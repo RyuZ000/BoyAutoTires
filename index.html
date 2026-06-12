@@ -94,7 +94,7 @@
         .nav-container a { color: black; padding: 6px 12px; font-size: clamp(18px, 1.3vw, 30px); text-decoration:none; font-weight:700; }
         .site-title { text-align:center; font-size: clamp(28px, 10vw, 100px); color: hsl(51, 100%, 50%); margin-bottom: 30px; line-height:1; }
         .site-title span { display:inline-block; }
-        .outsite-title { text-align: center; font-size: clamp(20px, 1.8vw, 40px); color: white; margin-top: -30px; margin-bottom: 30px; line-height: 1.2; }
+        .outsite-title { text-align: center; font-size: clamp(20px, 1.8vw, 40px); color: white; margin-top: 0; margin-bottom: 30px; line-height: 1.2; }
         .outsite-title span { display:inline-block; }
         .video-wrapper { background: rgba(0,0,0,0.4); width: 100%; margin-top: 30px; padding: 20px 0; display: flex; justify-content: center; align-items: center; }
         .video-wrapper .responsive-video { max-width: 900px; width: 90%; border-radius: 8px; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.25); }
@@ -150,9 +150,9 @@
             .site-title { margin-bottom: 15px; }
             .outsite-title { margin-top: -5px; }
         }        /* tablet (iPad) landscape — add spacing */
-        @media (min-width: 1024px) and (max-width: 768px) and (orientation: landscape) {
-            .site-title { margin-bottom: 50px; }
-            .outsite-title { margin-top: 15px; }
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .site-title { margin-bottom: 80px; }
+            .outsite-title { margin-top: 30px; }
         }    </style>
 </head>
 <body>
