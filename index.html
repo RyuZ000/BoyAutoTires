@@ -101,7 +101,7 @@
         
         /* mobile responsive: keep horizontal but adjust sizing */
         @media (max-width: 768px) {
-            .nav-container {
+            .nav-container {    
                 gap: clamp(4px, 3vw, 20px);
                 padding: 8px;
                 flex-wrap: wrap;
@@ -144,6 +144,11 @@
                 width: 98%;
                 margin: 15px auto;
             }
+        }
+        /* tablet (iPad) — add extra spacing between title and tagline */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .site-title { margin-bottom: 40px; }
+            .outsite-title { margin-top: 16px; }
         }
     </style>
 </head>
