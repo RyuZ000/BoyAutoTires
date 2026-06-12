@@ -100,23 +100,24 @@
         .video-wrapper { background: rgba(0,0,0,0.4); width: 100%; margin-top: 30px; padding: 20px 0; display: flex; justify-content: center; align-items: center; }
         .video-wrapper .responsive-video { max-width: 900px; width: 90%; border-radius: 8px; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.25); }
 
-        /* social nav: same style as nav-container */
-        .social-nav { background-color: goldenrod; display: flex; justify-content: center; gap: 16px; padding: 30px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
-        .social-nav a { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; }
-        .social-nav img { width: 150px; height: 150px; }
-        .social-nav .label { color: black; font-size: 50px; font-weight: 700; }
-        /* mobile: stack vertically */
+        /* social nav: same style as nav-container - horizontal all devices */
+        .social-nav { background-color: goldenrod; display: flex; justify-content: center; gap: 50px; padding: 30px; align-items: center; flex-wrap: wrap; margin-top: 50px; flex-direction: row; }
+        .social-nav a { display: flex; align-items: center; gap: 6px; text-decoration: none; color: inherit; flex-direction: row; }
+        .social-nav img { width: 120px; height: 120px; }
+        .social-nav .label { color: black; font-size: 50px; font-weight: 600; }
+
+        /* Mobile (iPhone, Android, iPad) */
         @media (max-width: 768px) {
-            .social-nav { flex-direction: column; gap: 8px; align-items: flex-start; padding: 12px; }
-            .social-nav a { flex-direction: column; align-items: center; width: 100%; justify-content: center; gap: 6px; }
-            .social-nav img { width: 48px; height: 48px; }
-            .social-nav .label { font-size: 14px; color: black; }
+            .social-nav { gap: 12px; padding: 12px; margin-top: 20px; }
+            .social-nav img { width: 36px; height: 36px; }
+            .social-nav .label { font-size: 14px; }
         }
 
-        /* desktop: stay horizontal */
+        /* Desktop (PC, Notebook, Mac) */
         @media (min-width: 769px) {
-            .social-nav { flex-direction: row; }
-            .social-nav a { flex-direction: row; }
+            .social-nav { gap: 50px; padding: 30px; margin-top: 50px; }
+            .social-nav img { width: 120px; height: 120px; }
+            .social-nav .label { font-size: 50px; }
         }        
         /* mobile responsive: keep horizontal but adjust sizing */
         @media (max-width: 768px) {
