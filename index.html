@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoyAutoTires</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        body { background-color: black; margin: 0; padding: 0; }
+        .carousel-container {
+            position: relative;
+            width: 80%;
+            max-width: 80%;
+            margin: 30px auto;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.25);
+        }
+        /* keep a consistent ratio and responsive height */
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            min-height: 260px;
+            background: #000; /* fallback background so empty areas look good */
+        }
+        .carousel-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* show whole image without cropping */
+            object-position: center center; /* center the image */
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            background: #000;
+        }
+        .carousel-img.active {
+            opacity: 1;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 215, 0, 0.9);
+            color: black;
+            border: none;
+            padding: 12px 16px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            z-index: 10;
+            opacity: 0.95;
+        }
+        .carousel-btn:hover {
+            background: rgba(255, 215, 0, 1);
+            transform: translateY(-50%) scale(1.05);
+        }
+        .carousel-btn-prev { left: 12px; }
+        .carousel-btn-next { right: 12px; }
+        .carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.45);
+            cursor: pointer;
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+        .dot.active {
+            background: #ffd700;
+            transform: scale(1.3);
+        }
+        .dot:hover { background: rgba(255, 255, 255, 0.85); }
+    </style>
+</head>
+<body>
+        <p>
+            <div style="background-color:goldenrod; display:flex; justify-content:center; gap:50px; padding:12px; align-items:center;">
+                <a href="home.html" style="color: black; padding: 1px 30px; font-size:30px; text-decoration:none; font-weight:bolder ;">Home</a>
+                <a href="category.html" style="color: black; padding: 1px 30px; font-size:30px; text-decoration:none; font-weight:bolder ;">Category</a>
+                <a href="services.html" style="color: black; padding: 1px 30px; font-size:30px; text-decoration:none; font-weight:bolder ;">Services</a>
+                <a href="contact.html" style="color: black; padding: 1px 30px; font-size:30px; text-decoration:none; font-weight:bolder ;">Contact</a>
+            </div>
+        </p>
+        <h1 style="text-align:center; font-size: 100px; color: #ffd700; margin-bottom: 30px;"><span style="color: yellow; ">B</span><span style="color: white;">oyAuto</span><span style="color: gold;">Tires</span></h1>
+        
+        <div class="carousel-container">
+            <div class="carousel-wrapper">
+                <img src="Photo Somza/Somza1.jpg" alt="Photo 1" class="carousel-img active">
+                <img src="Photo Somza/Somza2.jpg" alt="Photo 2" class="carousel-img">
+                <img src="Photo Somza/Somza3.jpg" alt="Photo 3" class="carousel-img">
+                <img src="Photo Somza/Somza4.jpg" alt="Photo 4" class="carousel-img">
+                <img src="Photo Somza/Somza5.jpg" alt="Photo 5" class="carousel-img">
+                <img src="Photo Somza/Somza6.jpg" alt="Photo 6" class="carousel-img">
+                <img src="Photo Somza/Somza7.jpg" alt="Photo 7" class="carousel-img">
+                <img src="Photo Somza/Somza8.jpg" alt="Photo 8" class="carousel-img">
+                <img src="Photo Somza/Somza9.jpg" alt="Photo 9" class="carousel-img">
+            </div>
+            <button class="carousel-btn carousel-btn-prev" onclick="prevSlide()">❮</button>
+            <button class="carousel-btn carousel-btn-next" onclick="nextSlide()">❯</button>
+            <div class="carousel-dots">
+                <span class="dot active" onclick="goToSlide(0)"></span>
+                <span class="dot" onclick="goToSlide(1)"></span>
+                <span class="dot" onclick="goToSlide(2)"></span>
+                <span class="dot" onclick="goToSlide(3)"></span>
+                <span class="dot" onclick="goToSlide(4)"></span>
+                <span class="dot" onclick="goToSlide(5)"></span>
+                <span class="dot" onclick="goToSlide(6)"></span>
+                <span class="dot" onclick="goToSlide(7)"></span>
+                <span class="dot" onclick="goToSlide(8)"></span>
+            </div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.4); width: 100%; margin-top: 30px; padding: 20px 0; text-align: center;">
+            <video width="90%" height="auto" controls autoplay muted loop style="max-width: 40%; border-radius: 8px; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.25);">
+                <source src="Video Somza/Somza1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-img');
+        const dots = document.querySelectorAll('.dot');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[n].classList.add('active');
+            dots[n].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+        }
+
+        // Auto-play carousel (เล่นอัตโนมัติทุก 5 วินาที)
+        setInterval(nextSlide, 5000);
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
