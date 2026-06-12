@@ -8,7 +8,7 @@
     <style>
         /* layout basics and prevent iOS font scaling */
         *, *::before, *::after { box-sizing: border-box; }
-        html, body { -webkit-text-size-adjust: 70%; -webkit-font-smoothing: antialiased; }
+        html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
         body { background-color: black; margin: 0; padding: 0; }
         img, video { max-width: 100%; height: auto; display: block; }
 
@@ -90,7 +90,8 @@
         .dot:hover { background: rgba(255, 255, 255, 0.85); }
         /* responsive header/nav and title */
         .nav-container { background-color: goldenrod; display:flex; justify-content:center; gap: clamp(8px, 6vw, 50px); padding:12px; align-items:center; flex-wrap:wrap; }
-        .nav-container a { color: black; padding: 6px 12px; font-size: clamp(14px, 4vw, 30px); text-decoration:none; font-weight:700; }
+        /* smaller desktop font while keeping responsive scaling */
+        .nav-container a { color: black; padding: 6px 12px; font-size: clamp(18px, 2.8vw, 30px); text-decoration:none; font-weight:700; }
         .site-title { text-align:center; font-size: clamp(28px, 10vw, 100px); color: #ffd700; margin-bottom: 30px; line-height:1; }
         .site-title span { display:inline-block; }
         .video-wrapper { background: rgba(0,0,0,0.4); width: 100%; margin-top: 30px; padding: 20px 0; display: flex; justify-content: center; align-items: center; }
