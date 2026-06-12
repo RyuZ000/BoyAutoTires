@@ -10,7 +10,8 @@
         *, *::before, *::after { box-sizing: border-box; }
         html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
         body { background-color: black; margin: 0; padding: 0; }
-        img, video { max-width: 100%; height: auto; display: block; }
+        img { max-width: 100%; height: auto; }
+        img.carousel-img, video { display: block; }
 
         .carousel-container {
             position: relative;
@@ -98,7 +99,25 @@
         .outsite-title span { display:inline-block; }
         .video-wrapper { background: rgba(0,0,0,0.4); width: 100%; margin-top: 30px; padding: 20px 0; display: flex; justify-content: center; align-items: center; }
         .video-wrapper .responsive-video { max-width: 900px; width: 90%; border-radius: 8px; box-shadow: 0 8px 32px rgba(255, 215, 0, 0.25); }
-        
+
+        /* social nav: same style as nav-container */
+        .social-nav { background-color: goldenrod; display: flex; justify-content: center; gap: 16px; padding: 30px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
+        .social-nav a { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; }
+        .social-nav img { width: 150px; height: 150px; }
+        .social-nav .label { color: black; font-size: 50px; font-weight: 700; }
+        /* mobile: stack vertically */
+        @media (max-width: 768px) {
+            .social-nav { flex-direction: column; gap: 8px; align-items: flex-start; padding: 12px; }
+            .social-nav a { flex-direction: column; align-items: center; width: 100%; justify-content: center; gap: 6px; }
+            .social-nav img { width: 48px; height: 48px; }
+            .social-nav .label { font-size: 14px; color: black; }
+        }
+
+        /* desktop: stay horizontal */
+        @media (min-width: 769px) {
+            .social-nav { flex-direction: row; }
+            .social-nav a { flex-direction: row; }
+        }        
         /* mobile responsive: keep horizontal but adjust sizing */
         @media (max-width: 768px) {
             .nav-container {    
@@ -197,8 +216,41 @@
         <div class="video-wrapper">
             <video class="responsive-video" controls autoplay muted loop>
                 <source src="Video Somza/Somza1.mp4" type="video/mp4">
-                Your browser does not support the video tag.
+                Your browser does not support the video tag.    
             </video>
+        </div>
+
+        <div class="social-nav" aria-label="Social media links">
+            <a href="https://www.instagram.com/boyautotires?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" title="Instagram" target="_blank">
+                <img src="Photo Social/IG.jpg" alt="Instagram">
+                <span class="label">boyautotires</span>
+            </a>
+            
+            <a href="https://www.facebook.com/BOYAUTOTIRES/?locale=th_TH" title="Facebook" target="_blank">
+                <img src="Photo Social/Fb.jpg" alt="Facebook">
+                <span class="label">Boy Auto Tires</span>
+            </a>
+            
+            <a href="https://www.tiktok.com/@boyautotires?is_from_webapp=1&sender_device=pcs" title="TikTok" target="_blank">
+                <img src="Photo Social/Tiktok.jpg" alt="TikTok">
+                <span class="label">Boy Auto Tires</span>
+            </a>
+            
+            <a href="https://line.me/ti/p/@boyautotires" title="Line" target="_blank">
+                <img src="Photo Social/Line.jpg" alt="Line">
+                <span class="label">BOYAUTOTIRES</span>
+            </a>
+            
+            <a href="https://shopee.co.th/mj_jeab?tab=shop&uls_trackid=55skpsgr00dv&utm_content=DMozhUx5nRhmTUuBo1FX7A2TEXZ" title="Shopee" target="_blank">
+                <img src="Photo Social/Shopee.jpg" alt="Shopee">
+                <span class="label">Boy Auto Tires</span>
+
+            </a>
+            
+            <a href="tel:+66811600060" title="Call us">
+                <img src="Photo Social/Call.jpg" alt="Phone">
+                <span class="label">081-160-0060</span>
+            </a>
         </div>
 
     <script>
