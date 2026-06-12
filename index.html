@@ -148,9 +148,12 @@
         /* tablet (iPad) portrait — add extra spacing between title and tagline */
         @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
             .site-title { margin-bottom: 15px; }
-            .outsite-title { margin-top: -10px; }
-        }
-    </style>
+            .outsite-title { margin-top: -5px; }
+        }        /* tablet (iPad) landscape — add spacing */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .site-title { margin-bottom: 25px; }
+            .outsite-title { margin-top: 0px; }
+        }    </style>
 </head>
 <body>
         <nav class="nav-container">
