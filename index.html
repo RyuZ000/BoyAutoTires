@@ -218,8 +218,26 @@
             transform: translateY(-2px);
         }
         .social-nav img { width: 24px; height: 24px; }
-        .social-nav .label { color: black; font-size: 11px; font-weight: 700; }        
-        /* mobile responsive: keep horizontal but adjust sizing */
+        .social-nav .label { color: black; font-size: 11px; font-weight: 700; }
+        
+        /* Desktop - hide labels to make room */
+        @media (min-width: 1025px) {
+            .social-nav {
+                gap: 2px;
+                padding: 10px 8px;
+            }
+            .social-nav a {
+                padding: 5px 5px;
+                gap: 0;
+            }
+            .social-nav img { 
+                width: 28px; 
+                height: 28px; 
+            }
+            .social-nav .label { 
+                display: none;
+            }
+        }
         @media (max-width: 768px) {
             .nav-container {    
                 gap: clamp(4px, 3vw, 20px);
