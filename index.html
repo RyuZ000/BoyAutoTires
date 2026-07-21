@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoyAutoTires</title>
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="css/staff.css">
     <style>
         /* layout basics and prevent iOS font scaling */
         *, *::before, *::after { box-sizing: border-box; }
@@ -297,6 +298,11 @@
         }    </style>
 </head>
 <body>
+        <div class="staff-corner">
+            <a id="staff-login-link" href="admin.html" class="staff-btn">🔒 Staff Login</a>
+            <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;">🛠 Admin Panel</a>
+            <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" onclick="staffLogout(); return false;">ออกจากระบบ</a>
+        </div>
         <nav class="nav-container">
             <a href="alloywheel.html">Wheels</a>
             <a href="tires.html">Tires</a>
@@ -413,5 +419,9 @@
         setInterval(nextSlide, 5000);
     </script>
     <script src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
