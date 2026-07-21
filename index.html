@@ -11,7 +11,7 @@
         *, *::before, *::after { box-sizing: border-box; }
         html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
         body { 
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            background: linear-gradient(160deg, #0d2a5c 0%, #0a1730 32%, #050810 68%, #020306 100%);
             margin: 0; 
             padding: 15px; 
             min-height: 100vh;
@@ -27,8 +27,8 @@
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(20, 20, 20, 0.9) 100%);
             border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2), 0 0 40px rgba(255, 215, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(77, 163, 255, 0.2), 0 0 40px rgba(77, 163, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(77, 163, 255, 0.2);
         }
         /* keep a consistent ratio and responsive height */
         .carousel-wrapper {
@@ -56,8 +56,8 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: black;
+            background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 55%, #050810 100%);
+            color: #fff;
             border: 2px solid rgba(255, 255, 255, 0.3);
             padding: 12px 16px;
             font-size: 24px;
@@ -67,7 +67,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 10;
             opacity: 0.8;
-            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 24px rgba(77, 163, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
             width: 60px;
             height: 60px;
             display: flex;
@@ -75,10 +75,10 @@
             justify-content: center;
         }
         .carousel-btn:hover {
-            background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+            background: linear-gradient(135deg, #050810 0%, #0b3d91 45%, #2f7cff 100%);
             transform: translateY(-50%) scale(1.2);
             opacity: 1;
-            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.45), 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 40px rgba(77, 163, 255, 0.45), 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         .carousel-btn-prev { left: 20px; }
         .carousel-btn-next { right: 20px; }
@@ -94,7 +94,7 @@
             padding: 10px 18px;
             border-radius: 50px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(77, 163, 255, 0.15);
         }
         .dot {
             width: 12px;
@@ -106,29 +106,29 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
         .dot.active {
-            background: #ffd700;
+            background: #4da3ff;
             transform: scale(1.5);
-            border-color: #ffed4e;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            border-color: #8ecbff;
+            box-shadow: 0 0 20px rgba(77, 163, 255, 0.6);
         }
         .dot:hover { background: rgba(255, 255, 255, 0.6); }
         
         /* responsive header/nav and title */
         .nav-container { 
-            background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            background: linear-gradient(90deg, #0b3d91 0%, #1f5fcf 45%, #050810 100%);
             display:flex; 
             justify-content:center; 
             gap: 25px;
             padding: 14px 30px; 
             align-items:center; 
             flex-wrap:wrap;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(77, 163, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-bottom: 2px solid rgba(0, 0, 0, 0.15);
             border-radius: 8px 8px 0 0;
         }
         /* smaller desktop font while keeping responsive scaling */
         .nav-container a { 
-            color: black; 
+            color: #eaf3ff; 
             padding: 10px 20px; 
             font-size: 18px;
             text-decoration:none; 
@@ -138,17 +138,17 @@
             position: relative;
         }
         .nav-container a:hover {
-            background: rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.14);
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
         }
         .site-title { 
             text-align:center; 
             font-size: 75px;
-            color: hsl(51, 100%, 50%); 
+            color: #4da3ff; 
             margin: 25px 0; 
             line-height:1;
-            text-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.25);
+            text-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 40px rgba(77, 163, 255, 0.25);
             font-family: 'Arial Black', sans-serif;
             letter-spacing: 2px;
             font-weight: 900;
@@ -174,20 +174,20 @@
             display: flex; 
             justify-content: center; 
             align-items: center;
-            border-top: 1px solid rgba(255, 215, 0, 0.15);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+            border-top: 1px solid rgba(77, 163, 255, 0.15);
+            border-bottom: 1px solid rgba(77, 163, 255, 0.15);
         }
         .video-wrapper .responsive-video { 
             max-width: 1100px; 
             width: 90%; 
             border-radius: 15px; 
-            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.18), 0 0 40px rgba(255, 215, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 215, 0, 0.18);
+            box-shadow: 0 20px 50px rgba(77, 163, 255, 0.18), 0 0 40px rgba(77, 163, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(77, 163, 255, 0.18);
         }
 
         /* social nav: same style as nav-container */
         .social-nav { 
-            background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            background: linear-gradient(90deg, #0b3d91 0%, #1f5fcf 45%, #050810 100%);
             display: flex; 
             justify-content: center; 
             gap: 10px; 
@@ -197,7 +197,7 @@
             margin-top: 0;
             flex-direction: row; 
             overflow-x: visible;
-            box-shadow: 0 -10px 30px rgba(255, 215, 0, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 -10px 30px rgba(77, 163, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.2);
             border-top: 2px solid rgba(0, 0, 0, 0.1);
             border-radius: 0 0 8px 8px;
         }
@@ -215,11 +215,11 @@
             transition: all 0.3s ease;
         }
         .social-nav a:hover {
-            background: rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.14);
             transform: translateY(-2px);
         }
         .social-nav img { width: 24px; height: 24px; }
-        .social-nav .label { color: black; font-size: 11px; font-weight: 700; }
+        .social-nav .label { color: #eaf3ff; font-size: 11px; font-weight: 700; }
         
         /* Desktop - wrap items and show labels */
         @media (min-width: 1025px) {
@@ -298,20 +298,24 @@
         }    </style>
 </head>
 <body>
+        <div class="lang-switch">
+            <button class="lang-btn" data-lang="th" onclick="setLanguage('th')">ไทย</button>
+            <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+        </div>
         <div class="staff-corner">
-            <a id="staff-login-link" href="admin.html" class="staff-btn">🔒 Staff Login</a>
-            <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;">🛠 Admin Panel</a>
-            <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" onclick="staffLogout(); return false;">ออกจากระบบ</a>
+            <a id="staff-login-link" href="admin.html" class="staff-btn" data-i18n="staff_login">🔒 Staff Login</a>
+            <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;" data-i18n="staff_admin">🛠 Admin Panel</a>
+            <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">ออกจากระบบ</a>
         </div>
         <nav class="nav-container">
-            <a href="alloywheel.html">Wheels</a>
-            <a href="tires.html">Tires</a>
-            <a href="shock.html">Shock Absorbers</a>
-            <a href="brake.html">Brake</a>
+            <a href="alloywheel.html" data-i18n="nav_wheels">Wheels</a>
+            <a href="tires.html" data-i18n="nav_tires">Tires</a>
+            <a href="shock.html" data-i18n="nav_shock">Shock Absorbers</a>
+            <a href="brake.html" data-i18n="nav_brake">Brake</a>
             
         </nav>
         <h1 class="site-title"><span style="color: yellow;">B</span><span style="color: white;">oyAuto</span><span style="color: gold;">Tires</span></h1>
-        <h2 class="outsite-title"><span style="color: white;">จำหน่ายล้อแม็ก-ยางรถยนต์ โช้คสตรัท สปริงโหลด ช่วงล่างครบวงจร</span></h2>
+        <h2 class="outsite-title"><span style="color: white;" data-i18n="tagline">จำหน่ายล้อแม็ก-ยางรถยนต์ โช้คสตรัท สปริงโหลด ช่วงล่างครบวงจร</span></h2>
         
         <div class="carousel-container">
             <div class="carousel-wrapper">
@@ -423,5 +427,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/i18n.js"></script>
 </body>
 </html>

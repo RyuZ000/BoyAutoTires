@@ -9,25 +9,25 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            background: linear-gradient(160deg, #0d2a5c 0%, #0a1730 32%, #050810 68%, #020306 100%);
             margin: 0;
             padding: 0 0 40px;
             min-height: 100vh;
             font-family: Arial, sans-serif;
         }
         .nav-container {
-            background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            background: linear-gradient(90deg, #0b3d91 0%, #1f5fcf 45%, #050810 100%);
             display:flex;
             justify-content:center;
             gap: 25px;
             padding: 14px 30px;
             align-items:center;
             flex-wrap:wrap;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(77, 163, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-bottom: 2px solid rgba(0, 0, 0, 0.15);
         }
         .nav-container a {
-            color: black;
+            color: #eaf3ff;
             padding: 10px 20px;
             font-size: 18px;
             text-decoration:none;
@@ -36,16 +36,16 @@
             transition: all 0.3s ease;
         }
         .nav-container a:hover {
-            background: rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.14);
             transform: translateY(-2px);
         }
         .page-title {
             text-align: center;
             font-size: clamp(28px, 6vw, 50px);
-            color: #ffd700;
+            color: #4da3ff;
             margin: 35px 0 10px;
             font-weight: 900;
-            text-shadow: 0 6px 25px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.25);
+            text-shadow: 0 6px 25px rgba(0,0,0,0.6), 0 0 40px rgba(77,163,255,0.25);
         }
         @media (max-width: 768px) {
             .nav-container { gap: clamp(4px, 3vw, 20px); padding: 8px; }
@@ -54,27 +54,32 @@
     </style>
 </head>
 <body>
+    <div class="lang-switch">
+        <button class="lang-btn" data-lang="th" onclick="setLanguage('th')">ไทย</button>
+        <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+    </div>
     <div class="staff-corner">
-        <a id="staff-login-link" href="admin.html" class="staff-btn">🔒 Staff Login</a>
-        <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;">🛠 Admin Panel</a>
-        <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" onclick="staffLogout(); return false;">ออกจากระบบ</a>
+        <a id="staff-login-link" href="admin.html" class="staff-btn" data-i18n="staff_login">🔒 Staff Login</a>
+        <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;" data-i18n="staff_admin">🛠 Admin Panel</a>
+        <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">ออกจากระบบ</a>
     </div>
 
     <nav class="nav-container">
-        <a href="index.html">หน้าแรก</a>
-        <a href="alloywheel.html">Wheels</a>
-        <a href="tires.html">Tires</a>
-        <a href="shock.html">Shock Absorbers</a>
-        <a href="brake.html">Brake</a>
+        <a href="index.html" data-i18n="nav_home">หน้าแรก</a>
+        <a href="alloywheel.html" data-i18n="nav_wheels">Wheels</a>
+        <a href="tires.html" data-i18n="nav_tires">Tires</a>
+        <a href="shock.html" data-i18n="nav_shock">Shock Absorbers</a>
+        <a href="brake.html" data-i18n="nav_brake">Brake</a>
     </nav>
 
-    <h1 class="page-title">โช้คอัพ (Shock Absorbers)</h1>
+    <h1 class="page-title" data-i18n="page_title_shock">Loading...</h1>
 
     <div class="products-grid" id="products-grid"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="js/products.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

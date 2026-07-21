@@ -8,7 +8,7 @@
 <style>
     * { box-sizing: border-box; }
     body {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+        background: linear-gradient(160deg, #0d2a5c 0%, #0a1730 32%, #050810 68%, #020306 100%);
         margin: 0;
         min-height: 100vh;
         font-family: Arial, sans-serif;
@@ -17,7 +17,7 @@
     }
     h1 {
         text-align: center;
-        color: #ffd700;
+        color: #4da3ff;
         font-size: clamp(24px, 5vw, 40px);
         margin-top: 40px;
     }
@@ -25,7 +25,7 @@
         max-width: 480px;
         margin: 30px auto;
         background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(20,20,20,0.9) 100%);
-        border: 1px solid rgba(255,215,0,0.2);
+        border: 1px solid rgba(77,163,255,0.2);
         border-radius: 14px;
         padding: 28px;
     }
@@ -39,7 +39,7 @@
         width: 100%;
         padding: 10px 12px;
         border-radius: 8px;
-        border: 1px solid rgba(255,215,0,0.3);
+        border: 1px solid rgba(77,163,255,0.3);
         background: #111;
         color: #eee;
         font-size: 14px;
@@ -51,8 +51,8 @@
         padding: 12px;
         border-radius: 8px;
         border: none;
-        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-        color: #000;
+        background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 55%, #050810 100%);
+        color: #fff;
         font-weight: 700;
         font-size: 15px;
         cursor: pointer;
@@ -60,8 +60,8 @@
     .btn:hover { filter: brightness(1.05); }
     .btn.secondary {
         background: transparent;
-        border: 1px solid rgba(255,215,0,0.4);
-        color: #ffd700;
+        border: 1px solid rgba(77,163,255,0.4);
+        color: #4da3ff;
     }
     .error-msg { color: #ff6b6b; font-size: 13px; margin-top: 10px; min-height: 16px; }
 
@@ -70,14 +70,14 @@
     .tab-btn {
         padding: 8px 18px;
         border-radius: 20px;
-        border: 1px solid rgba(255,215,0,0.35);
+        border: 1px solid rgba(77,163,255,0.35);
         background: transparent;
-        color: #ffd700;
+        color: #4da3ff;
         font-weight: 700;
         cursor: pointer;
         font-size: 13px;
     }
-    .tab-btn.active { background: #ffd700; color: #000; }
+    .tab-btn.active { background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 60%, #050810 100%); color: #fff; }
 
     .dash-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
     @media (max-width: 800px) { .dash-grid { grid-template-columns: 1fr; } }
@@ -85,7 +85,7 @@
     .product-list { display: flex; flex-direction: column; gap: 12px; }
     .product-row {
         background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(20,20,20,0.9) 100%);
-        border: 1px solid rgba(255,215,0,0.2);
+        border: 1px solid rgba(77,163,255,0.2);
         border-radius: 10px;
         padding: 12px 14px;
         display: flex;
@@ -94,13 +94,13 @@
     }
     .product-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
     .product-row .info { flex: 1; min-width: 0; }
-    .product-row .info h4 { margin: 0 0 4px; color: #ffd700; font-size: 14px; }
+    .product-row .info h4 { margin: 0 0 4px; color: #4da3ff; font-size: 14px; }
     .product-row .info p { margin: 0; color: #aaa; font-size: 12px; }
     .product-row .actions { display: flex; gap: 6px; }
     .icon-btn {
         border: none;
-        background: rgba(255,215,0,0.12);
-        color: #ffd700;
+        background: rgba(77,163,255,0.12);
+        color: #4da3ff;
         border-radius: 6px;
         padding: 6px 10px;
         cursor: pointer;
@@ -112,55 +112,61 @@
 </head>
 <body>
 
+<div class="lang-switch">
+    <button class="lang-btn" data-lang="th" onclick="setLanguage('th')">ไทย</button>
+    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+</div>
 <div class="staff-corner">
-    <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" onclick="staffLogout(); return false;">ออกจากระบบ</a>
-    <a href="index.html" class="staff-btn">← กลับหน้าเว็บ</a>
+    <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">ออกจากระบบ</a>
+    <a href="index.html" class="staff-btn" data-i18n="staff_back">← กลับหน้าเว็บ</a>
 </div>
 
-<h1>Staff Admin Panel</h1>
+<h1 data-i18n="admin_title">Staff Admin Panel</h1>
 
 <!-- ===================== LOGIN ===================== -->
 <div class="panel" id="login-panel">
-    <label for="login-email">Email</label>
+    <label for="login-email" data-i18n="field_email">Email</label>
     <input type="email" id="login-email" placeholder="staff@boyautotires.com">
-    <label for="login-password">Password</label>
-    <input type="password" id="login-password" placeholder="••••••••">
-    <button class="btn" onclick="handleLogin()">เข้าสู่ระบบ</button>
+    <label for="login-password" data-i18n="field_password">Password</label>
+    <input type="password" id="login-password" data-i18n-placeholder="placeholder_password" placeholder="••••••••">
+    <button class="btn" onclick="handleLogin()" data-i18n="btn_login">เข้าสู่ระบบ</button>
     <div class="error-msg" id="login-error"></div>
 </div>
 
 <!-- ===================== DASHBOARD ===================== -->
 <div id="dashboard">
     <div class="tabs">
-        <button class="tab-btn active" data-cat="tires" onclick="switchTab('tires')">ยางรถยนต์</button>
-        <button class="tab-btn" data-cat="wheels" onclick="switchTab('wheels')">ล้อแม็ก</button>
-        <button class="tab-btn" data-cat="shock" onclick="switchTab('shock')">โช้คอัพ</button>
-        <button class="tab-btn" data-cat="brake" onclick="switchTab('brake')">เบรก</button>
+        <button class="tab-btn active" data-cat="tires" onclick="switchTab('tires')" data-i18n="tab_tires">ยางรถยนต์</button>
+        <button class="tab-btn" data-cat="wheels" onclick="switchTab('wheels')" data-i18n="tab_wheels">ล้อแม็ก</button>
+        <button class="tab-btn" data-cat="shock" onclick="switchTab('shock')" data-i18n="tab_shock">โช้คอัพ</button>
+        <button class="tab-btn" data-cat="brake" onclick="switchTab('brake')" data-i18n="tab_brake">เบรก</button>
     </div>
 
     <div class="dash-grid">
         <!-- Add / Edit form -->
         <div class="panel" style="margin:0;">
-            <h3 style="color:#ffd700; margin-top:0;" id="form-title">เพิ่มสินค้าใหม่</h3>
+            <h3 style="color:#4da3ff; margin-top:0;" id="form-title" data-i18n="form_title_add">เพิ่มสินค้าใหม่</h3>
             <input type="hidden" id="edit-id">
-            <label>ชื่อสินค้า</label>
-            <input type="text" id="f-name" placeholder="เช่น Michelin Primacy 4">
-            <label>รายละเอียด</label>
-            <textarea id="f-desc" placeholder="ขนาด, สเปค, ข้อมูลเพิ่มเติม"></textarea>
-            <label>ราคา (บาท)</label>
+            <label data-i18n="field_name">ชื่อสินค้า</label>
+            <input type="text" id="f-name" data-i18n-placeholder="placeholder_name" placeholder="เช่น Michelin Primacy 4">
+            <label data-i18n="field_size">ไซส์ (สำหรับยาง)</label>
+            <input type="text" id="f-size" data-i18n-placeholder="placeholder_size" placeholder="เช่น 265/60R18">
+            <label data-i18n="field_desc">รายละเอียด</label>
+            <textarea id="f-desc" data-i18n-placeholder="placeholder_desc" placeholder="ขนาด, สเปค, ข้อมูลเพิ่มเติม"></textarea>
+            <label data-i18n="field_price">ราคา (บาท)</label>
             <input type="number" id="f-price" placeholder="2500">
-            <label>รูปภาพสินค้า</label>
+            <label data-i18n="field_image">รูปภาพสินค้า</label>
             <input type="file" id="f-image-file" accept="image/*" onchange="previewImage()">
             <div id="image-preview" style="margin-top:10px; display:none;">
-                <img id="image-preview-img" style="max-width:100%; max-height:140px; border-radius:8px; border:1px solid rgba(255,215,0,0.3);">
+                <img id="image-preview-img" style="max-width:100%; max-height:140px; border-radius:8px; border:1px solid rgba(77,163,255,0.3);">
             </div>
             <input type="hidden" id="f-image">
             <div id="upload-status" style="font-size:12px; color:#aaa; margin-top:6px;"></div>
             <label style="display:flex; align-items:center; gap:8px; margin-top:14px;">
-                <input type="checkbox" id="f-instock" style="width:auto;" checked> มีสินค้าพร้อมขาย
+                <input type="checkbox" id="f-instock" style="width:auto;" checked> <span data-i18n="field_instock">มีสินค้าพร้อมขาย</span>
             </label>
-            <button class="btn" onclick="saveProduct()">บันทึก</button>
-            <button class="btn secondary" style="margin-top:8px;" onclick="resetForm()">ล้างฟอร์ม</button>
+            <button class="btn" onclick="saveProduct()" data-i18n="btn_save">บันทึก</button>
+            <button class="btn secondary" style="margin-top:8px;" onclick="resetForm()" data-i18n="btn_clear">ล้างฟอร์ม</button>
             <div class="error-msg" id="form-error"></div>
         </div>
 
@@ -175,6 +181,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/i18n.js"></script>
+<script>
+    function onLanguageChange() {
+        // re-render dynamic text that isn't covered by data-i18n
+        document.getElementById('form-title').textContent =
+            document.getElementById('edit-id').value ? t('form_title_edit') : t('form_title_add');
+        if (document.getElementById('dashboard').style.display !== 'none') {
+            refreshList();
+        }
+    }
+</script>
 <script>
     let currentCategory = 'tires';
     let selectedFile = null;
@@ -200,7 +217,7 @@
             return document.getElementById('f-image').value || null;
         }
         const statusEl = document.getElementById('upload-status');
-        statusEl.textContent = 'กำลังอัปโหลดรูป...';
+        statusEl.textContent = t('upload_uploading');
 
         const ext = selectedFile.name.split('.').pop();
         const path = `${currentCategory}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
@@ -210,12 +227,12 @@
             .upload(path, selectedFile);
 
         if (uploadError) {
-            statusEl.textContent = 'อัปโหลดรูปไม่สำเร็จ: ' + uploadError.message;
+            statusEl.textContent = t('upload_error') + uploadError.message;
             throw uploadError;
         }
 
         const { data } = sb.storage.from(IMAGE_BUCKET).getPublicUrl(path);
-        statusEl.textContent = 'อัปโหลดรูปสำเร็จ';
+        statusEl.textContent = t('upload_success');
         return data.publicUrl;
     }
 
@@ -234,13 +251,13 @@
         errEl.textContent = '';
 
         if (!email || !password) {
-            errEl.textContent = 'กรุณากรอกอีเมลและรหัสผ่าน';
+            errEl.textContent = t('login_error_empty');
             return;
         }
 
         const { error } = await sb.auth.signInWithPassword({ email, password });
         if (error) {
-            errEl.textContent = 'เข้าสู่ระบบไม่สำเร็จ: อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+            errEl.textContent = t('login_error_failed');
             return;
         }
         checkAccess();
@@ -258,7 +275,7 @@
     async function refreshList() {
         const listEl = document.getElementById('product-list');
         const statusEl = document.getElementById('list-status');
-        statusEl.textContent = 'กำลังโหลด...';
+        statusEl.textContent = t('list_loading');
         listEl.innerHTML = '';
 
         const { data, error } = await sb
@@ -268,13 +285,13 @@
             .order('created_at', { ascending: false });
 
         if (error) {
-            statusEl.textContent = 'โหลดข้อมูลไม่สำเร็จ';
+            statusEl.textContent = t('list_error');
             console.error(error);
             return;
         }
 
         if (!data || data.length === 0) {
-            statusEl.textContent = 'ยังไม่มีสินค้าในหมวดนี้';
+            statusEl.textContent = t('list_empty');
             return;
         }
 
@@ -283,12 +300,12 @@
             <div class="product-row">
                 ${p.image_url ? `<img src="${escHtml(p.image_url)}" alt="">` : ''}
                 <div class="info">
-                    <h4>${escHtml(p.name)}</h4>
-                    <p>${p.price != null ? '฿' + Number(p.price).toLocaleString() : ''} ${p.in_stock ? '' : '· สินค้าหมด'}</p>
+                    <h4>${escHtml(p.name)}${p.size ? ' · ' + escHtml(p.size) : ''}</h4>
+                    <p>${p.price != null ? '฿' + Number(p.price).toLocaleString() : ''} ${p.in_stock ? '' : '· ' + t('out_of_stock')}</p>
                 </div>
                 <div class="actions">
-                    <button class="icon-btn" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'>แก้ไข</button>
-                    <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">ลบ</button>
+                    <button class="icon-btn" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'>${t('btn_edit')}</button>
+                    <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">${t('btn_delete')}</button>
                 </div>
             </div>
         `).join('');
@@ -304,6 +321,7 @@
     function resetForm() {
         document.getElementById('edit-id').value = '';
         document.getElementById('f-name').value = '';
+        document.getElementById('f-size').value = '';
         document.getElementById('f-desc').value = '';
         document.getElementById('f-price').value = '';
         document.getElementById('f-image').value = '';
@@ -312,13 +330,14 @@
         document.getElementById('upload-status').textContent = '';
         selectedFile = null;
         document.getElementById('f-instock').checked = true;
-        document.getElementById('form-title').textContent = 'เพิ่มสินค้าใหม่';
+        document.getElementById('form-title').textContent = t('form_title_add');
         document.getElementById('form-error').textContent = '';
     }
 
     function editProduct(p) {
         document.getElementById('edit-id').value = p.id;
         document.getElementById('f-name').value = p.name || '';
+        document.getElementById('f-size').value = p.size || '';
         document.getElementById('f-desc').value = p.description || '';
         document.getElementById('f-price').value = p.price ?? '';
         document.getElementById('f-image').value = p.image_url || '';
@@ -333,7 +352,7 @@
             preview.style.display = 'none';
         }
         document.getElementById('f-instock').checked = !!p.in_stock;
-        document.getElementById('form-title').textContent = 'แก้ไขสินค้า';
+        document.getElementById('form-title').textContent = t('form_title_edit');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -343,12 +362,13 @@
 
         const id = document.getElementById('edit-id').value;
         const name = document.getElementById('f-name').value.trim();
+        const size = document.getElementById('f-size').value.trim();
         const description = document.getElementById('f-desc').value.trim();
         const priceRaw = document.getElementById('f-price').value;
         const in_stock = document.getElementById('f-instock').checked;
 
         if (!name) {
-            errEl.textContent = 'กรุณากรอกชื่อสินค้า';
+            errEl.textContent = t('name_required');
             return;
         }
 
@@ -356,13 +376,14 @@
         try {
             image_url = await uploadImageIfNeeded();
         } catch (uploadErr) {
-            errEl.textContent = 'อัปโหลดรูปไม่สำเร็จ กรุณาลองใหม่';
+            errEl.textContent = t('upload_error_retry');
             return;
         }
 
         const payload = {
             category: currentCategory,
             name,
+            size: size || null,
             description: description || null,
             price: priceRaw ? Number(priceRaw) : null,
             image_url: image_url || null,
@@ -377,7 +398,7 @@
         }
 
         if (error) {
-            errEl.textContent = 'บันทึกไม่สำเร็จ: ' + error.message;
+            errEl.textContent = t('save_error') + error.message;
             console.error(error);
             return;
         }
@@ -387,10 +408,10 @@
     }
 
     async function deleteProduct(id) {
-        if (!confirm('ยืนยันลบสินค้านี้?')) return;
+        if (!confirm(t('confirm_delete'))) return;
         const { error } = await sb.from('products').delete().eq('id', id);
         if (error) {
-            alert('ลบไม่สำเร็จ: ' + error.message);
+            alert(t('delete_error') + error.message);
             return;
         }
         refreshList();

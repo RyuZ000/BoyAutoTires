@@ -11,8 +11,8 @@
 }
 .staff-btn {
     background: rgba(0, 0, 0, 0.65);
-    color: #ffd700;
-    border: 1px solid rgba(255, 215, 0, 0.45);
+    color: #4da3ff;
+    border: 1px solid rgba(77, 163, 255, 0.45);
     padding: 7px 14px;
     border-radius: 20px;
     font-size: 12px;
@@ -27,13 +27,50 @@
     white-space: nowrap;
 }
 .staff-btn:hover {
-    background: rgba(255, 215, 0, 0.18);
+    background: rgba(77, 163, 255, 0.18);
     transform: translateY(-1px);
-    border-color: #ffd700;
+    border-color: #4da3ff;
 }
 @media (max-width: 480px) {
     .staff-corner { top: 8px; right: 8px; }
     .staff-btn { font-size: 10px; padding: 6px 10px; }
+}
+
+/* ============================================================
+   Language switcher - top left of every page
+   ============================================================ */
+.lang-switch {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    display: flex;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(77, 163, 255, 0.45);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+}
+.lang-btn {
+    border: none;
+    background: transparent;
+    color: #9fc3ff;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.lang-btn.active {
+    background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 100%);
+    color: #fff;
+}
+.lang-btn:hover:not(.active) {
+    background: rgba(77, 163, 255, 0.15);
+}
+@media (max-width: 480px) {
+    .lang-switch { top: 8px; left: 8px; }
+    .lang-btn { font-size: 10px; padding: 6px 10px; }
 }
 
 /* ============================================================
@@ -56,7 +93,7 @@
 }
 .product-card {
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(20, 20, 20, 0.9) 100%);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(77, 163, 255, 0.2);
     border-radius: 14px;
     overflow: hidden;
     display: flex;
@@ -65,7 +102,7 @@
 }
 .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.15);
+    box-shadow: 0 15px 30px rgba(77, 163, 255, 0.15);
 }
 .product-card img {
     width: 100%;
@@ -85,9 +122,20 @@
 }
 .product-body { padding: 14px 16px; }
 .product-body h3 {
-    color: #ffd700;
+    color: #4da3ff;
     margin: 0 0 8px;
     font-size: 18px;
+}
+.product-size-badge {
+    display: inline-block;
+    background: rgba(77, 163, 255, 0.15);
+    border: 1px solid rgba(77, 163, 255, 0.4);
+    color: #9fc3ff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
 }
 .product-desc {
     color: #ddd;
@@ -101,7 +149,7 @@
     align-items: center;
 }
 .product-price {
-    color: #ffd700;
+    color: #4da3ff;
     font-weight: 700;
     font-size: 16px;
 }
@@ -112,3 +160,77 @@
 }
 .product-stock.stock-out { color: #ff6b6b; }
 .product-card.out-of-stock { opacity: 0.55; }
+
+/* ============================================================
+   Search + sort bar (used on tires.html)
+   ============================================================ */
+.search-sort-bar {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding: 0 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+}
+.search-input {
+    flex: 1 1 280px;
+    max-width: 420px;
+    padding: 11px 16px;
+    border-radius: 24px;
+    border: 1px solid rgba(77, 163, 255, 0.35);
+    background: rgba(0, 0, 0, 0.55);
+    color: #eaf3ff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+.search-input:focus {
+    border-color: #4da3ff;
+}
+.search-input::placeholder {
+    color: #7c93b8;
+}
+.sort-btn {
+    border: 1px solid rgba(77, 163, 255, 0.35);
+    background: rgba(0, 0, 0, 0.55);
+    color: #9fc3ff;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.sort-btn:hover {
+    background: rgba(77, 163, 255, 0.15);
+}
+.sort-btn.active {
+    background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 100%);
+    color: #fff;
+    border-color: #4da3ff;
+}
+.sort-select {
+    padding: 11px 16px;
+    border-radius: 24px;
+    border: 1px solid rgba(77, 163, 255, 0.35);
+    background: rgba(0, 0, 0, 0.55);
+    color: #eaf3ff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+.sort-select:focus {
+    border-color: #4da3ff;
+}
+.sort-select option {
+    background: #0a1730;
+    color: #eaf3ff;
+}
