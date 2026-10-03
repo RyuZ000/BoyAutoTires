@@ -132,6 +132,30 @@
     }
     .icon-btn.danger { background: rgba(255,80,80,0.15); color: #ff6b6b; }
     .status-msg { text-align: center; color: #888; font-size: 13px; margin: 12px 0; }
+
+    /* multi-image picker */
+    .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px; }
+    .image-grid:empty { display: none; }
+    .image-thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(77,163,255,0.3); }
+    .image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .image-thumb .remove-img {
+        position: absolute; top: 4px; right: 4px;
+        width: 22px; height: 22px; padding: 0;
+        border: none; border-radius: 50%;
+        background: rgba(0,0,0,0.75); color: #ff6b6b;
+        font-size: 14px; line-height: 22px; cursor: pointer;
+    }
+    .image-thumb .cover-tag {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        background: rgba(47,124,255,0.85); color: #fff;
+        font-size: 10px; font-weight: 700; text-align: center; padding: 2px 0;
+    }
+    .product-row .img-wrap { position: relative; flex-shrink: 0; }
+    .product-row .img-count {
+        position: absolute; right: 2px; bottom: 2px;
+        background: rgba(0,0,0,0.75); color: #fff;
+        font-size: 10px; padding: 1px 5px; border-radius: 8px;
+    }
 </style>
 </head>
 <body>
@@ -183,11 +207,8 @@
             <label data-i18n="field_price">ราคา (บาท)</label>
             <input type="number" id="f-price" placeholder="2500">
             <label data-i18n="field_image">รูปภาพสินค้า</label>
-            <input type="file" id="f-image-file" accept="image/*" onchange="previewImage()">
-            <div id="image-preview" style="margin-top:10px; display:none;">
-                <img id="image-preview-img" style="max-width:100%; max-height:140px; border-radius:8px; border:1px solid rgba(77,163,255,0.3);">
-            </div>
-            <input type="hidden" id="f-image">
+            <input type="file" id="f-image-file" accept="image/*" multiple onchange="addImages()">
+            <div class="image-grid" id="image-grid"></div>
             <div id="upload-status" style="font-size:12px; color:#aaa; margin-top:6px;"></div>
             <label style="display:flex; align-items:center; gap:8px; margin-top:14px;">
                 <input type="checkbox" id="f-instock" style="width:auto;" checked> <span data-i18n="field_instock">มีสินค้าพร้อมขาย</span>
@@ -246,6 +267,7 @@
         updatePasswordToggleUI();
         document.getElementById('form-title').textContent =
             document.getElementById('edit-id').value ? t('form_title_edit') : t('form_title_add');
+        renderImageGrid();
         if (document.getElementById('dashboard').style.display !== 'none') {
             refreshList();
         }
@@ -253,46 +275,78 @@
 </script>
 <script>
     let currentCategory = 'tires';
-    let selectedFile = null;
+    // Images in the form, in display order. Each item is either
+    // { url } (already in Storage) or { file, preview } (not uploaded yet).
+    let formImages = [];
     const IMAGE_BUCKET = 'product-images';
 
-    // ---- Image upload ----
-    function previewImage() {
-        const fileInput = document.getElementById('f-image-file');
-        const file = fileInput.files[0];
-        if (!file) return;
-        selectedFile = file;
-
-        const preview = document.getElementById('image-preview');
-        const previewImg = document.getElementById('image-preview-img');
-        previewImg.src = URL.createObjectURL(file);
-        preview.style.display = 'block';
-        document.getElementById('upload-status').textContent = '';
+    // older rows only have image_url; newer rows have image_urls
+    function getProductImages(p) {
+        if (p.image_urls && p.image_urls.length) return p.image_urls;
+        return p.image_url ? [p.image_url] : [];
     }
 
-    async function uploadImageIfNeeded() {
-        if (!selectedFile) {
-            // no new file chosen -> keep whatever URL is already in the hidden field
-            return document.getElementById('f-image').value || null;
+    // ---- Image upload ----
+    function addImages() {
+        const fileInput = document.getElementById('f-image-file');
+        for (const file of fileInput.files) {
+            formImages.push({ file, preview: URL.createObjectURL(file) });
         }
+        // clear so picking more files (or the same file again) still fires onchange
+        fileInput.value = '';
+        document.getElementById('upload-status').textContent = '';
+        renderImageGrid();
+    }
+
+    function removeImage(index) {
+        const [removed] = formImages.splice(index, 1);
+        if (removed && removed.preview) URL.revokeObjectURL(removed.preview);
+        renderImageGrid();
+    }
+
+    function renderImageGrid() {
+        document.getElementById('image-grid').innerHTML = formImages.map((img, i) => `
+            <div class="image-thumb">
+                <img src="${escHtml(img.url || img.preview)}" alt="">
+                <button type="button" class="remove-img" title="${t('image_remove')}" onclick="removeImage(${i})">×</button>
+                ${i === 0 ? `<div class="cover-tag">${t('image_cover')}</div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    async function uploadImages() {
+        const pending = formImages.filter(img => img.file);
+        if (pending.length === 0) return formImages.map(img => img.url);
+
         const statusEl = document.getElementById('upload-status');
-        statusEl.textContent = t('upload_uploading');
+        let done = 0;
 
-        const ext = selectedFile.name.split('.').pop();
-        const path = `${currentCategory}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        for (const img of pending) {
+            statusEl.textContent = `${t('upload_uploading')} (${done + 1}/${pending.length})`;
 
-        const { error: uploadError } = await sb.storage
-            .from(IMAGE_BUCKET)
-            .upload(path, selectedFile);
+            const ext = img.file.name.split('.').pop();
+            const path = `${currentCategory}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-        if (uploadError) {
-            statusEl.textContent = t('upload_error') + uploadError.message;
-            throw uploadError;
+            const { error: uploadError } = await sb.storage
+                .from(IMAGE_BUCKET)
+                .upload(path, img.file);
+
+            if (uploadError) {
+                statusEl.textContent = t('upload_error') + uploadError.message;
+                throw uploadError;
+            }
+
+            const { data } = sb.storage.from(IMAGE_BUCKET).getPublicUrl(path);
+            // remember the URL so a retry after a later failure doesn't re-upload this one
+            URL.revokeObjectURL(img.preview);
+            img.url = data.publicUrl;
+            delete img.file;
+            delete img.preview;
+            done++;
         }
 
-        const { data } = sb.storage.from(IMAGE_BUCKET).getPublicUrl(path);
         statusEl.textContent = t('upload_success');
-        return data.publicUrl;
+        return formImages.map(img => img.url);
     }
 
     // ---- Auth gate ----
@@ -355,9 +409,15 @@
         }
 
         statusEl.textContent = '';
-        listEl.innerHTML = data.map(p => `
+        listEl.innerHTML = data.map(p => {
+            const images = getProductImages(p);
+            return `
             <div class="product-row">
-                ${p.image_url ? `<img src="${escHtml(p.image_url)}" alt="">` : ''}
+                ${images.length ? `
+                <div class="img-wrap">
+                    <img src="${escHtml(images[0])}" alt="">
+                    ${images.length > 1 ? `<span class="img-count">${images.length}</span>` : ''}
+                </div>` : ''}
                 <div class="info">
                     <h4>${escHtml(p.name)}${p.size ? ' · ' + escHtml(p.size) : ''}</h4>
                     <p>${p.price != null ? '฿' + Number(p.price).toLocaleString() : ''} ${p.in_stock ? '' : '· ' + t('out_of_stock')}</p>
@@ -367,7 +427,8 @@
                     <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">${t('btn_delete')}</button>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function escHtml(str) {
@@ -383,11 +444,11 @@
         document.getElementById('f-size').value = '';
         document.getElementById('f-desc').value = '';
         document.getElementById('f-price').value = '';
-        document.getElementById('f-image').value = '';
         document.getElementById('f-image-file').value = '';
-        document.getElementById('image-preview').style.display = 'none';
         document.getElementById('upload-status').textContent = '';
-        selectedFile = null;
+        formImages.forEach(img => img.preview && URL.revokeObjectURL(img.preview));
+        formImages = [];
+        renderImageGrid();
         document.getElementById('f-instock').checked = true;
         document.getElementById('form-title').textContent = t('form_title_add');
         document.getElementById('form-error').textContent = '';
@@ -399,17 +460,11 @@
         document.getElementById('f-size').value = p.size || '';
         document.getElementById('f-desc').value = p.description || '';
         document.getElementById('f-price').value = p.price ?? '';
-        document.getElementById('f-image').value = p.image_url || '';
         document.getElementById('f-image-file').value = '';
-        selectedFile = null;
-        const preview = document.getElementById('image-preview');
-        const previewImg = document.getElementById('image-preview-img');
-        if (p.image_url) {
-            previewImg.src = p.image_url;
-            preview.style.display = 'block';
-        } else {
-            preview.style.display = 'none';
-        }
+        document.getElementById('upload-status').textContent = '';
+        formImages.forEach(img => img.preview && URL.revokeObjectURL(img.preview));
+        formImages = getProductImages(p).map(url => ({ url }));
+        renderImageGrid();
         document.getElementById('f-instock').checked = !!p.in_stock;
         document.getElementById('form-title').textContent = t('form_title_edit');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -431,9 +486,9 @@
             return;
         }
 
-        let image_url;
+        let image_urls;
         try {
-            image_url = await uploadImageIfNeeded();
+            image_urls = await uploadImages();
         } catch (uploadErr) {
             errEl.textContent = t('upload_error_retry');
             return;
@@ -445,7 +500,8 @@
             size: size || null,
             description: description || null,
             price: priceRaw ? Number(priceRaw) : null,
-            image_url: image_url || null,
+            image_url: image_urls[0] || null,  // cover image
+            image_urls,
             in_stock
         };
 
