@@ -1,0 +1,225 @@
+/* ============================================================
+   Shared site layout - header, footer, floating contact
+   Used on every public page (index / tires / wheels / shock / brake)
+   ============================================================ */
+:root {
+    --bg: #050810;
+    --bg-2: #0a1730;
+    --panel: #0d1a33;
+    --line: rgba(77, 163, 255, 0.18);
+    --blue: #2f7cff;
+    --blue-soft: #4da3ff;
+    --gold: #f5c518;
+    --text: #eaf3ff;
+    --muted: #9aaccc;
+    --header-h: 72px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Prompt', 'Segoe UI', Tahoma, sans-serif;
+    line-height: 1.5;
+}
+img { max-width: 100%; height: auto; }
+a { color: inherit; }
+
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------------- Top bar ---------------- */
+.topbar {
+    background: #02040a;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--muted);
+}
+.topbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 38px;
+}
+.topbar-contact { display: flex; gap: 18px; flex-wrap: wrap; }
+.topbar-contact a { text-decoration: none; color: var(--muted); }
+.topbar-contact a:hover { color: var(--gold); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* language switch + staff buttons now sit inside the top bar */
+.topbar .lang-switch,
+.topbar .staff-corner {
+    position: static;
+    top: auto; left: auto; right: auto;
+}
+.topbar .lang-btn { padding: 5px 12px; }
+.topbar .staff-btn { padding: 5px 12px; font-size: 11px; }
+
+/* ---------------- Header ---------------- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: rgba(5, 8, 16, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+}
+.site-header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-h);
+    gap: 16px;
+}
+.logo {
+    font-family: 'Arial Black', sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    white-space: nowrap;
+    color: #fff;
+}
+.logo .b { color: var(--gold); }
+.logo .t { color: var(--gold); }
+
+.main-nav { display: flex; align-items: center; gap: 4px; }
+.main-nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: background .2s, color .2s;
+}
+.main-nav a:hover { background: rgba(77, 163, 255, 0.12); color: var(--blue-soft); }
+.main-nav a.active { color: var(--gold); }
+
+.header-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: #111;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: transform .2s, box-shadow .2s;
+}
+.header-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245, 197, 24, 0.3); }
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--text);
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
+    .header-cta { display: none; }
+    .main-nav {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        background: #050810;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 16px 16px;
+        display: none;
+    }
+    .main-nav.open { display: flex; }
+    .main-nav a { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+}
+@media (max-width: 600px) {
+    .topbar-contact .hide-sm { display: none; }
+    .logo { font-size: 22px; }
+}
+
+/* ---------------- Page heading (category pages) ---------------- */
+.page-hero {
+    background:
+        linear-gradient(90deg, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0.7) 100%),
+        url('../Photo Somza/Somza5.jpg') center/cover no-repeat;
+    border-bottom: 1px solid var(--line);
+    padding: 48px 0;
+}
+.page-hero .page-title {
+    margin: 0;
+    text-align: left;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    color: #fff;
+    text-shadow: none;
+}
+.breadcrumb { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+.breadcrumb a { text-decoration: none; color: var(--muted); }
+.breadcrumb a:hover { color: var(--gold); }
+
+/* ---------------- Footer ---------------- */
+.site-footer {
+    background: #02040a;
+    border-top: 1px solid var(--line);
+    margin-top: 60px;
+    padding: 48px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 32px;
+}
+.site-footer h4 { color: #fff; font-size: 16px; margin: 0 0 14px; }
+.site-footer ul { list-style: none; margin: 0; padding: 0; }
+.site-footer li { margin-bottom: 8px; }
+.site-footer a { text-decoration: none; }
+.site-footer a:hover { color: var(--gold); }
+.footer-social { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.footer-social a img {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: block;
+    transition: transform .2s;
+}
+.footer-social a:hover img { transform: translateY(-3px); }
+.footer-bottom {
+    margin-top: 36px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 0;
+    text-align: center;
+    font-size: 13px;
+}
+@media (max-width: 760px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* ---------------- Floating contact buttons ---------------- */
+.float-contact {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.float-contact a {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    transition: transform .2s;
+}
+.float-contact a:hover { transform: scale(1.08); }
+.float-contact img { width: 100%; height: 100%; object-fit: cover; display: block; }
