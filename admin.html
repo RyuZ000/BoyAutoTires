@@ -3,234 +3,491 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Staff Admin - BoyAutoTires</title>
-<link rel="stylesheet" href="css/staff.css">
+<title>ระบบหลังร้าน - BoyAutoTires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
 <style>
-    * { box-sizing: border-box; }
-    body {
-        background: linear-gradient(160deg, #0d2a5c 0%, #0a1730 32%, #050810 68%, #020306 100%);
-        margin: 0;
-        min-height: 100vh;
-        font-family: Arial, sans-serif;
-        color: #eee;
-        padding: 20px 15px 60px;
-    }
-    h1 {
-        text-align: center;
-        color: #4da3ff;
-        font-size: clamp(24px, 5vw, 40px);
-        margin-top: 40px;
-    }
-    .panel {
-        max-width: 480px;
-        margin: 30px auto;
-        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(20,20,20,0.9) 100%);
-        border: 1px solid rgba(77,163,255,0.2);
-        border-radius: 14px;
-        padding: 28px;
-    }
-    .panel label {
-        display: block;
-        font-size: 13px;
-        color: #ccc;
-        margin: 14px 0 6px;
-    }
-    .panel input, .panel select, .panel textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid rgba(77,163,255,0.3);
-        background: #111;
-        color: #eee;
-        font-size: 14px;
-    }
-    .panel textarea { resize: vertical; min-height: 60px; }
+    [hidden] { display: none !important; }
+    body { min-height: 100vh; }
+    .muted { color: var(--muted); }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-    /* password field + show/hide toggle */
-    .password-field { position: relative; }
-    .password-field input { padding-right: 46px; }
-    .password-toggle {
-        position: absolute;
-        top: 50%;
-        right: 6px;
-        transform: translateY(-50%);
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        border-radius: 6px;
-        background: transparent;
-        color: #4da3ff;
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
-    }
-    .password-toggle:hover { background: rgba(77,163,255,0.12); }
+    /* ---------------- Buttons & fields (same look as the public site) ---------------- */
     .btn {
-        margin-top: 18px;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 11px 22px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font: inherit; font-weight: 700; font-size: 15px;
+        text-decoration: none;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    .btn:disabled { opacity: .6; cursor: wait; transform: none; box-shadow: none; }
+    .btn-gold { background: var(--gold); color: #111; }
+    .btn-gold:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245, 197, 24, 0.3); }
+    .btn-outline { background: transparent; border-color: var(--line); color: var(--text); }
+    .btn-outline:hover { background: rgba(77, 163, 255, 0.1); }
+    .btn-block { width: 100%; }
+
+    .field-label { display: block; font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
+    .field-label .req { color: var(--gold); }
+    .field-hint { display: block; font-size: 12px; color: var(--muted); margin-top: 5px; }
+    .field {
         width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 55%, #050810 100%);
-        color: #fff;
-        font-weight: 700;
-        font-size: 15px;
-        cursor: pointer;
-    }
-    .btn:hover { filter: brightness(1.05); }
-    .btn.secondary {
-        background: transparent;
-        border: 1px solid rgba(77,163,255,0.4);
-        color: #4da3ff;
-    }
-    .error-msg { color: #ff6b6b; font-size: 13px; margin-top: 10px; min-height: 16px; }
-
-    #dashboard { display: none; max-width: 1100px; margin: 0 auto; }
-    .tabs { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
-    .tab-btn {
-        padding: 8px 18px;
-        border-radius: 20px;
-        border: 1px solid rgba(77,163,255,0.35);
-        background: transparent;
-        color: #4da3ff;
-        font-weight: 700;
-        cursor: pointer;
-        font-size: 13px;
-    }
-    .tab-btn.active { background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 60%, #050810 100%); color: #fff; }
-
-    .dash-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
-    @media (max-width: 800px) { .dash-grid { grid-template-columns: 1fr; } }
-
-    .product-list { display: flex; flex-direction: column; gap: 12px; }
-    .product-row {
-        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(20,20,20,0.9) 100%);
-        border: 1px solid rgba(77,163,255,0.2);
-        border-radius: 10px;
         padding: 12px 14px;
-        display: flex;
-        gap: 12px;
-        align-items: center;
+        border-radius: 10px;
+        border: 1px solid rgba(77, 163, 255, 0.25);
+        background: #070d1c;
+        color: var(--text);
+        font: inherit; font-size: 15px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
     }
-    .product-row img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
-    .product-row .info { flex: 1; min-width: 0; }
-    .product-row .info h4 { margin: 0 0 4px; color: #4da3ff; font-size: 14px; }
-    .product-row .info p { margin: 0; color: #aaa; font-size: 12px; }
-    .product-row .actions { display: flex; gap: 6px; }
-    .icon-btn {
-        border: none;
-        background: rgba(77,163,255,0.12);
-        color: #4da3ff;
-        border-radius: 6px;
-        padding: 6px 10px;
-        cursor: pointer;
-        font-size: 12px;
-    }
-    .icon-btn.danger { background: rgba(255,80,80,0.15); color: #ff6b6b; }
-    .status-msg { text-align: center; color: #888; font-size: 13px; margin: 12px 0; }
+    .field:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.15); }
+    .field::placeholder { color: #5f7396; }
+    textarea.field { resize: vertical; min-height: 90px; }
+    .error-msg { color: #ff7a7a; font-size: 14px; min-height: 20px; margin-top: 10px; }
 
-    /* multi-image picker */
-    .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px; }
+    /* ---------------- Header ---------------- */
+    .admin-header {
+        position: sticky; top: 0; z-index: 900;
+        background: rgba(5, 8, 16, 0.92);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+    }
+    .admin-header .container { display: flex; align-items: center; gap: 12px; min-height: 64px; flex-wrap: wrap; }
+    .admin-header .logo { font-size: 22px; }
+    .admin-badge {
+        font-size: 12px; font-weight: 700;
+        color: var(--gold);
+        border: 1px solid rgba(245, 197, 24, 0.4);
+        padding: 3px 10px; border-radius: 999px;
+        white-space: nowrap;
+    }
+    .admin-header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .hdr-link {
+        display: inline-flex; align-items: center;
+        color: var(--muted); text-decoration: none;
+        font-size: 13px; font-weight: 600;
+        padding: 6px 12px; border-radius: 999px;
+        border: 1px solid var(--line);
+        white-space: nowrap;
+    }
+    .hdr-link:hover { color: var(--gold); border-color: rgba(245, 197, 24, 0.4); }
+    .lang-switch { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+    .lang-btn { border: none; background: transparent; color: var(--muted); padding: 6px 12px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .lang-btn.active { background: var(--gold); color: #111; }
+    @media (max-width: 560px) {
+        .admin-badge { display: none; }
+        .hdr-link { padding: 6px 10px; font-size: 12px; }
+    }
+
+    /* ---------------- Login ---------------- */
+    .login-wrap { display: flex; justify-content: center; padding: 56px 16px; }
+    .login-card {
+        width: 100%; max-width: 420px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 32px 28px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+    .login-card h1 { margin: 0 0 6px; font-size: 26px; }
+    .login-card p { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+    .login-card .btn { margin-top: 24px; }
+    .password-field { position: relative; }
+    .password-field .field { padding-right: 48px; }
+    .password-toggle {
+        position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+        width: 38px; height: 38px;
+        border: none; border-radius: 8px;
+        background: transparent; color: var(--muted);
+        font-size: 17px; cursor: pointer;
+    }
+    .password-toggle:hover { background: rgba(77, 163, 255, 0.12); }
+
+    /* ---------------- Dashboard ---------------- */
+    .dash { padding-top: 28px; padding-bottom: 60px; }
+    .dash-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+    .dash-head h1 { margin: 0; font-size: clamp(24px, 4vw, 32px); }
+    .dash-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; max-width: 560px; }
+
+    .cat-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+    .cat-tab {
+        display: flex; align-items: center; gap: 10px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--text);
+        font: inherit; font-weight: 600; font-size: 15px;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+    .cat-tab:hover { border-color: rgba(245, 197, 24, 0.4); }
+    .cat-tab.active { border-color: var(--gold); background: rgba(245, 197, 24, 0.08); color: var(--gold); }
+    .cat-tab .icon { font-size: 22px; }
+    .cat-tab .count {
+        margin-left: auto;
+        font-size: 12px; font-weight: 700;
+        background: rgba(255, 255, 255, 0.08); color: var(--text);
+        padding: 2px 9px; border-radius: 999px;
+    }
+    .cat-tab.active .count { background: var(--gold); color: #111; }
+    @media (max-width: 760px) { .cat-tabs { grid-template-columns: repeat(2, 1fr); } }
+
+    .list-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .list-toolbar .field { max-width: 420px; border-radius: 999px; padding: 10px 18px; }
+    .list-toolbar .muted { font-size: 14px; white-space: nowrap; }
+
+    .status-msg { text-align: center; color: var(--muted); padding: 40px 0; }
+    .product-list { display: flex; flex-direction: column; gap: 10px; }
+    .product-row {
+        display: grid;
+        grid-template-columns: 64px 1fr auto auto;
+        align-items: center;
+        gap: 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 16px;
+    }
+    .product-row.out .thumb, .product-row.out .info { opacity: .5; }
+    .thumb {
+        position: relative;
+        width: 64px; height: 64px;
+        border-radius: 10px; overflow: hidden;
+        background: #070d1c;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--muted); font-size: 11px; text-align: center;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb .img-count {
+        position: absolute; right: 3px; bottom: 3px;
+        background: rgba(0, 0, 0, 0.75); color: #fff;
+        font-size: 10px; padding: 1px 6px; border-radius: 8px;
+    }
+    .info { min-width: 0; }
+    .info h4 { margin: 0 0 4px; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+    .size-badge {
+        background: rgba(77, 163, 255, 0.12);
+        border: 1px solid rgba(77, 163, 255, 0.35);
+        color: #9fc3ff;
+        font-size: 12px; font-weight: 700;
+        padding: 1px 9px; border-radius: 999px;
+    }
+    .price { color: var(--gold); font-weight: 700; }
+
+    /* on/off switch */
+    .switch-label { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; font-size: 14px; font-weight: 600; }
+    .switch-label input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .switch {
+        position: relative; flex-shrink: 0;
+        width: 44px; height: 24px;
+        border-radius: 999px;
+        background: #3a4560;
+        transition: background .2s;
+    }
+    .switch::after {
+        content: ''; position: absolute; top: 3px; left: 3px;
+        width: 18px; height: 18px; border-radius: 50%;
+        background: #fff; transition: transform .2s;
+    }
+    .switch-label input:checked + .switch { background: #22b35a; }
+    .switch-label input:checked + .switch::after { transform: translateX(20px); }
+    .switch-label input:focus-visible + .switch { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .switch-label input:disabled + .switch { opacity: .5; }
+    .stock-text { min-width: 64px; }
+    .stock-text.on { color: #4ade80; }
+    .stock-text.off { color: #ff7a7a; }
+
+    .row-actions { display: flex; gap: 8px; }
+    .btn-sm {
+        border: 1px solid var(--line);
+        background: transparent; color: var(--text);
+        font: inherit; font-size: 13px; font-weight: 600;
+        padding: 7px 14px; border-radius: 999px;
+        cursor: pointer; white-space: nowrap;
+    }
+    .btn-sm:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-sm.danger:hover { border-color: #ff7a7a; color: #ff7a7a; }
+
+    @media (max-width: 700px) {
+        .product-row { grid-template-columns: 64px 1fr; gap: 10px 14px; }
+        .product-row .switch-label { grid-column: 1 / -1; }
+        .product-row .row-actions { grid-column: 1 / -1; }
+        .product-row .row-actions .btn-sm { flex: 1; padding: 10px; }
+        .list-toolbar .field { max-width: none; }
+    }
+
+    /* ---------------- Add / edit drawer ---------------- */
+    .drawer-backdrop {
+        position: fixed; inset: 0; z-index: 1500;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex; justify-content: flex-end;
+    }
+    .drawer {
+        width: 100%; max-width: 520px; height: 100%;
+        background: var(--bg-2);
+        border-left: 1px solid var(--line);
+        display: flex; flex-direction: column;
+        animation: slideIn .2s ease-out;
+    }
+    @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .drawer-head { display: flex; align-items: flex-start; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+    .drawer-head h2 { margin: 4px 0 0; font-size: 22px; }
+    .drawer-cat { font-size: 13px; font-weight: 700; color: var(--gold); }
+    .drawer-close {
+        margin-left: auto;
+        width: 40px; height: 40px; flex-shrink: 0;
+        border: 1px solid var(--line); border-radius: 50%;
+        background: transparent; color: var(--text);
+        font-size: 22px; line-height: 1; cursor: pointer;
+    }
+    .drawer-close:hover { border-color: var(--gold); color: var(--gold); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 4px 24px 24px; }
+    .drawer-foot { padding: 14px 24px 20px; border-top: 1px solid var(--line); }
+    .drawer-foot .error-msg { margin: 0 0 10px; min-height: 0; }
+    .drawer-foot .btns { display: flex; gap: 10px; }
+    .drawer-foot .btns .btn { flex: 1; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+    @media (max-width: 480px) {
+        .field-row { grid-template-columns: 1fr; }
+        .drawer-head, .drawer-body, .drawer-foot { padding-left: 16px; padding-right: 16px; }
+    }
+
+    .stock-box {
+        margin-top: 20px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #070d1c;
+    }
+
+    /* image picker */
+    .dropzone {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+        padding: 22px 16px;
+        border: 2px dashed rgba(77, 163, 255, 0.35);
+        border-radius: 14px;
+        background: #070d1c;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+    .dropzone:hover, .dropzone.drag { border-color: var(--gold); background: rgba(245, 197, 24, 0.06); }
+    .dropzone .dz-icon { font-size: 28px; }
+    .dropzone .dz-text { font-weight: 600; }
+    .dropzone small { color: var(--muted); font-size: 12px; }
+    .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 12px; }
     .image-grid:empty { display: none; }
-    .image-thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid rgba(77,163,255,0.3); }
+    .image-thumb { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid transparent; background: #070d1c; }
+    .image-thumb.cover { border-color: var(--gold); }
     .image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .image-thumb .remove-img {
-        position: absolute; top: 4px; right: 4px;
-        width: 22px; height: 22px; padding: 0;
+        position: absolute; top: 5px; right: 5px;
+        width: 26px; height: 26px; padding: 0;
         border: none; border-radius: 50%;
-        background: rgba(0,0,0,0.75); color: #ff6b6b;
-        font-size: 14px; line-height: 22px; cursor: pointer;
+        background: rgba(0, 0, 0, 0.75); color: #fff;
+        font-size: 16px; line-height: 26px; cursor: pointer;
     }
-    .image-thumb .cover-tag {
+    .image-thumb .remove-img:hover { background: #d33; }
+    .image-thumb .cover-tag, .image-thumb .make-cover {
         position: absolute; left: 0; right: 0; bottom: 0;
-        background: rgba(47,124,255,0.85); color: #fff;
-        font-size: 10px; font-weight: 700; text-align: center; padding: 2px 0;
+        border: none;
+        font: inherit; font-size: 11px; font-weight: 700;
+        text-align: center; padding: 4px 0;
     }
-    .product-row .img-wrap { position: relative; flex-shrink: 0; }
-    .product-row .img-count {
-        position: absolute; right: 2px; bottom: 2px;
-        background: rgba(0,0,0,0.75); color: #fff;
-        font-size: 10px; padding: 1px 5px; border-radius: 8px;
+    .image-thumb .cover-tag { background: var(--gold); color: #111; }
+    .image-thumb .make-cover { background: rgba(0, 0, 0, 0.7); color: #fff; cursor: pointer; }
+    .image-thumb .make-cover:hover { background: rgba(0, 0, 0, 0.9); color: var(--gold); }
+    #upload-status { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+    /* ---------------- Toast ---------------- */
+    .toast {
+        position: fixed; left: 50%; bottom: 24px; z-index: 2000;
+        transform: translate(-50%, 20px);
+        background: #16a34a; color: #fff;
+        font-weight: 600; font-size: 15px;
+        padding: 12px 22px; border-radius: 999px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        opacity: 0; pointer-events: none;
+        transition: opacity .25s, transform .25s;
+        max-width: calc(100% - 32px);
     }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast.error { background: #c53030; }
 </style>
 </head>
 <body>
 
-<div class="lang-switch">
-    <button class="lang-btn" data-lang="th" onclick="setLanguage('th')">ไทย</button>
-    <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
-</div>
-<div class="staff-corner">
-    <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">ออกจากระบบ</a>
-    <a href="index.html" class="staff-btn" data-i18n="staff_back">← กลับหน้าเว็บ</a>
-</div>
-
-<h1 data-i18n="admin_title">Staff Admin Panel</h1>
+<header class="admin-header">
+    <div class="container">
+        <a href="index.html" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
+        <span class="admin-badge" data-i18n="admin_badge">ระบบหลังร้าน</span>
+        <div class="admin-header-right">
+            <div class="lang-switch">
+                <button class="lang-btn" data-lang="th" onclick="setLanguage('th')">ไทย</button>
+                <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+            </div>
+            <a href="index.html" target="_blank" rel="noopener" class="hdr-link" data-i18n="admin_view_site">ดูหน้าเว็บ ↗</a>
+            <a id="staff-logout-link" href="#" class="hdr-link" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">ออกจากระบบ</a>
+        </div>
+    </div>
+</header>
 
 <!-- ===================== LOGIN ===================== -->
-<div class="panel" id="login-panel">
-    <label for="login-email" data-i18n="field_email">Email</label>
-    <input type="email" id="login-email" placeholder=" ">
-    <label for="login-password" data-i18n="field_password">Password</label>
-    <div class="password-field">
-        <input type="password" id="login-password" data-i18n-placeholder="placeholder_password" placeholder=" ">
-        <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()">👁</button>
-    </div>
-    <button class="btn" onclick="handleLogin()" data-i18n="btn_login">เข้าสู่ระบบ</button>
-    <div class="error-msg" id="login-error"></div>
-</div>
+<main class="login-wrap" id="login-view" hidden>
+    <form class="login-card" onsubmit="handleLogin(event)">
+        <h1 data-i18n="login_title">เข้าสู่ระบบพนักงาน</h1>
+        <p data-i18n="login_sub">สำหรับเพิ่ม แก้ไข และลบสินค้าบนหน้าเว็บ</p>
+        <label class="field-label" for="login-email" data-i18n="field_email">อีเมล</label>
+        <input class="field" type="email" id="login-email" autocomplete="username">
+        <label class="field-label" for="login-password" data-i18n="field_password">รหัสผ่าน</label>
+        <div class="password-field">
+            <input class="field" type="password" id="login-password" autocomplete="current-password" data-i18n-placeholder="placeholder_password">
+            <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()">👁</button>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block" id="login-btn" data-i18n="btn_login">เข้าสู่ระบบ</button>
+        <div class="error-msg" id="login-error"></div>
+    </form>
+</main>
 
 <!-- ===================== DASHBOARD ===================== -->
-<div id="dashboard">
-    <div class="tabs">
-        <button class="tab-btn active" data-cat="tires" onclick="switchTab('tires')" data-i18n="tab_tires">ยางรถยนต์</button>
-        <button class="tab-btn" data-cat="wheels" onclick="switchTab('wheels')" data-i18n="tab_wheels">ล้อแม็ก</button>
-        <button class="tab-btn" data-cat="shock" onclick="switchTab('shock')" data-i18n="tab_shock">โช้คอัพ</button>
-        <button class="tab-btn" data-cat="brake" onclick="switchTab('brake')" data-i18n="tab_brake">เบรก</button>
-    </div>
-
-    <div class="dash-grid">
-        <!-- Add / Edit form -->
-        <div class="panel" style="margin:0;">
-            <h3 style="color:#4da3ff; margin-top:0;" id="form-title" data-i18n="form_title_add">เพิ่มสินค้าใหม่</h3>
-            <input type="hidden" id="edit-id">
-            <label data-i18n="field_name">ชื่อสินค้า</label>
-            <input type="text" id="f-name" data-i18n-placeholder="placeholder_name" placeholder="เช่น Michelin Primacy 4">
-            <label data-i18n="field_size">ไซส์ (สำหรับยาง)</label>
-            <input type="text" id="f-size" data-i18n-placeholder="placeholder_size" placeholder="เช่น 265/60R18">
-            <label data-i18n="field_desc">รายละเอียด</label>
-            <textarea id="f-desc" data-i18n-placeholder="placeholder_desc" placeholder="ขนาด, สเปค, ข้อมูลเพิ่มเติม"></textarea>
-            <label data-i18n="field_price">ราคา (บาท)</label>
-            <input type="number" id="f-price" placeholder="2500">
-            <label data-i18n="field_image">รูปภาพสินค้า</label>
-            <input type="file" id="f-image-file" accept="image/*" multiple onchange="addImages()">
-            <div class="image-grid" id="image-grid"></div>
-            <div id="upload-status" style="font-size:12px; color:#aaa; margin-top:6px;"></div>
-            <label style="display:flex; align-items:center; gap:8px; margin-top:14px;">
-                <input type="checkbox" id="f-instock" style="width:auto;" checked> <span data-i18n="field_instock">มีสินค้าพร้อมขาย</span>
-            </label>
-            <button class="btn" onclick="saveProduct()" data-i18n="btn_save">บันทึก</button>
-            <button class="btn secondary" style="margin-top:8px;" onclick="resetForm()" data-i18n="btn_clear">ล้างฟอร์ม</button>
-            <div class="error-msg" id="form-error"></div>
-        </div>
-
-        <!-- Product list -->
+<main class="container dash" id="dashboard" hidden>
+    <div class="dash-head">
         <div>
-            <div class="status-msg" id="list-status"></div>
-            <div class="product-list" id="product-list"></div>
+            <h1 data-i18n="dash_title">จัดการสินค้า</h1>
+            <p data-i18n="dash_sub"></p>
         </div>
+        <button type="button" class="btn btn-gold" onclick="openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
     </div>
+
+    <div class="cat-tabs" id="cat-tabs"></div>
+
+    <div class="list-toolbar">
+        <input type="search" class="field" id="list-search" data-i18n-placeholder="list_search" oninput="renderList()">
+        <span class="muted" id="list-count"></span>
+    </div>
+
+    <div class="status-msg" id="list-status"></div>
+    <div class="product-list" id="product-list"></div>
+</main>
+
+<!-- ===================== ADD / EDIT DRAWER ===================== -->
+<div class="drawer-backdrop" id="drawer" hidden>
+    <form class="drawer" onsubmit="saveProduct(event)" novalidate>
+        <div class="drawer-head">
+            <div>
+                <div class="drawer-cat" id="form-cat"></div>
+                <h2 id="form-title"></h2>
+            </div>
+            <button type="button" class="drawer-close" id="drawer-close" onclick="closeForm()">×</button>
+        </div>
+
+        <div class="drawer-body">
+            <input type="hidden" id="edit-id">
+
+            <label class="field-label" for="f-name"><span data-i18n="field_name">ชื่อสินค้า</span> <span class="req">*</span></label>
+            <input class="field" type="text" id="f-name" data-i18n-placeholder="placeholder_name">
+
+            <div class="field-row">
+                <div>
+                    <label class="field-label" for="f-size" data-i18n="field_size">ไซส์</label>
+                    <input class="field" type="text" id="f-size">
+                </div>
+                <div>
+                    <label class="field-label" for="f-price" data-i18n="field_price">ราคา (บาท)</label>
+                    <input class="field" type="number" id="f-price" min="0" inputmode="numeric" data-i18n-placeholder="price_placeholder">
+                </div>
+            </div>
+
+            <label class="field-label" for="f-desc" data-i18n="field_desc">รายละเอียด</label>
+            <textarea class="field" id="f-desc" data-i18n-placeholder="placeholder_desc"></textarea>
+
+            <span class="field-label" data-i18n="field_image">รูปภาพสินค้า</span>
+            <label class="dropzone" id="dropzone">
+                <input type="file" id="f-image-file" class="visually-hidden" accept="image/*" multiple onchange="addImages(this.files); this.value='';">
+                <span class="dz-icon">📷</span>
+                <span class="dz-text" data-i18n="dz_text">กดเพื่อเลือกรูป หรือลากรูปมาวางตรงนี้</span>
+                <small data-i18n="dz_hint">เลือกได้หลายรูป · รูปที่มีกรอบสีทองคือรูปหลักที่ลูกค้าเห็นก่อน</small>
+            </label>
+            <div class="image-grid" id="image-grid"></div>
+            <div id="upload-status"></div>
+
+            <div class="stock-box">
+                <label class="switch-label">
+                    <input type="checkbox" id="f-instock" checked>
+                    <span class="switch"></span>
+                    <span data-i18n="field_instock">มีสินค้าพร้อมขาย</span>
+                </label>
+                <span class="field-hint" data-i18n="field_instock_hint"></span>
+            </div>
+        </div>
+
+        <div class="drawer-foot">
+            <div class="error-msg" id="form-error"></div>
+            <div class="btns">
+                <button type="button" class="btn btn-outline" onclick="closeForm()" data-i18n="btn_cancel">ยกเลิก</button>
+                <button type="submit" class="btn btn-gold" id="save-btn" data-i18n="btn_save">บันทึก</button>
+            </div>
+        </div>
+    </form>
 </div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/i18n.js"></script>
 <script>
+    const CATEGORIES = [
+        { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
+        { cat: 'wheels', key: 'tab_wheels', icon: '⚙️' },
+        { cat: 'shock',  key: 'tab_shock',  icon: '🔩' },
+        { cat: 'brake',  key: 'tab_brake',  icon: '🛑' },
+    ];
+    const IMAGE_BUCKET = 'product-images';
+
+    let currentCategory = 'tires';
+    let products = [];        // every product, all categories
+    // Images in the form, in display order. Each item is either
+    // { url } (already in Storage) or { file, preview } (not uploaded yet).
+    let formImages = [];
+
+    function escHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str ?? '';
+        return div.innerHTML;
+    }
+
+    // older rows only have image_url; newer rows have image_urls
+    function getProductImages(p) {
+        if (p.image_urls && p.image_urls.length) return p.image_urls;
+        return p.image_url ? [p.image_url] : [];
+    }
+
+    function categoryInfo(cat) {
+        return CATEGORIES.find(c => c.cat === cat);
+    }
+
+    // ---- Toast ----
+    let toastTimer;
+    function showToast(msg, type) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.className = 'toast show' + (type === 'error' ? ' error' : '');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), type === 'error' ? 5000 : 2500);
+    }
+
     // ---- Show / hide password ----
     function togglePassword() {
         const input = document.getElementById('login-password');
@@ -248,52 +505,288 @@
         btn.setAttribute('aria-label', btn.title);
     }
 
-    document.addEventListener('DOMContentLoaded', updatePasswordToggleUI);
+    // ---- Auth gate ----
+    async function checkAccess() {
+        const isLoggedIn = await initAuthUI();
+        document.getElementById('login-view').hidden = isLoggedIn;
+        document.getElementById('dashboard').hidden = !isLoggedIn;
+        if (isLoggedIn) refreshList();
+        else document.getElementById('login-email').focus();
+    }
 
-    // ---- Enter key submits the login form ----
-    document.addEventListener('DOMContentLoaded', () => {
-        ['login-email', 'login-password'].forEach(id => {
-            document.getElementById(id).addEventListener('keydown', e => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleLogin();
-                }
-            });
-        });
-    });
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const errEl = document.getElementById('login-error');
+        const btn = document.getElementById('login-btn');
+        errEl.textContent = '';
 
-    function onLanguageChange() {
-        // re-render dynamic text that isn't covered by data-i18n
-        updatePasswordToggleUI();
-        document.getElementById('form-title').textContent =
-            document.getElementById('edit-id').value ? t('form_title_edit') : t('form_title_add');
+        if (!email || !password) {
+            errEl.textContent = t('login_error_empty');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = t('login_loading');
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        btn.disabled = false;
+        btn.textContent = t('btn_login');
+
+        if (error) {
+            errEl.textContent = t('login_error_failed');
+            return;
+        }
+        checkAccess();
+    }
+
+    // ---- Category tabs ----
+    function renderTabs() {
+        document.getElementById('cat-tabs').innerHTML = CATEGORIES.map(c => {
+            const count = products.filter(p => p.category === c.cat).length;
+            return `
+                <button type="button" class="cat-tab ${c.cat === currentCategory ? 'active' : ''}" onclick="switchTab('${c.cat}')">
+                    <span class="icon">${c.icon}</span>
+                    <span>${t(c.key)}</span>
+                    <span class="count">${count}</span>
+                </button>`;
+        }).join('');
+    }
+
+    function switchTab(cat) {
+        currentCategory = cat;
+        document.getElementById('list-search').value = '';
+        renderTabs();
+        renderList();
+    }
+
+    // ---- List ----
+    async function refreshList() {
+        const statusEl = document.getElementById('list-status');
+        if (!products.length) {
+            statusEl.textContent = t('list_loading');
+            statusEl.hidden = false;
+        }
+
+        const { data, error } = await sb
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            statusEl.textContent = t('list_error');
+            statusEl.hidden = false;
+            console.error(error);
+            return;
+        }
+
+        products = data || [];
+        renderTabs();
+        renderList();
+    }
+
+    function renderList() {
+        const listEl = document.getElementById('product-list');
+        const statusEl = document.getElementById('list-status');
+        const countEl = document.getElementById('list-count');
+        const query = document.getElementById('list-search').value.trim().toLowerCase();
+
+        const inCategory = products.filter(p => p.category === currentCategory);
+        const list = inCategory.filter(p =>
+            !query ||
+            (p.name || '').toLowerCase().includes(query) ||
+            (p.size || '').toLowerCase().includes(query)
+        );
+
+        countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
+
+        if (list.length === 0) {
+            listEl.innerHTML = '';
+            statusEl.textContent = inCategory.length ? t('list_no_match') : t('list_empty');
+            statusEl.hidden = false;
+            return;
+        }
+
+        statusEl.hidden = true;
+        listEl.innerHTML = list.map(p => {
+            const images = getProductImages(p);
+            const hasPrice = p.price !== null && p.price !== undefined && p.price !== '';
+            return `
+            <div class="product-row ${p.in_stock ? '' : 'out'}">
+                <div class="thumb">
+                    ${images.length
+                        ? `<img src="${escHtml(images[0])}" alt="" loading="lazy">
+                           ${images.length > 1 ? `<span class="img-count">📷 ${images.length}</span>` : ''}`
+                        : escHtml(t('no_image'))}
+                </div>
+                <div class="info">
+                    <h4 title="${escHtml(p.name)}">${escHtml(p.name)}</h4>
+                    <div class="meta">
+                        ${p.size ? `<span class="size-badge">${escHtml(p.size)}</span>` : ''}
+                        ${hasPrice
+                            ? `<span class="price">฿${Number(p.price).toLocaleString()}</span>`
+                            : `<span>${t('no_price')}</span>`}
+                    </div>
+                </div>
+                <label class="switch-label" title="${t('stock_toggle_hint')}">
+                    <input type="checkbox" ${p.in_stock ? 'checked' : ''} onchange="toggleStock('${p.id}', this)">
+                    <span class="switch"></span>
+                    <span class="stock-text ${p.in_stock ? 'on' : 'off'}">${p.in_stock ? t('in_stock') : t('out_of_stock')}</span>
+                </label>
+                <div class="row-actions">
+                    <button type="button" class="btn-sm" onclick="editProduct('${p.id}')">${t('btn_edit')}</button>
+                    <button type="button" class="btn-sm danger" onclick="deleteProduct('${p.id}')">${t('btn_delete')}</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function toggleStock(id, checkbox) {
+        const p = products.find(x => x.id === id);
+        const value = checkbox.checked;
+        checkbox.disabled = true;
+
+        const { error } = await sb.from('products').update({ in_stock: value }).eq('id', id);
+        if (error) {
+            checkbox.checked = !value;
+            checkbox.disabled = false;
+            showToast(t('stock_error') + error.message, 'error');
+            return;
+        }
+
+        p.in_stock = value;
+        renderList();
+        showToast(value ? t('toast_in_stock') : t('toast_out_of_stock'));
+    }
+
+    async function deleteProduct(id) {
+        const p = products.find(x => x.id === id);
+        if (!confirm(`${t('confirm_delete')}\n\n${p.name}`)) return;
+
+        const { error } = await sb.from('products').delete().eq('id', id);
+        if (error) {
+            showToast(t('delete_error') + error.message, 'error');
+            return;
+        }
+        showToast(t('toast_deleted'));
+        refreshList();
+    }
+
+    // ---- Add / edit drawer ----
+    function fillForm(p) {
+        const editing = !!p;
+        document.getElementById('edit-id').value = editing ? p.id : '';
+        document.getElementById('f-name').value = editing ? p.name || '' : '';
+        document.getElementById('f-size').value = editing ? p.size || '' : '';
+        document.getElementById('f-desc').value = editing ? p.description || '' : '';
+        document.getElementById('f-price').value = editing ? p.price ?? '' : '';
+        document.getElementById('f-instock').checked = editing ? !!p.in_stock : true;
+        document.getElementById('upload-status').textContent = '';
+        document.getElementById('form-error').textContent = '';
+        formImages.forEach(img => img.preview && URL.revokeObjectURL(img.preview));
+        formImages = editing ? getProductImages(p).map(url => ({ url })) : [];
         renderImageGrid();
-        if (document.getElementById('dashboard').style.display !== 'none') {
+        updateFormText();
+    }
+
+    // texts in the drawer that depend on the language / category / mode
+    function updateFormText() {
+        const editing = !!document.getElementById('edit-id').value;
+        const c = categoryInfo(currentCategory);
+        document.getElementById('form-cat').textContent = `${c.icon} ${t(c.key)}`;
+        document.getElementById('form-title').textContent = t(editing ? 'form_title_edit' : 'form_title_add');
+        document.getElementById('f-size').placeholder = t('size_ph_' + currentCategory);
+        document.getElementById('drawer-close').setAttribute('aria-label', t('btn_cancel'));
+    }
+
+    function openDrawer() {
+        document.getElementById('drawer').hidden = false;
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('f-name').focus(), 50);
+    }
+
+    function openAddForm() {
+        fillForm(null);
+        openDrawer();
+    }
+
+    function editProduct(id) {
+        fillForm(products.find(x => x.id === id));
+        openDrawer();
+    }
+
+    function closeForm() {
+        document.getElementById('drawer').hidden = true;
+        document.body.style.overflow = '';
+    }
+
+    async function saveProduct(e) {
+        e.preventDefault();
+        const errEl = document.getElementById('form-error');
+        const saveBtn = document.getElementById('save-btn');
+        errEl.textContent = '';
+
+        const id = document.getElementById('edit-id').value;
+        const name = document.getElementById('f-name').value.trim();
+        const size = document.getElementById('f-size').value.trim();
+        const description = document.getElementById('f-desc').value.trim();
+        const priceRaw = document.getElementById('f-price').value;
+        const in_stock = document.getElementById('f-instock').checked;
+
+        if (!name) {
+            errEl.textContent = t('name_required');
+            document.getElementById('f-name').focus();
+            return;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = t('btn_saving');
+
+        try {
+            let image_urls;
+            try {
+                image_urls = await uploadImages();
+            } catch (uploadErr) {
+                errEl.textContent = t('upload_error_retry');
+                return;
+            }
+
+            const payload = {
+                category: currentCategory,
+                name,
+                size: size || null,
+                description: description || null,
+                price: priceRaw ? Number(priceRaw) : null,
+                image_url: image_urls[0] || null,  // cover image
+                image_urls,
+                in_stock
+            };
+
+            const { error } = id
+                ? await sb.from('products').update(payload).eq('id', id)
+                : await sb.from('products').insert(payload);
+
+            if (error) {
+                errEl.textContent = t('save_error') + error.message;
+                console.error(error);
+                return;
+            }
+
+            closeForm();
+            showToast(t('toast_saved'));
             refreshList();
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = t('btn_save');
         }
     }
-</script>
-<script>
-    let currentCategory = 'tires';
-    // Images in the form, in display order. Each item is either
-    // { url } (already in Storage) or { file, preview } (not uploaded yet).
-    let formImages = [];
-    const IMAGE_BUCKET = 'product-images';
 
-    // older rows only have image_url; newer rows have image_urls
-    function getProductImages(p) {
-        if (p.image_urls && p.image_urls.length) return p.image_urls;
-        return p.image_url ? [p.image_url] : [];
-    }
-
-    // ---- Image upload ----
-    function addImages() {
-        const fileInput = document.getElementById('f-image-file');
-        for (const file of fileInput.files) {
+    // ---- Image picker ----
+    function addImages(files) {
+        for (const file of files) {
+            if (!file.type.startsWith('image/')) continue;
             formImages.push({ file, preview: URL.createObjectURL(file) });
         }
-        // clear so picking more files (or the same file again) still fires onchange
-        fileInput.value = '';
         document.getElementById('upload-status').textContent = '';
         renderImageGrid();
     }
@@ -304,12 +797,20 @@
         renderImageGrid();
     }
 
+    function makeCover(index) {
+        const [img] = formImages.splice(index, 1);
+        formImages.unshift(img);
+        renderImageGrid();
+    }
+
     function renderImageGrid() {
         document.getElementById('image-grid').innerHTML = formImages.map((img, i) => `
-            <div class="image-thumb">
+            <div class="image-thumb ${i === 0 ? 'cover' : ''}">
                 <img src="${escHtml(img.url || img.preview)}" alt="">
-                <button type="button" class="remove-img" title="${t('image_remove')}" onclick="removeImage(${i})">×</button>
-                ${i === 0 ? `<div class="cover-tag">${t('image_cover')}</div>` : ''}
+                <button type="button" class="remove-img" title="${t('image_remove')}" aria-label="${t('image_remove')}" onclick="removeImage(${i})">×</button>
+                ${i === 0
+                    ? `<div class="cover-tag">★ ${t('image_cover')}</div>`
+                    : `<button type="button" class="make-cover" onclick="makeCover(${i})">${t('image_make_cover')}</button>`}
             </div>
         `).join('');
     }
@@ -349,190 +850,35 @@
         return formImages.map(img => img.url);
     }
 
-    // ---- Auth gate ----
-    async function checkAccess() {
-        const isLoggedIn = await initAuthUI();
-        document.getElementById('login-panel').style.display = isLoggedIn ? 'none' : 'block';
-        document.getElementById('dashboard').style.display = isLoggedIn ? 'block' : 'none';
-        if (isLoggedIn) refreshList();
+    // drag & drop onto the picker
+    document.addEventListener('DOMContentLoaded', () => {
+        const dz = document.getElementById('dropzone');
+        ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => {
+            e.preventDefault();
+            dz.classList.add('drag');
+        }));
+        ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, () => dz.classList.remove('drag')));
+        dz.addEventListener('drop', e => {
+            e.preventDefault();
+            addImages(e.dataTransfer.files);
+        });
+    });
+
+    function onLanguageChange() {
+        // re-render dynamic text that isn't covered by data-i18n
+        updatePasswordToggleUI();
+        updateFormText();
+        renderImageGrid();
+        if (!document.getElementById('dashboard').hidden) {
+            renderTabs();
+            renderList();
+        }
     }
 
-    async function handleLogin() {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value;
-        const errEl = document.getElementById('login-error');
-        errEl.textContent = '';
-
-        if (!email || !password) {
-            errEl.textContent = t('login_error_empty');
-            return;
-        }
-
-        const { error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) {
-            errEl.textContent = t('login_error_failed');
-            return;
-        }
+    document.addEventListener('DOMContentLoaded', () => {
+        updatePasswordToggleUI();
         checkAccess();
-    }
-
-    // ---- Tabs ----
-    function switchTab(cat) {
-        currentCategory = cat;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
-        resetForm();
-        refreshList();
-    }
-
-    // ---- List ----
-    async function refreshList() {
-        const listEl = document.getElementById('product-list');
-        const statusEl = document.getElementById('list-status');
-        statusEl.textContent = t('list_loading');
-        listEl.innerHTML = '';
-
-        const { data, error } = await sb
-            .from('products')
-            .select('*')
-            .eq('category', currentCategory)
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            statusEl.textContent = t('list_error');
-            console.error(error);
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            statusEl.textContent = t('list_empty');
-            return;
-        }
-
-        statusEl.textContent = '';
-        listEl.innerHTML = data.map(p => {
-            const images = getProductImages(p);
-            return `
-            <div class="product-row">
-                ${images.length ? `
-                <div class="img-wrap">
-                    <img src="${escHtml(images[0])}" alt="">
-                    ${images.length > 1 ? `<span class="img-count">${images.length}</span>` : ''}
-                </div>` : ''}
-                <div class="info">
-                    <h4>${escHtml(p.name)}${p.size ? ' · ' + escHtml(p.size) : ''}</h4>
-                    <p>${p.price != null ? '฿' + Number(p.price).toLocaleString() : ''} ${p.in_stock ? '' : '· ' + t('out_of_stock')}</p>
-                </div>
-                <div class="actions">
-                    <button class="icon-btn" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'>${t('btn_edit')}</button>
-                    <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">${t('btn_delete')}</button>
-                </div>
-            </div>
-        `;
-        }).join('');
-    }
-
-    function escHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str ?? '';
-        return div.innerHTML;
-    }
-
-    // ---- Form ----
-    function resetForm() {
-        document.getElementById('edit-id').value = '';
-        document.getElementById('f-name').value = '';
-        document.getElementById('f-size').value = '';
-        document.getElementById('f-desc').value = '';
-        document.getElementById('f-price').value = '';
-        document.getElementById('f-image-file').value = '';
-        document.getElementById('upload-status').textContent = '';
-        formImages.forEach(img => img.preview && URL.revokeObjectURL(img.preview));
-        formImages = [];
-        renderImageGrid();
-        document.getElementById('f-instock').checked = true;
-        document.getElementById('form-title').textContent = t('form_title_add');
-        document.getElementById('form-error').textContent = '';
-    }
-
-    function editProduct(p) {
-        document.getElementById('edit-id').value = p.id;
-        document.getElementById('f-name').value = p.name || '';
-        document.getElementById('f-size').value = p.size || '';
-        document.getElementById('f-desc').value = p.description || '';
-        document.getElementById('f-price').value = p.price ?? '';
-        document.getElementById('f-image-file').value = '';
-        document.getElementById('upload-status').textContent = '';
-        formImages.forEach(img => img.preview && URL.revokeObjectURL(img.preview));
-        formImages = getProductImages(p).map(url => ({ url }));
-        renderImageGrid();
-        document.getElementById('f-instock').checked = !!p.in_stock;
-        document.getElementById('form-title').textContent = t('form_title_edit');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    async function saveProduct() {
-        const errEl = document.getElementById('form-error');
-        errEl.textContent = '';
-
-        const id = document.getElementById('edit-id').value;
-        const name = document.getElementById('f-name').value.trim();
-        const size = document.getElementById('f-size').value.trim();
-        const description = document.getElementById('f-desc').value.trim();
-        const priceRaw = document.getElementById('f-price').value;
-        const in_stock = document.getElementById('f-instock').checked;
-
-        if (!name) {
-            errEl.textContent = t('name_required');
-            return;
-        }
-
-        let image_urls;
-        try {
-            image_urls = await uploadImages();
-        } catch (uploadErr) {
-            errEl.textContent = t('upload_error_retry');
-            return;
-        }
-
-        const payload = {
-            category: currentCategory,
-            name,
-            size: size || null,
-            description: description || null,
-            price: priceRaw ? Number(priceRaw) : null,
-            image_url: image_urls[0] || null,  // cover image
-            image_urls,
-            in_stock
-        };
-
-        let error;
-        if (id) {
-            ({ error } = await sb.from('products').update(payload).eq('id', id));
-        } else {
-            ({ error } = await sb.from('products').insert(payload));
-        }
-
-        if (error) {
-            errEl.textContent = t('save_error') + error.message;
-            console.error(error);
-            return;
-        }
-
-        resetForm();
-        refreshList();
-    }
-
-    async function deleteProduct(id) {
-        if (!confirm(t('confirm_delete'))) return;
-        const { error } = await sb.from('products').delete().eq('id', id);
-        if (error) {
-            alert(t('delete_error') + error.message);
-            return;
-        }
-        refreshList();
-    }
-
-    document.addEventListener('DOMContentLoaded', checkAccess);
+    });
 </script>
 
 </body>
