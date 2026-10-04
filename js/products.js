@@ -30,27 +30,127 @@ function renderProductCards(data, gridId) {
 
   grid.innerHTML = data.map(p => {
     const images = getProductImages(p);
+    const hasPrice = p.price !== null && p.price !== undefined && p.price !== '';
     galleryData[p.id] = { name: p.name, images };
     return `
-    <div class="product-card ${p.in_stock ? '' : 'out-of-stock'}">
+    <article class="product-card ${p.in_stock ? '' : 'out-of-stock'}">
       ${images.length
         ? `<button type="button" class="product-img-btn" onclick="openLightbox('${p.id}')">
              <img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.name)}" loading="lazy">
              ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}
            </button>`
-        : `<div class="product-noimg">ไม่มีรูป</div>`}
+        : `<div class="product-noimg"><span>📷</span>${escapeHtml(t('no_image'))}</div>`}
       <div class="product-body">
-        <h3>${escapeHtml(p.name)}</h3>
         ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
+        <h3>${escapeHtml(p.name)}</h3>
         ${p.description ? `<p class="product-desc">${escapeHtml(p.description)}</p>` : ''}
         <div class="product-footer">
-          ${p.price !== null && p.price !== '' ? `<span class="product-price">฿${Number(p.price).toLocaleString()}</span>` : '<span></span>'}
+          ${hasPrice
+            ? `<span class="product-price">฿${Number(p.price).toLocaleString()}</span>`
+            : `<span class="product-price ask">${t('price_ask')}</span>`}
           <span class="product-stock ${p.in_stock ? '' : 'stock-out'}">${p.in_stock ? t('in_stock') : t('out_of_stock')}</span>
         </div>
       </div>
-    </div>
+    </article>
   `;
   }).join('');
+}
+
+/* ---------------- Category page: chips + search + sort ---------------- */
+
+// Wires up a category page (tires / wheels / shock / brake). The page needs
+// #cat-chips, #shop-search, #shop-sort, #shop-count and #products-grid.
+function initProductPage(category, defaultSort) {
+  const searchEl = document.getElementById('shop-search');
+  const sortEl = document.getElementById('shop-sort');
+  let allProducts = [];
+  let loaded = false;
+
+  function renderChips() {
+    // SITE_NAV comes from js/layout.js
+    document.getElementById('cat-chips').innerHTML = SITE_NAV
+      .filter(n => n.page !== 'home')
+      .map(n => `<a href="${n.href}" class="cat-chip ${n.page === document.body.dataset.page ? 'active' : ''}">${t(n.key)}</a>`)
+      .join('');
+  }
+
+  function compare(a, b, field, dir) {
+    if (field === 'newest') {
+      return String(b.created_at || '').localeCompare(String(a.created_at || ''));
+    }
+    if (field === 'price') {
+      // products with no price set are always pushed to the end
+      const ap = a.price;
+      const bp = b.price;
+      if (ap == null && bp == null) return 0;
+      if (ap == null) return 1;
+      if (bp == null) return -1;
+      return (ap - bp) * dir;
+    }
+    const av = (field === 'size' ? a.size : a.name) || '';
+    const bv = (field === 'size' ? b.size : b.name) || '';
+    return av.localeCompare(bv, undefined, { numeric: true, sensitivity: 'base' }) * dir;
+  }
+
+  function render() {
+    if (!loaded) return;
+    const query = searchEl.value.trim().toLowerCase();
+    const [field, dirName] = sortEl.value.split('_');
+    const dir = dirName === 'desc' ? -1 : 1;
+
+    const list = allProducts
+      .filter(p => {
+        const name = (p.name || '').toLowerCase();
+        const size = (p.size || '').toLowerCase();
+        return !query || name.includes(query) || size.includes(query);
+      })
+      .sort((a, b) => compare(a, b, field, dir));
+
+    document.getElementById('shop-count').textContent = `${list.length} ${t('list_count_suffix')}`;
+
+    if (query && list.length === 0) {
+      document.getElementById('products-grid').innerHTML = `<p class="products-status">${t('search_no_results')}</p>`;
+      return;
+    }
+    renderProductCards(list, 'products-grid');
+  }
+
+  async function fetchProducts() {
+    const grid = document.getElementById('products-grid');
+    grid.innerHTML = `<p class="products-status">${t('products_loading')}</p>`;
+
+    const { data, error } = await sb
+      .from('products')
+      .select('*')
+      .eq('category', category)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      grid.innerHTML = `<p class="products-status">${t('products_error')}</p>`;
+      console.error('initProductPage error:', error);
+      return;
+    }
+
+    allProducts = data || [];
+    loaded = true;
+    render();
+  }
+
+  sortEl.value = defaultSort;
+  searchEl.addEventListener('input', render);
+  sortEl.addEventListener('change', render);
+
+  // search box on the home page links here as tires.html?q=...
+  const initialQuery = new URLSearchParams(location.search).get('q');
+  if (initialQuery) searchEl.value = initialQuery;
+
+  window.onLanguageChange = () => {
+    renderChips();
+    render();
+  };
+
+  renderChips();
+  fetchProducts();
 }
 
 /* ---------------- Lightbox (full-screen image viewer) ---------------- */

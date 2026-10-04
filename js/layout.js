@@ -10,8 +10,7 @@ const SITE_CONTACT = {
   phoneTel: '+66811600060',
   phone2: '081-160-0020',
   phone2Tel: '+66811600020',
-  line: 'https://line.me/ti/p/@boyautotires',
-  lineId: '@boyautotires',
+  line: 'https://line.me/ti/p/yWkHxGNvL2',
   messenger: 'https://m.me/BOYAUTOTIRES',
 };
 
@@ -47,7 +46,7 @@ function renderSiteHeader() {
       <div class="container">
         <div class="topbar-contact">
           <a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a>
-          <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="hide-sm">💬 LINE ${SITE_CONTACT.lineId}</a>
+          <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="hide-sm" data-i18n="cta_line">💬 แอด LINE</a>
         </div>
         <div class="topbar-right">
           <div class="lang-switch">
@@ -99,7 +98,7 @@ function renderSiteFooter() {
           <ul>
             <li><a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a></li>
             <li><a href="tel:${SITE_CONTACT.phone2Tel}">📞 ${SITE_CONTACT.phone2}</a></li>
-            <li><a href="${SITE_CONTACT.line}" target="_blank" rel="noopener">💬 LINE ${SITE_CONTACT.lineId}</a></li>
+            <li><a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" data-i18n="cta_line">💬 แอด LINE</a></li>
           </ul>
         </div>
       </div>

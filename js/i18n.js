@@ -64,6 +64,9 @@ const translations = {
         out_of_stock: "สินค้าหมด",
 
         search_placeholder: "ค้นหาไซส์ยาง หรือชื่อยาง...",
+        search_placeholder_generic: "ค้นหาชื่อสินค้า หรือไซส์...",
+        sort_newest: "ใหม่ล่าสุด",
+        price_ask: "สอบถามราคา",
         sort_size: "🔢 เรียงตามไซส์",
         sort_name: "🔤 เรียงตามชื่อ",
         sort_price: "💰 เรียงตามราคา",
@@ -73,7 +76,7 @@ const translations = {
         sort_name_desc: "ชื่อ: ฮ-ก / Z-A",
         sort_price_asc: "ราคา: ถูก → แพง",
         sort_price_desc: "ราคา: แพง → ถูก",
-        search_no_results: "ไม่พบยางที่ตรงกับคำค้นหา",
+        search_no_results: "ไม่พบสินค้าที่ตรงกับคำค้นหา",
 
         admin_badge: "ระบบหลังร้าน",
         admin_view_site: "ดูหน้าเว็บ ↗",
@@ -207,6 +210,9 @@ const translations = {
         out_of_stock: "Out of stock",
 
         search_placeholder: "Search by tire size or name...",
+        search_placeholder_generic: "Search by name or size...",
+        sort_newest: "Newest",
+        price_ask: "Ask for price",
         sort_size: "🔢 Sort by size",
         sort_name: "🔤 Sort by name",
         sort_price: "💰 Sort by price",
@@ -216,7 +222,7 @@ const translations = {
         sort_name_desc: "Name: Z → A",
         sort_price_asc: "Price: Low → High",
         sort_price_desc: "Price: High → Low",
-        search_no_results: "No tires match your search",
+        search_no_results: "No products match your search",
 
         admin_badge: "Back office",
         admin_view_site: "View site ↗",
