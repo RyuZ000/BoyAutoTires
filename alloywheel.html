@@ -17,10 +17,29 @@
         <div class="container">
             <div class="breadcrumb"><a href="index.html" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="nav_wheels"></span></div>
             <h1 class="page-title" data-i18n="page_title_wheels">Loading...</h1>
+            <p class="page-sub" data-i18n="cat_wheels_desc"></p>
         </div>
     </section>
 
-    <div class="products-grid" id="products-grid"></div>
+    <main class="container shop">
+        <nav class="cat-chips" id="cat-chips"></nav>
+        <div class="shop-toolbar">
+            <div class="shop-search">
+                <input type="search" id="shop-search" data-i18n-placeholder="search_placeholder_generic" placeholder="ค้นหาชื่อสินค้า หรือไซส์...">
+            </div>
+            <select id="shop-sort" class="shop-sort">
+                <option value="newest" data-i18n="sort_newest">ใหม่ล่าสุด</option>
+                <option value="name_asc" data-i18n="sort_name_asc">ชื่อ: ก-ฮ / A-Z</option>
+                <option value="name_desc" data-i18n="sort_name_desc">ชื่อ: ฮ-ก / Z-A</option>
+                <option value="price_asc" data-i18n="sort_price_asc">ราคา: ถูก → แพง</option>
+                <option value="price_desc" data-i18n="sort_price_desc">ราคา: แพง → ถูก</option>
+                <option value="size_asc" data-i18n="sort_size_asc">ไซส์: เล็ก → ใหญ่</option>
+                <option value="size_desc" data-i18n="sort_size_desc">ไซส์: ใหญ่ → เล็ก</option>
+            </select>
+            <span class="shop-count" id="shop-count"></span>
+        </div>
+        <div class="products-grid" id="products-grid"></div>
+    </main>
 
     <div id="site-footer"></div>
 
@@ -31,9 +50,7 @@
     <script src="js/i18n.js"></script>
     <script src="js/products.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProducts('wheels', 'products-grid');
-        });
+        document.addEventListener('DOMContentLoaded', () => initProductPage('wheels', 'newest'));
     </script>
 </body>
 </html>
