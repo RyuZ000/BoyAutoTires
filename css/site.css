@@ -223,3 +223,8 @@ a { color: inherit; }
 }
 .float-contact a:hover { transform: scale(1.08); }
 .float-contact img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.float-contact .fc-messenger {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(45deg, #0099ff, #a033ff 60%, #ff5280 90%, #ff7061);
+}
+.float-contact .fc-messenger svg { width: 60%; height: 60%; }
