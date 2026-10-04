@@ -1,432 +1,397 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoyAutoTires</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="css/site.css">
     <style>
-        /* layout basics and prevent iOS font scaling */
-        *, *::before, *::after { box-sizing: border-box; }
-        html, body { -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
-        body { 
-            background: linear-gradient(160deg, #0d2a5c 0%, #0a1730 32%, #050810 68%, #020306 100%);
-            margin: 0; 
-            padding: 15px; 
-            min-height: 100vh;
-        }
-        img { max-width: 100%; height: auto; }
-        img.carousel-img, video { display: block; }
-
-        .carousel-container {
+        /* ---------------- Hero ---------------- */
+        .hero {
             position: relative;
-            width: 90%;
-            max-width: 1100px;
-            margin: 25px auto;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(20, 20, 20, 0.9) 100%);
-            border-radius: 18px;
+            min-height: clamp(460px, 78vh, 720px);
+            display: flex;
+            align-items: center;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(77, 163, 255, 0.2), 0 0 40px rgba(77, 163, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(77, 163, 255, 0.2);
-        }
-        /* keep a consistent ratio and responsive height */
-        .carousel-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            min-height: 580px;
             background: #000;
         }
-        .carousel-img {
+        .hero-slide {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            object-position: center center;
+            object-fit: cover;
             opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #000;
+            transition: opacity 1s ease;
         }
-        .carousel-img.active {
-            opacity: 1;
-        }
-        .carousel-btn {
+        .hero-slide.active { opacity: 1; }
+        .hero::after {
+            content: '';
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(135deg, #2f7cff 0%, #0b3d91 55%, #050810 100%);
-            color: #fff;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 12px 16px;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 10;
-            opacity: 0.8;
-            box-shadow: 0 8px 24px rgba(77, 163, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
-            width: 60px;
-            height: 60px;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(5,8,16,0.92) 0%, rgba(5,8,16,0.65) 45%, rgba(5,8,16,0.15) 100%);
+        }
+        .hero-content { position: relative; z-index: 2; padding: 60px 16px; }
+        .hero-kicker {
+            display: inline-block;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .hero h1 {
+            font-size: clamp(26px, 6vw, 60px);
+            line-height: 1.15;
+            margin: 0 0 16px;
+            max-width: 820px;
+            font-weight: 800;
+        }
+        .hero p { color: #cfdcf3; font-size: clamp(15px, 2vw, 18px); max-width: 540px; margin: 0 0 28px; }
+        .hero-search {
             display: flex;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 999px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        .hero-search input {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-family: inherit;
+            border-radius: 999px;
+            color: #111;
+        }
+        .hero-search button {
+            border: none;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 700;
+            font-family: inherit;
+            padding: 0 26px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+        .hero-search button:hover { background: #1f5fcf; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .btn {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: 999px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform .2s;
         }
-        .carousel-btn:hover {
-            background: linear-gradient(135deg, #050810 0%, #0b3d91 45%, #2f7cff 100%);
-            transform: translateY(-50%) scale(1.2);
-            opacity: 1;
-            box-shadow: 0 15px 40px rgba(77, 163, 255, 0.45), 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-        .carousel-btn-prev { left: 20px; }
-        .carousel-btn-next { right: 20px; }
-        .carousel-dots {
+        .btn:hover { transform: translateY(-2px); }
+        .btn-gold { background: var(--gold); color: #111; }
+        .btn-line { background: #06c755; color: #fff; }
+        .btn-outline { border: 1px solid var(--line); color: var(--text); }
+        .hero-dots {
             position: absolute;
-            bottom: 25px;
+            z-index: 3;
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 12px;
-            z-index: 10;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px 18px;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(77, 163, 255, 0.15);
+            gap: 8px;
         }
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.35);
+        .hero-dots button {
+            width: 10px; height: 10px;
+            border-radius: 999px;
+            border: none;
+            padding: 0;
+            background: rgba(255,255,255,0.4);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: width .3s, background .3s;
         }
-        .dot.active {
-            background: #4da3ff;
-            transform: scale(1.5);
-            border-color: #8ecbff;
-            box-shadow: 0 0 20px rgba(77, 163, 255, 0.6);
+        .hero-dots button.active { width: 28px; background: var(--gold); }
+
+        /* ---------------- Sections ---------------- */
+        .section { padding: 64px 0 0; }
+        .section-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        .dot:hover { background: rgba(255, 255, 255, 0.6); }
-        
-        /* responsive header/nav and title */
-        .nav-container { 
-            background: linear-gradient(90deg, #0b3d91 0%, #1f5fcf 45%, #050810 100%);
-            display:flex; 
-            justify-content:center; 
-            gap: 25px;
-            padding: 14px 30px; 
-            align-items:center; 
-            flex-wrap:wrap;
-            box-shadow: 0 10px 30px rgba(77, 163, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border-bottom: 2px solid rgba(0, 0, 0, 0.15);
-            border-radius: 8px 8px 0 0;
-        }
-        /* smaller desktop font while keeping responsive scaling */
-        .nav-container a { 
-            color: #eaf3ff; 
-            padding: 10px 20px; 
-            font-size: 18px;
-            text-decoration:none; 
-            font-weight:700;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+        .section-head h2 { margin: 0; font-size: clamp(24px, 3.5vw, 32px); font-weight: 800; }
+        .section-head p { margin: 4px 0 0; color: var(--muted); }
+        .section-head a { color: var(--blue-soft); text-decoration: none; font-weight: 600; white-space: nowrap; }
+
+        /* category cards */
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .cat-card {
             position: relative;
+            display: block;
+            aspect-ratio: 3 / 4;
+            border-radius: 16px;
+            overflow: hidden;
+            text-decoration: none;
+            border: 1px solid var(--line);
+            background: var(--panel);
         }
-        .nav-container a:hover {
-            background: rgba(255, 255, 255, 0.14);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        .cat-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform .5s ease;
         }
-        .site-title { 
-            text-align:center; 
-            font-size: 75px;
-            color: #4da3ff; 
-            margin: 25px 0; 
-            line-height:1;
-            text-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 40px rgba(77, 163, 255, 0.25);
-            font-family: 'Arial Black', sans-serif;
-            letter-spacing: 2px;
-            font-weight: 900;
+        .cat-card:hover img { transform: scale(1.06); }
+        .cat-card .cat-info {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 18px;
+            background: linear-gradient(0deg, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0) 100%);
         }
-        .site-title span { display:inline-block; }
-        .outsite-title { 
-            text-align: center; 
-            font-size: 30px;
-            color: #e8e8e8; 
-            margin-top: 0; 
-            margin-bottom: 25px; 
-            line-height: 1.3;
-            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.6);
-            font-weight: 300;
-            letter-spacing: 0.5px;
+        .cat-card h3 { margin: 0 0 4px; font-size: 22px; color: #fff; }
+        .cat-card p { margin: 0 0 10px; font-size: 13px; color: #cfdcf3; }
+        .cat-card span { color: var(--gold); font-weight: 600; font-size: 14px; }
+
+        /* why us */
+        .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .why-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 24px;
         }
-        .outsite-title span { display:inline-block; }
-        .video-wrapper { 
-            background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(20,20,20,0.7) 100%); 
-            width: 100%; 
-            margin: 25px 0; 
-            padding: 25px 0; 
-            display: flex; 
-            justify-content: center; 
+        .why-icon {
+            width: 52px; height: 52px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 14px;
+            background: rgba(245, 197, 24, 0.12);
+            font-size: 26px;
+            margin-bottom: 14px;
+        }
+        .why-card h3 { margin: 0 0 6px; font-size: 18px; }
+        .why-card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+        /* latest products reuse .products-grid from staff.css */
+        #latest-grid { margin: 0; padding: 0; max-width: none; }
+
+        /* gallery */
+        .gallery { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-auto-rows: 200px; gap: 12px; }
+        .gallery video, .gallery img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+            display: block;
+        }
+        .gallery .g-main { grid-row: span 2; }
+
+        /* CTA band */
+        .cta-band {
+            margin-top: 64px;
+            border-radius: 20px;
+            padding: 36px;
+            background: linear-gradient(120deg, #0b3d91 0%, #1f5fcf 60%, #2f7cff 100%);
+            display: flex;
             align-items: center;
-            border-top: 1px solid rgba(77, 163, 255, 0.15);
-            border-bottom: 1px solid rgba(77, 163, 255, 0.15);
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        .video-wrapper .responsive-video { 
-            max-width: 1100px; 
-            width: 90%; 
-            border-radius: 15px; 
-            box-shadow: 0 20px 50px rgba(77, 163, 255, 0.18), 0 0 40px rgba(77, 163, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(77, 163, 255, 0.18);
-        }
+        .cta-band h2 { margin: 0 0 4px; font-size: clamp(22px, 3vw, 28px); }
+        .cta-band p { margin: 0; color: #dbe8ff; }
 
-        /* social nav: same style as nav-container */
-        .social-nav { 
-            background: linear-gradient(90deg, #0b3d91 0%, #1f5fcf 45%, #050810 100%);
-            display: flex; 
-            justify-content: center; 
-            gap: 10px; 
-            padding: 12px 15px; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            margin-top: 0;
-            flex-direction: row; 
-            overflow-x: visible;
-            box-shadow: 0 -10px 30px rgba(77, 163, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-            border-top: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 8px 8px;
+        @media (max-width: 900px) {
+            .cat-grid, .why-grid { grid-template-columns: repeat(2, 1fr); }
+            .gallery { grid-template-columns: 1fr 1fr; grid-auto-rows: 160px; }
+            .gallery .g-main { grid-column: span 2; grid-row: span 2; }
         }
-        .social-nav a { 
-            display: flex; 
-            align-items: center; 
-            gap: 4px; 
-            text-decoration: none; 
-            color: inherit; 
-            flex-direction: row; 
-            white-space: nowrap; 
-            flex-shrink: 0;
-            padding: 8px 10px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        .social-nav a:hover {
-            background: rgba(255, 255, 255, 0.14);
-            transform: translateY(-2px);
-        }
-        .social-nav img { width: 24px; height: 24px; }
-        .social-nav .label { color: #eaf3ff; font-size: 11px; font-weight: 700; }
-        
-        /* Desktop - wrap items and show labels */
-        @media (min-width: 1025px) {
-            .social-nav {
-                gap: 12px;
-                padding: 12px 20px;
-                justify-content: center;
-            }
-            .social-nav a {
-                padding: 8px 10px;
-                gap: 4px;
-                flex-shrink: 0;
-            }
-            .social-nav img { 
-                width: 24px; 
-                height: 24px; 
-            }
-            .social-nav .label { 
-                display: inline;
-            }
-        }
-        @media (max-width: 768px) {
-            .nav-container {    
-                gap: clamp(4px, 3vw, 20px);
-                padding: 8px;
-                flex-wrap: wrap;
-            }
-            .nav-container a {
-                font-size: clamp(12px, 3.5vw, 18px);
-                padding: 8px 12px;
-            }
-            .site-title {
-                font-size: clamp(24px, 8vw, 60px);
-                margin-bottom: 20px;
-            }
-            .outsite-title {
-                font-size: clamp(14px, 2.0vw, 18px);
-                margin-top: 0;
-            }
-            .carousel-container {
-                width: 95%;
-                margin: 20px auto;
-            }
-            .carousel-btn {
-                padding: 10px 12px;
-                font-size: 18px;
-            }
-        }
-        
         @media (max-width: 480px) {
-            .nav-container a {
-                font-size: 12px;
-                padding: 6px 10px;
-            }
-            .site-title {
-                font-size: clamp(24px, 8vw, 60px);
-                margin-bottom: 20px;
-            }
-            .outsite-title {
-                font-size: clamp(14px, 2.0vw, 18px);
-                margin-top: 0;
-            }
-            .carousel-container {
-                width: 98%;
-                margin: 15px auto;
-            }
+            .cat-grid { gap: 12px; }
+            .cat-card h3 { font-size: 18px; }
+            .cat-card p { display: none; }
+            .why-grid { grid-template-columns: 1fr; }
+            .cta-band { padding: 24px; }
+            .hero-search button { padding: 0 18px; }
         }
-        /* tablet (iPad) portrait — add extra spacing between title and tagline */
-        @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-            .site-title { margin-bottom: 15px; }
-            .outsite-title { margin-top: -5px; }
-        }        /* tablet (iPad) landscape — add spacing */
-        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-            .site-title { margin-bottom: 25px; }
-            .outsite-title { margin-top: 0px; }
-        }    </style>
+    </style>
 </head>
-<body>
-        <div class="lang-switch">
-            <button class="lang-btn" data-lang="th" onclick="setLanguage('th')">ไทย</button>
-            <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
-        </div>
-        <div class="staff-corner">
-            <a id="staff-login-link" href="admin.html" class="staff-btn" data-i18n="staff_login">🔒 Staff Login</a>
-            <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;" data-i18n="staff_admin">🛠 Admin Panel</a>
-            <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">ออกจากระบบ</a>
-        </div>
-        <nav class="nav-container">
-            <a href="alloywheel.html" data-i18n="nav_wheels">Wheels</a>
-            <a href="tires.html" data-i18n="nav_tires">Tires</a>
-            <a href="shock.html" data-i18n="nav_shock">Shock Absorbers</a>
-            <a href="brake.html" data-i18n="nav_brake">Brake</a>
-            
-        </nav>
-        <h1 class="site-title"><span style="color: yellow;">B</span><span style="color: white;">oyAuto</span><span style="color: gold;">Tires</span></h1>
-        <h2 class="outsite-title"><span style="color: white;" data-i18n="tagline">จำหน่ายล้อแม็ก-ยางรถยนต์ โช้คสตรัท สปริงโหลด ช่วงล่างครบวงจร</span></h2>
-        
-        <div class="carousel-container">
-            <div class="carousel-wrapper">
-                <img src="Photo Somza/Somza1.jpg" alt="Photo 1" class="carousel-img active">
-                <img src="Photo Somza/Somza2.jpg" alt="Photo 2" class="carousel-img">
-                <img src="Photo Somza/Somza3.jpg" alt="Photo 3" class="carousel-img">
-                <img src="Photo Somza/Somza4.jpg" alt="Photo 4" class="carousel-img">
-                <img src="Photo Somza/Somza5.jpg" alt="Photo 5" class="carousel-img">
-                <img src="Photo Somza/Somza6.jpg" alt="Photo 6" class="carousel-img">
-                <img src="Photo Somza/Somza7.jpg" alt="Photo 7" class="carousel-img">
-                <img src="Photo Somza/Somza8.jpg" alt="Photo 8" class="carousel-img">
-                <img src="Photo Somza/Somza9.jpg" alt="Photo 9" class="carousel-img">
-            </div>
-            <button class="carousel-btn carousel-btn-prev" onclick="prevSlide()">❮</button>
-            <button class="carousel-btn carousel-btn-next" onclick="nextSlide()">❯</button>
-            <div class="carousel-dots">
-                <span class="dot active" onclick="goToSlide(0)"></span>
-                <span class="dot" onclick="goToSlide(1)"></span>
-                <span class="dot" onclick="goToSlide(2)"></span>
-                <span class="dot" onclick="goToSlide(3)"></span>
-                <span class="dot" onclick="goToSlide(4)"></span>
-                <span class="dot" onclick="goToSlide(5)"></span>
-                <span class="dot" onclick="goToSlide(6)"></span>
-                <span class="dot" onclick="goToSlide(7)"></span>
-                <span class="dot" onclick="goToSlide(8)"></span>
+<body data-page="home">
+    <div id="site-header"></div>
+
+    <!-- Hero with photo slideshow -->
+    <section class="hero">
+        <img src="Photo Somza/Somza1.jpg" alt="" class="hero-slide active">
+        <img src="Photo Somza/Somza5.jpg" alt="" class="hero-slide" loading="lazy">
+        <img src="Photo Somza/Somza6.jpg" alt="" class="hero-slide" loading="lazy">
+        <img src="Photo Somza/Somza8.jpg" alt="" class="hero-slide" loading="lazy">
+        <div class="container hero-content">
+            <span class="hero-kicker" data-i18n="hero_kicker">ล้อแม็ก · ยาง · โช้คอัพ · เบรก</span>
+            <h1 data-i18n="hero_title">ศูนย์รวมช่วงล่างครบวงจร</h1>
+            <p data-i18n="hero_sub"></p>
+            <form class="hero-search" onsubmit="heroSearch(event)">
+                <input type="text" id="hero-q" data-i18n-placeholder="hero_search_placeholder" placeholder="ค้นหาไซส์ยาง">
+                <button type="submit" data-i18n="hero_search_btn">ค้นหา</button>
+            </form>
+            <div class="hero-actions">
+                <a href="tel:+66811600060" class="btn btn-gold" data-i18n="cta_call">📞 โทรเลย</a>
+                <a href="https://line.me/ti/p/@boyautotires" target="_blank" rel="noopener" class="btn btn-line" data-i18n="cta_line">💬 แอด LINE</a>
             </div>
         </div>
+        <div class="hero-dots" id="hero-dots"></div>
+    </section>
 
-        <div class="video-wrapper">
-            <video class="responsive-video" controls autoplay muted loop>
-                <source src="Video Somza/Somza1.mp4" type="video/mp4">
-                Your browser does not support the video tag.    
-            </video>
-        </div>
+    <main class="container">
+        <!-- Categories -->
+        <section class="section">
+            <div class="section-head">
+                <div>
+                    <h2 data-i18n="section_categories">หมวดหมู่สินค้า</h2>
+                    <p data-i18n="section_categories_sub"></p>
+                </div>
+            </div>
+            <div class="cat-grid">
+                <a href="alloywheel.html" class="cat-card">
+                    <img src="Photo Somza/Somza5.jpg" alt="" data-cat="wheels" loading="lazy">
+                    <div class="cat-info"><h3 data-i18n="nav_wheels">ล้อแม็ก</h3><p data-i18n="cat_wheels_desc"></p><span data-i18n="cat_view"></span></div>
+                </a>
+                <a href="tires.html" class="cat-card">
+                    <img src="Photo Somza/Somza2.jpg" alt="" data-cat="tires" loading="lazy">
+                    <div class="cat-info"><h3 data-i18n="nav_tires">ยาง</h3><p data-i18n="cat_tires_desc"></p><span data-i18n="cat_view"></span></div>
+                </a>
+                <a href="shock.html" class="cat-card">
+                    <img src="Photo Somza/Somza3.jpg" alt="" data-cat="shock" loading="lazy">
+                    <div class="cat-info"><h3 data-i18n="nav_shock">โช้คอัพ</h3><p data-i18n="cat_shock_desc"></p><span data-i18n="cat_view"></span></div>
+                </a>
+                <a href="brake.html" class="cat-card">
+                    <img src="Photo Somza/Somza4.jpg" alt="" data-cat="brake" loading="lazy">
+                    <div class="cat-info"><h3 data-i18n="nav_brake">เบรก</h3><p data-i18n="cat_brake_desc"></p><span data-i18n="cat_view"></span></div>
+                </a>
+            </div>
+        </section>
 
-        <div class="social-nav" aria-label="Social media links">
-            <a href="https://www.instagram.com/boyautotires?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" title="Instagram" target="_blank">
-                <img src="Photo Social/IG.jpg" alt="Instagram">
-                <span class="label">boyautotires</span>
-            </a>
-            
-            <a href="https://www.facebook.com/BOYAUTOTIRES/?locale=th_TH" title="Facebook" target="_blank">
-                <img src="Photo Social/Fb.jpg" alt="Facebook">
-                <span class="label">Boy Auto Tires</span>
-            </a>
-            
-            <a href="https://www.tiktok.com/@boyautotires?is_from_webapp=1&sender_device=pcs" title="TikTok" target="_blank">
-                <img src="Photo Social/Tiktok.jpg" alt="TikTok">
-                <span class="label">Boy Auto Tires</span>
-            </a>
+        <!-- Latest products from Supabase -->
+        <section class="section" id="latest-section">
+            <div class="section-head">
+                <h2 data-i18n="section_latest">สินค้ามาใหม่</h2>
+            </div>
+            <div class="products-grid" id="latest-grid"></div>
+        </section>
 
-            <a href="https://www.youtube.com/@BoyAutoTires" title="Youtube" target="_blank">
-                <img src="Photo Social/Youtube.jpg" alt="Youtube">
-                <span class="label">BoyAutoTires</span>
-            </a>
-            
-            <a href="https://line.me/ti/p/@boyautotires" title="Line" target="_blank">
-                <img src="Photo Social/Line.jpg" alt="Line">
-                <span class="label">BOYAUTOTIRES</span>
-            </a>
-            
-            <a href="https://shopee.co.th/mj_jeab?tab=shop&uls_trackid=55skpsgr00dv&utm_content=DMozhUx5nRhmTUuBo1FX7A2TEXZ" title="Shopee" target="_blank">
-                <img src="Photo Social/Shopee.jpg" alt="Shopee">
-                <span class="label">Boy Auto Tires</span>
+        <!-- Why us -->
+        <section class="section">
+            <div class="section-head"><h2 data-i18n="section_why">ทำไมต้อง BoyAutoTires</h2></div>
+            <div class="why-grid">
+                <div class="why-card"><div class="why-icon">🔧</div><h3 data-i18n="why_1_title"></h3><p data-i18n="why_1_desc"></p></div>
+                <div class="why-card"><div class="why-icon">🛞</div><h3 data-i18n="why_2_title"></h3><p data-i18n="why_2_desc"></p></div>
+                <div class="why-card"><div class="why-icon">💬</div><h3 data-i18n="why_3_title"></h3><p data-i18n="why_3_desc"></p></div>
+                <div class="why-card"><div class="why-icon">📱</div><h3 data-i18n="why_4_title"></h3><p data-i18n="why_4_desc"></p></div>
+            </div>
+        </section>
 
-            </a>
-            
-            <a href="tel:+66811600060" title="Call us">
-                <img src="Photo Social/Call.jpg" alt="Phone">
-                <span class="label">081-160-0060</span>
-            </a>
-            
-        </div>
+        <!-- Gallery -->
+        <section class="section">
+            <div class="section-head"><h2 data-i18n="section_gallery">ผลงานของเรา</h2></div>
+            <div class="gallery">
+                <video class="g-main" autoplay muted loop playsinline controls>
+                    <source src="Video Somza/Somza1.mp4" type="video/mp4">
+                </video>
+                <img src="Photo Somza/Somza6.jpg" alt="" loading="lazy">
+                <img src="Photo Somza/Somza7.jpg" alt="" loading="lazy">
+                <img src="Photo Somza/Somza8.jpg" alt="" loading="lazy">
+                <img src="Photo Somza/Somza9.jpg" alt="" loading="lazy">
+            </div>
+        </section>
 
-    <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.carousel-img');
-        const dots = document.querySelectorAll('.dot');
-        const totalSlides = slides.length;
+        <!-- Contact CTA -->
+        <section class="cta-band">
+            <div>
+                <h2 data-i18n="cta_band_title">สนใจสินค้าหรือต้องการสอบถาม?</h2>
+                <p data-i18n="cta_band_sub"></p>
+            </div>
+            <div class="hero-actions">
+                <a href="tel:+66811600060" class="btn btn-gold" data-i18n="cta_call">📞 โทรเลย</a>
+                <a href="https://line.me/ti/p/@boyautotires" target="_blank" rel="noopener" class="btn btn-line" data-i18n="cta_line">💬 แอด LINE</a>
+            </div>
+        </section>
+    </main>
 
-        function showSlide(n) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            
-            slides[n].classList.add('active');
-            dots[n].classList.add('active');
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            showSlide(currentSlide);
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            showSlide(currentSlide);
-        }
-
-        function goToSlide(n) {
-            currentSlide = n;
-            showSlide(currentSlide);
-        }
-
-        // Auto-play carousel (เล่นอัตโนมัติทุก 5 วินาที)
-        setInterval(nextSlide, 5000);
-    </script>
-    <script src="script.js"></script>
+    <div id="site-footer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
+    <script src="js/layout.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/i18n.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        // hero slideshow
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDots = document.getElementById('hero-dots');
+        let heroIndex = 0;
+        heroSlides.forEach((_, i) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('aria-label', 'Slide ' + (i + 1));
+            b.onclick = () => showHero(i);
+            heroDots.appendChild(b);
+        });
+        function showHero(i) {
+            heroIndex = i;
+            heroSlides.forEach((s, j) => s.classList.toggle('active', j === i));
+            heroDots.querySelectorAll('button').forEach((d, j) => d.classList.toggle('active', j === i));
+        }
+        showHero(0);
+        setInterval(() => showHero((heroIndex + 1) % heroSlides.length), 5000);
+
+        // hero search -> tires page with ?q=
+        function heroSearch(e) {
+            e.preventDefault();
+            const q = document.getElementById('hero-q').value.trim();
+            location.href = 'tires.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+        }
+
+        // newest products across all categories
+        let latestProducts = [];
+        async function loadLatest() {
+            const grid = document.getElementById('latest-grid');
+            grid.innerHTML = `<p class="products-status">${t('products_loading')}</p>`;
+            const { data, error } = await sb
+                .from('products')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(8);
+            if (error) {
+                console.error('loadLatest error:', error);
+                document.getElementById('latest-section').style.display = 'none';
+                return;
+            }
+            latestProducts = data || [];
+            if (!latestProducts.length) {
+                document.getElementById('latest-section').style.display = 'none';
+                return;
+            }
+            renderProductCards(latestProducts, 'latest-grid');
+            useProductImagesForCategories(latestProducts);
+        }
+
+        // swap category card photos for a real product photo when one exists
+        function useProductImagesForCategories(products) {
+            document.querySelectorAll('.cat-card img[data-cat]').forEach(img => {
+                const p = products.find(p => p.category === img.dataset.cat && getProductImages(p).length);
+                if (p) img.src = getProductImages(p)[0];
+            });
+        }
+
+        function onLanguageChange() {
+            if (latestProducts.length) renderProductCards(latestProducts, 'latest-grid');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadLatest);
+    </script>
 </body>
 </html>
