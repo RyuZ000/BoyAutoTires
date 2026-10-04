@@ -8,9 +8,14 @@
 const SITE_CONTACT = {
   phone: '081-160-0060',
   phoneTel: '+66811600060',
+  phone2: '081-160-0020',
+  phone2Tel: '+66811600020',
   line: 'https://line.me/ti/p/@boyautotires',
   lineId: '@boyautotires',
+  messenger: 'https://m.me/BOYAUTOTIRES',
 };
+
+const MESSENGER_ICON = `<svg viewBox="0 0 36 36" aria-hidden="true"><path fill="#fff" d="M18 4C10.27 4 4 9.8 4 16.96c0 4.07 2.03 7.7 5.2 10.08V32l4.75-2.6c1.27.35 2.6.54 4.05.54 7.73 0 14-5.8 14-12.98C32 9.8 25.73 4 18 4zm1.39 17.47l-3.57-3.8-6.96 3.8 7.66-8.13 3.65 3.8 6.88-3.8-7.66 8.13z"/></svg>`;
 
 const SITE_SOCIAL = [
   { title: 'Facebook', href: 'https://www.facebook.com/BOYAUTOTIRES/?locale=th_TH', img: 'Photo Social/Fb.jpg' },
@@ -93,6 +98,7 @@ function renderSiteFooter() {
           <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
           <ul>
             <li><a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a></li>
+            <li><a href="tel:${SITE_CONTACT.phone2Tel}">📞 ${SITE_CONTACT.phone2}</a></li>
             <li><a href="${SITE_CONTACT.line}" target="_blank" rel="noopener">💬 LINE ${SITE_CONTACT.lineId}</a></li>
           </ul>
         </div>
@@ -100,6 +106,7 @@ function renderSiteFooter() {
       <div class="footer-bottom">© ${new Date().getFullYear()} BoyAutoTires. All rights reserved.</div>
     </footer>
     <div class="float-contact">
+      <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" title="Messenger" class="fc-messenger">${MESSENGER_ICON}</a>
       <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" title="LINE"><img src="Photo Social/Line.jpg" alt="LINE"></a>
       <a href="tel:${SITE_CONTACT.phoneTel}" title="Call"><img src="Photo Social/Call.jpg" alt="Call"></a>
     </div>

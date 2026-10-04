@@ -22,6 +22,7 @@ const translations = {
 
         cta_call: "📞 โทรเลย",
         cta_line: "💬 แอด LINE",
+        cta_messenger: "💬 แชท Messenger",
         footer_products: "สินค้า",
         footer_contact: "ติดต่อเรา",
         hero_kicker: "ล้อแม็ก · ยาง · โช้คอัพ · เบรก",
@@ -137,6 +138,7 @@ const translations = {
 
         cta_call: "📞 Call us",
         cta_line: "💬 Add LINE",
+        cta_messenger: "💬 Chat on Messenger",
         footer_products: "Products",
         footer_contact: "Contact",
         hero_kicker: "Wheels · Tires · Shocks · Brakes",
