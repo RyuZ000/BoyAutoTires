@@ -191,7 +191,7 @@ const translations = {
         footer_contact: "Contact",
         hero_kicker: "Wheels · Tires · Shocks · Brakes",
         hero_title: "Your complete suspension shop",
-        hero_sub: "Alloy wheels, tires, struts and lowering springs, installed in-store by our technicians",
+        hero_sub: "Alloy wheels, tires, struts and lowering springs,—plus a team of expert technicians ready to provide advice.",
         hero_search_btn: "Search",
         section_categories: "Product categories",
         section_categories_sub: "Browse products by category",
