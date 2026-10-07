@@ -187,13 +187,14 @@ function initProductPage(category, defaultSort, options = {}) {
   return { render };
 }
 
-/* ---------------- Lightbox (full-screen image viewer) ---------------- */
+/* ---------------- Lightbox (full-screen viewer) ---------------- */
+// A horizontal strip of slides that people swipe (or trackpad-scroll) through.
+// No arrow buttons: a "swipe" hint and dots show there is more to the right.
+// galleryData[id] = { name, images: [url], names?: [caption], types?: ['photo'|'video'] }
 
-let lbImages = [];
-let lbNames = null; // optional caption per image (portfolio), else the product name
-let lbTypes = null; // optional 'photo' | 'video' per item (portfolio albums); default photo
+let lbItems = [];   // { url, type, name }
 let lbIndex = 0;
-let lbTouchX = null;
+let lbWheelLock = false;
 
 function ensureLightbox() {
   let lb = document.getElementById('lightbox');
@@ -204,21 +205,33 @@ function ensureLightbox() {
   lb.className = 'lightbox';
   lb.innerHTML = `
     <button type="button" class="lb-btn lb-close" onclick="closeLightbox()">×</button>
-    <button type="button" class="lb-btn lb-prev" onclick="stepLightbox(-1)">‹</button>
-    <img class="lb-img" alt="">
-    <video class="lb-img lb-video" controls playsinline style="display:none"></video>
-    <button type="button" class="lb-btn lb-next" onclick="stepLightbox(1)">›</button>
-    <div class="lb-caption"></div>
+    <div class="lb-track"></div>
+    <div class="lb-hint"><span class="lb-hint-text"></span> <span class="lb-hint-arrow">›››</span></div>
+    <div class="lb-footer">
+      <div class="lb-caption"></div>
+      <div class="lb-dots"></div>
+    </div>
   `;
-  // click on the dark background (not the image/buttons) closes it
-  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
-  lb.addEventListener('touchstart', e => { lbTouchX = e.touches[0].clientX; }, { passive: true });
-  lb.addEventListener('touchend', e => {
-    if (lbTouchX === null) return;
-    const dx = e.changedTouches[0].clientX - lbTouchX;
-    lbTouchX = null;
-    if (Math.abs(dx) > 50) stepLightbox(dx < 0 ? 1 : -1);
-  });
+  const track = lb.querySelector('.lb-track');
+  // clicking the dark area around a photo closes the viewer
+  track.addEventListener('click', e => { if (e.target.classList.contains('lb-slide')) closeLightbox(); });
+  track.addEventListener('scroll', () => {
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    if (i !== lbIndex) {
+      lbIndex = i;
+      lb.classList.add('swiped'); // they found it, hide the hint
+      updateLightboxInfo();
+    }
+  }, { passive: true });
+  // a normal mouse wheel scrolls vertically; turn it into next / previous
+  track.addEventListener('wheel', e => {
+    if (lbItems.length < 2 || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // trackpads scroll sideways natively
+    e.preventDefault();
+    if (lbWheelLock) return;
+    lbWheelLock = true;
+    setTimeout(() => { lbWheelLock = false; }, 450);
+    stepLightbox(e.deltaY > 0 ? 1 : -1);
+  }, { passive: false });
   document.body.appendChild(lb);
   return lb;
 }
@@ -226,54 +239,61 @@ function ensureLightbox() {
 function openLightbox(productId, start = 0) {
   const product = galleryData[productId];
   if (!product || !product.images.length) return;
-  lbImages = product.images;
-  lbNames = product.names || null;
-  lbTypes = product.types || null;
+  lbItems = product.images.map((url, i) => ({
+    url,
+    type: (product.types && product.types[i]) || 'photo',
+    name: product.names ? product.names[i] || '' : product.name || '',
+  }));
   lbIndex = start;
 
   const lb = ensureLightbox();
   lb.querySelector('.lb-close').setAttribute('aria-label', t('lb_close'));
-  lb.querySelector('.lb-prev').setAttribute('aria-label', t('lb_prev'));
-  lb.querySelector('.lb-next').setAttribute('aria-label', t('lb_next'));
-  lb.querySelector('img.lb-img').alt = product.name || '';
-  lb.dataset.name = product.name || '';
-  lb.classList.toggle('single', lbImages.length < 2);
+  lb.querySelector('.lb-hint-text').textContent = t('lb_swipe_hint');
+  lb.querySelector('.lb-track').innerHTML = lbItems.map(item => `
+    <div class="lb-slide">
+      ${item.type === 'video'
+        ? `<video class="lb-media" src="${escapeHtml(item.url)}#t=0.1" controls playsinline preload="metadata"></video>`
+        : `<img class="lb-media" src="${escapeHtml(item.url)}" alt="${escapeHtml(item.name)}">`}
+    </div>`).join('');
+  lb.querySelector('.lb-dots').innerHTML = lbItems.length > 1
+    ? lbItems.map((_, i) => `<button type="button" aria-label="${i + 1} / ${lbItems.length}" onclick="goToLightbox(${i})"></button>`).join('')
+    : '';
+  lb.classList.toggle('single', lbItems.length < 2);
+  lb.classList.remove('swiped');
   lb.classList.add('open');
   document.body.style.overflow = 'hidden';
-  showLightboxImage();
+
+  const track = lb.querySelector('.lb-track');
+  track.scrollLeft = track.clientWidth * lbIndex;
+  updateLightboxInfo();
 }
 
-function showLightboxImage() {
+function updateLightboxInfo() {
   const lb = document.getElementById('lightbox');
-  const img = lb.querySelector('img.lb-img');
-  const video = lb.querySelector('.lb-video');
-  const isVideo = !!lbTypes && lbTypes[lbIndex] === 'video';
-  video.pause();
-  img.style.display = isVideo ? 'none' : '';
-  video.style.display = isVideo ? '' : 'none';
-  if (isVideo) {
-    video.src = lbImages[lbIndex];
-    img.removeAttribute('src');
-  } else {
-    video.removeAttribute('src');
-    video.load();
-    img.src = lbImages[lbIndex];
-  }
-  const counter = lbImages.length > 1 ? ` · ${lbIndex + 1} / ${lbImages.length}` : '';
-  const name = lbNames ? lbNames[lbIndex] || '' : lb.dataset.name;
-  lb.querySelector('.lb-caption').textContent = name + counter;
+  const counter = lbItems.length > 1 ? ` · ${lbIndex + 1} / ${lbItems.length}` : '';
+  lb.querySelector('.lb-caption').textContent = (lbItems[lbIndex] ? lbItems[lbIndex].name : '') + counter;
+  lb.querySelectorAll('.lb-dots button').forEach((d, i) => d.classList.toggle('active', i === lbIndex));
+  // only the visible slide's video may keep playing
+  lb.querySelectorAll('.lb-slide').forEach((slide, i) => {
+    const video = slide.querySelector('video');
+    if (video && i !== lbIndex) video.pause();
+  });
+}
+
+function goToLightbox(i) {
+  const track = document.querySelector('#lightbox .lb-track');
+  track.scrollTo({ left: track.clientWidth * i, behavior: 'smooth' });
 }
 
 function stepLightbox(dir) {
-  if (lbImages.length < 2) return;
-  lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
-  showLightboxImage();
+  if (lbItems.length < 2) return;
+  goToLightbox((lbIndex + dir + lbItems.length) % lbItems.length);
 }
 
 function closeLightbox() {
   const lb = document.getElementById('lightbox');
   if (!lb) return;
-  lb.querySelector('.lb-video').pause();
+  lb.querySelectorAll('video').forEach(v => v.pause());
   lb.classList.remove('open');
   document.body.style.overflow = '';
 }

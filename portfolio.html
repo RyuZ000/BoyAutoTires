@@ -59,7 +59,7 @@
                 .filter(a => textMatches(a.name, pfSearch.value))
                 .map(a => {
                     const items = type === 'photo' ? a.photos : type === 'video' ? a.videos : a.items;
-                    return { ...a, items, cover: items.find(i => i.media_type === 'photo') || items[0] };
+                    return { ...a, items, cover: items[0] };
                 })
                 .filter(a => a.items.length);
         }

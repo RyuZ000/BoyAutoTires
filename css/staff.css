@@ -230,28 +230,50 @@
 }
 
 /* ============================================================
-   Lightbox - full-screen image viewer (js/products.js)
+   Lightbox - full-screen viewer (js/products.js)
+   A swipeable strip of slides; a hint + dots show there's more.
    ============================================================ */
 .lightbox {
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0, 0, 0, 0.92);
+    background: rgba(0, 0, 0, 0.97);
     display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 50px 60px;
+    flex-direction: column;
 }
 .lightbox.open { display: flex; }
-.lb-img {
+.lb-track {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+}
+.lb-track::-webkit-scrollbar { display: none; }
+.lb-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 16px 8px;
+    box-sizing: border-box;
+}
+.lb-media {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
     user-select: none;
+    -webkit-user-drag: none;
 }
 .lb-btn {
     position: absolute;
+    z-index: 2;
     border: none;
     background: rgba(255, 255, 255, 0.12);
     color: #fff;
@@ -265,20 +287,50 @@
 }
 .lb-btn:hover { background: var(--gold, #f5c518); color: #111; }
 .lb-close { top: 12px; right: 12px; }
-.lb-prev { left: 10px; top: 50%; transform: translateY(-50%); }
-.lb-next { right: 10px; top: 50%; transform: translateY(-50%); }
-.lightbox.single .lb-prev,
-.lightbox.single .lb-next { display: none; }
-.lb-caption {
+
+/* "swipe for more" hint: nudges to the right until the first swipe */
+.lb-hint {
     position: absolute;
-    bottom: 14px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    color: #ddd;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
     font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+    animation: lbNudge 1.4s ease-in-out infinite;
+    transition: opacity .3s;
 }
+.lb-hint-arrow { color: var(--gold, #f5c518); letter-spacing: -2px; }
+@keyframes lbNudge {
+    0%, 100% { transform: translate(0, -50%); }
+    50% { transform: translate(8px, -50%); }
+}
+.lightbox.single .lb-hint,
+.lightbox.swiped .lb-hint { opacity: 0; animation: none; }
+
+.lb-footer { padding: 10px 16px 18px; text-align: center; }
+.lb-caption { color: #ddd; font-size: 14px; min-height: 20px; }
+.lb-dots { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.lb-dots button {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: width .25s, background .25s;
+}
+.lb-dots button.active { width: 26px; background: var(--gold, #f5c518); }
 @media (max-width: 480px) {
-    .lightbox { padding: 50px 8px; }
+    .lb-slide { padding: 56px 6px 6px; }
     .lb-btn { background: rgba(0, 0, 0, 0.55); }
+    .lb-hint { right: 10px; font-size: 13px; }
 }

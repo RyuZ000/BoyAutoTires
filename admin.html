@@ -162,48 +162,18 @@
     .store-now b.open { color: #2ee07a; }
     .store-now b.closed { color: #ff7a7a; }
 
-    /* portfolio (ผลงาน) tab */
-    .pf-upload {
-        padding: 18px; margin-bottom: 18px;
-        border-radius: 14px; border: 1px solid var(--line); background: var(--panel);
-    }
-    .pf-upload h2 { margin: 0; font-size: 18px; }
-    .pf-upload .field-label:first-of-type { margin-top: 12px; }
-    .pf-pending { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 12px; }
-    .pf-pending:empty { display: none; }
-    .pf-pending .image-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* drag to reorder photos (SortableJS) */
+    .image-thumb { cursor: grab; touch-action: manipulation; }
+    .image-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .image-thumb.sortable-chosen { transform: scale(1.06); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+    .image-thumb.sortable-ghost { opacity: .35; }
     .pf-type-tag {
         position: absolute; left: 5px; top: 5px;
         background: rgba(0, 0, 0, 0.75); color: #fff;
         font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 8px;
     }
-    .pf-upload-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
-    #pf-upload-status { font-size: 13px; color: var(--muted); }
-    .pf-admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-    .pf-admin-card {
-        position: relative;
-        background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
-    }
-    .pf-admin-card img, .pf-admin-card video { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: #000; }
-    .pf-admin-body { display: flex; gap: 8px; padding: 10px; }
-    .pf-admin-body .field { padding: 8px 10px; font-size: 14px; }
-    .pf-admin-card .remove-img {
-        position: absolute; top: 6px; right: 6px;
-        width: 30px; height: 30px; padding: 0;
-        border: none; border-radius: 50%;
-        background: rgba(0, 0, 0, 0.75); color: #fff;
-        font-size: 18px; line-height: 30px; cursor: pointer;
-    }
-    .pf-admin-card .remove-img:hover { background: #d33; }
-    .pf-admin-card.open { grid-column: 1 / -1; }
-    .pf-admin-card.open > img, .pf-admin-card.open > video { max-width: 260px; }
-    .pf-admin-actions { display: flex; gap: 8px; padding: 0 10px 10px; }
-    .pf-admin-actions .btn-sm { flex: 1; }
-    .pf-album-files {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px;
-        padding: 0 10px 12px;
-    }
-    .pf-album-files .image-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .drag-hint { display: block; font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .drag-hint:empty { display: none; }
 
     .list-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .list-toolbar .field { max-width: 420px; border-radius: 999px; padding: 10px 18px; }
@@ -362,15 +332,12 @@
         font-size: 16px; line-height: 26px; cursor: pointer;
     }
     .image-thumb .remove-img:hover { background: #d33; }
-    .image-thumb .cover-tag, .image-thumb .make-cover {
+    .image-thumb .cover-tag {
         position: absolute; left: 0; right: 0; bottom: 0;
-        border: none;
-        font: inherit; font-size: 11px; font-weight: 700;
+        font-size: 11px; font-weight: 700;
         text-align: center; padding: 4px 0;
+        background: var(--gold); color: #111;
     }
-    .image-thumb .cover-tag { background: var(--gold); color: #111; }
-    .image-thumb .make-cover { background: rgba(0, 0, 0, 0.7); color: #fff; cursor: pointer; }
-    .image-thumb .make-cover:hover { background: rgba(0, 0, 0, 0.9); color: var(--gold); }
     #upload-status { font-size: 13px; color: var(--muted); margin-top: 8px; }
 
     /* ---------------- Toast ---------------- */
@@ -430,7 +397,7 @@
             <h1 data-i18n="dash_title">จัดการสินค้า</h1>
             <p data-i18n="dash_sub"></p>
         </div>
-        <button type="button" class="btn btn-gold" id="add-product-btn" onclick="openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
+        <button type="button" class="btn btn-gold" id="add-product-btn" onclick="currentCategory === 'portfolio' ? openPortfolioForm() : openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
     </div>
 
     <div class="store-panel">
@@ -453,32 +420,12 @@
 
     <!-- portfolio photos/videos shown on /portfolio -->
     <section id="portfolio-view" hidden>
-        <div class="pf-upload">
-            <h2 data-i18n="pf_add_title">＋ เพิ่มผลงาน</h2>
-            <label class="field-label" for="pf-car"><span data-i18n="pf_field_car">ชื่อรถ</span> <span class="req">*</span></label>
-            <input class="field" type="text" id="pf-car" list="pf-car-list" autocomplete="off" data-i18n-placeholder="pf_car_ph">
-            <datalist id="pf-car-list"></datalist>
-            <span class="field-hint" data-i18n="pf_car_hint">ใช้ชื่อรถเดิม ไฟล์จะเข้าอัลบั้มเดียวกัน</span>
-            <span class="field-label" data-i18n="pf_field_files">รูปภาพ / วิดีโอ</span>
-            <label class="dropzone" id="pf-dropzone">
-                <input type="file" id="pf-file" class="visually-hidden" accept="image/*,video/*" multiple onchange="addPortfolioFiles(this.files); this.value='';">
-                <span class="dz-icon">📷 🎬</span>
-                <span class="dz-text" data-i18n="pf_dz_text">กดเพื่อเลือกรูปหรือวิดีโอ หรือลากมาวางตรงนี้</span>
-                <small data-i18n="pf_dz_hint">เลือกได้หลายไฟล์ · วิดีโอไม่เกิน 50 MB ต่อไฟล์</small>
-            </label>
-            <div class="pf-pending" id="pf-pending"></div>
-            <div class="pf-upload-foot">
-                <button type="button" class="btn btn-gold" id="pf-upload-btn" onclick="uploadPortfolio()" data-i18n="pf_upload_btn">อัปโหลด</button>
-                <span id="pf-upload-status"></span>
-            </div>
-        </div>
-
         <div class="list-toolbar">
             <input type="search" class="field" id="pf-admin-search" data-i18n-placeholder="pf_search" oninput="renderPortfolioAdmin()">
             <span class="muted" id="pf-count"></span>
         </div>
         <div class="status-msg" id="pf-status" hidden></div>
-        <div class="pf-admin-grid" id="pf-admin-grid"></div>
+        <div class="product-list" id="pf-list"></div>
     </section>
 </main>
 
@@ -530,6 +477,7 @@
                 <small data-i18n="dz_hint">เลือกได้หลายรูป · รูปที่มีกรอบสีทองคือรูปหลักที่ลูกค้าเห็นก่อน</small>
             </label>
             <div class="image-grid" id="image-grid"></div>
+            <span class="drag-hint" id="image-drag-hint"></span>
             <div id="upload-status"></div>
 
             <div class="stock-box">
@@ -552,9 +500,47 @@
     </form>
 </div>
 
+<!-- ===================== PORTFOLIO DRAWER ===================== -->
+<div class="drawer-backdrop" id="pf-drawer" hidden>
+    <form class="drawer" onsubmit="savePortfolio(event)" novalidate>
+        <div class="drawer-head">
+            <div>
+                <div class="drawer-cat">🏆 <span data-i18n="tab_portfolio">ผลงาน</span></div>
+                <h2 id="pf-form-title"></h2>
+            </div>
+            <button type="button" class="drawer-close" onclick="closePortfolioForm()" aria-label="Close">×</button>
+        </div>
+
+        <div class="drawer-body">
+            <label class="field-label" for="pf-car"><span data-i18n="pf_field_car">ชื่อรถ</span> <span class="req">*</span></label>
+            <input class="field" type="text" id="pf-car" autocomplete="off" data-i18n-placeholder="pf_car_ph">
+
+            <span class="field-label" data-i18n="pf_field_files">รูปภาพ / วิดีโอ</span>
+            <label class="dropzone" id="pf-dropzone">
+                <input type="file" id="pf-file" class="visually-hidden" accept="image/*,video/*" multiple onchange="addPortfolioFiles(this.files); this.value='';">
+                <span class="dz-icon">📷 🎬</span>
+                <span class="dz-text" data-i18n="pf_dz_text">กดเพื่อเลือกรูปหรือวิดีโอ หรือลากมาวางตรงนี้</span>
+                <small data-i18n="pf_dz_hint">เลือกได้หลายไฟล์ · ไฟล์ละไม่เกิน 50 MB</small>
+            </label>
+            <div class="image-grid" id="pf-grid-edit"></div>
+            <span class="drag-hint" id="pf-drag-hint"></span>
+            <div id="pf-upload-status"></div>
+        </div>
+
+        <div class="drawer-foot">
+            <div class="error-msg" id="pf-form-error"></div>
+            <div class="btns">
+                <button type="button" class="btn btn-outline" onclick="closePortfolioForm()" data-i18n="btn_cancel">ยกเลิก</button>
+                <button type="submit" class="btn btn-gold" id="pf-save-btn" data-i18n="btn_save">บันทึก</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/i18n.js"></script>
@@ -709,18 +695,21 @@
         const isPortfolio = cat === 'portfolio';
         document.getElementById('products-view').hidden = isPortfolio;
         document.getElementById('portfolio-view').hidden = !isPortfolio;
-        document.getElementById('add-product-btn').hidden = isPortfolio;
+        const addBtn = document.getElementById('add-product-btn');
+        addBtn.setAttribute('data-i18n', isPortfolio ? 'pf_add_title' : 'btn_add');
+        addBtn.textContent = t(addBtn.getAttribute('data-i18n'));
         document.getElementById('list-search').value = '';
         renderTabs();
         if (isPortfolio) renderPortfolioAdmin();
         else renderList();
     }
 
-    // ---- Portfolio (ผลงาน): photos/videos + car name, shown on /portfolio ----
+    // ---- Portfolio (ผลงาน): one row per car, edited in a drawer like products ----
     const PORTFOLIO_BUCKET = 'portfolio';
     const PORTFOLIO_MAX_BYTES = 50 * 1024 * 1024; // bucket limit (supabase-add-portfolio.sql)
     let portfolioItems = [];
-    let pfPending = []; // { file, preview, type } waiting to be uploaded
+    let pfEditKey = null;   // album being edited, null when adding
+    let pfFormItems = [];   // in display order: { id, url, type } saved, or { file, preview, type } new
 
     async function refreshPortfolio() {
         const { data, error } = await sb
@@ -739,84 +728,74 @@
         renderPortfolioAdmin();
     }
 
-    // one card per car (album); "manage" shows the album's files so single ones can be removed
-    const pfOpenAlbums = new Set();
-
-    function renderPortfolioAdmin() {
-        const query = document.getElementById('pf-admin-search').value;
-        const all = groupPortfolio(portfolioItems);
-        const albums = all.filter(a => textMatches(a.name, query));
-        const statusEl = document.getElementById('pf-status');
-        document.getElementById('pf-count').textContent = `${albums.length} ${t('pf_album_suffix')}`;
-        statusEl.textContent = t(all.length ? 'list_no_match' : 'pf_empty_admin');
-        statusEl.hidden = albums.length > 0;
-
-        document.getElementById('pf-car-list').innerHTML =
-            all.filter(a => a.name).map(a => `<option value="${escHtml(a.name)}">`).join('');
-
-        document.getElementById('pf-admin-grid').innerHTML = albums.map(a => {
-            const open = pfOpenAlbums.has(a.key);
-            const cover = a.cover.media_type === 'video'
-                ? `<video src="${escHtml(a.cover.url)}#t=0.1" muted playsinline preload="metadata"></video>`
-                : `<img src="${escHtml(a.cover.url)}" alt="" loading="lazy">`;
-            return `
-            <div class="pf-admin-card ${open ? 'open' : ''}">
-                ${cover}
-                <span class="pf-type-tag">${a.photos.length ? '📷 ' + a.photos.length : ''} ${a.videos.length ? '🎬 ' + a.videos.length : ''}</span>
-                <div class="pf-admin-body">
-                    <input class="field" type="text" value="${escHtml(a.name)}" placeholder="${escHtml(t('pf_no_name'))}"
-                           onchange="renameAlbum('${a.key}', this)" aria-label="${escHtml(t('pf_field_car'))}">
-                </div>
-                <div class="pf-admin-actions">
-                    <button type="button" class="btn-sm" onclick="addToAlbum('${a.key}')">${t('pf_add_files')}</button>
-                    <button type="button" class="btn-sm" onclick="toggleAlbum('${a.key}')">${t(open ? 'pf_manage_close' : 'pf_manage')}</button>
-                </div>
-                ${open ? `<div class="pf-album-files">${a.items.map(i => `
-                    <div class="image-thumb">
-                        ${i.media_type === 'video'
-                            ? `<video src="${escHtml(i.url)}#t=0.1" muted playsinline preload="metadata"></video>`
-                            : `<img src="${escHtml(i.url)}" alt="" loading="lazy">`}
-                        <span class="pf-type-tag">${i.media_type === 'video' ? '🎬' : '📷'}</span>
-                        <button type="button" class="remove-img" title="${t('btn_delete')}" aria-label="${t('btn_delete')}" onclick="deletePortfolioItem('${i.id}')">×</button>
-                    </div>`).join('')}</div>` : ''}
-            </div>`;
-        }).join('');
-        renderPortfolioPending();
-    }
-
     function findAlbum(key) {
         return groupPortfolio(portfolioItems).find(a => a.key === key);
     }
 
-    function toggleAlbum(key) {
-        if (pfOpenAlbums.has(key)) pfOpenAlbums.delete(key);
-        else pfOpenAlbums.add(key);
-        renderPortfolioAdmin();
+    function mediaThumb(url, type) {
+        return type === 'video'
+            ? `<video src="${escHtml(url)}#t=0.1" muted playsinline preload="metadata"></video>`
+            : `<img src="${escHtml(url)}" alt="" loading="lazy">`;
     }
 
-    // fill the upload box with this car's name and open the file picker
-    function addToAlbum(key) {
-        const album = findAlbum(key);
-        const carInput = document.getElementById('pf-car');
-        carInput.value = album ? album.name : '';
-        document.querySelector('.pf-upload').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        document.getElementById('pf-file').click();
+    function renderPortfolioAdmin() {
+        const all = groupPortfolio(portfolioItems);
+        const albums = all.filter(a => textMatches(a.name, document.getElementById('pf-admin-search').value));
+        const statusEl = document.getElementById('pf-status');
+        document.getElementById('pf-count').textContent = `${albums.length} ${t('pf_count_suffix')}`;
+        statusEl.textContent = t(all.length ? 'list_no_match' : 'pf_empty_admin');
+        statusEl.hidden = albums.length > 0;
+
+        document.getElementById('pf-list').innerHTML = albums.map(a => `
+            <div class="product-row">
+                <div class="thumb">
+                    ${mediaThumb(a.cover.url, a.cover.media_type)}
+                    ${a.items.length > 1 ? `<span class="img-count">${a.items.length}</span>` : ''}
+                </div>
+                <div class="info">
+                    <h4 title="${escHtml(a.name)}">${escHtml(a.name || t('pf_no_name'))}</h4>
+                    <div class="meta">
+                        ${a.photos.length ? `<span>📷 ${a.photos.length}</span>` : ''}
+                        ${a.videos.length ? `<span>🎬 ${a.videos.length}</span>` : ''}
+                    </div>
+                </div>
+                <span></span>
+                <div class="row-actions">
+                    <button type="button" class="btn-sm" onclick="openPortfolioForm('${a.key}')">${t('btn_edit')}</button>
+                    <button type="button" class="btn-sm danger" onclick="deletePortfolioAlbum('${a.key}')">${t('btn_delete')}</button>
+                </div>
+            </div>`).join('');
     }
 
-    // renaming an album renames every file in it (and merges it into another album with that name)
-    async function renameAlbum(key, input) {
-        const album = findAlbum(key);
-        if (!album) return;
-        const car_name = input.value.trim();
-        const ids = album.items.map(i => i.id);
-        const { error } = await sb.from('portfolio_items').update({ car_name }).in('id', ids);
-        if (error) {
-            showToast(t('save_error') + error.message, 'error');
-            input.value = album.name;
-            return;
-        }
-        showToast(t('toast_saved'));
-        refreshPortfolio();
+    function openPortfolioForm(key = null) {
+        const album = key ? findAlbum(key) : null;
+        pfEditKey = album ? album.key : null;
+        pfFormItems.forEach(i => i.preview && URL.revokeObjectURL(i.preview));
+        pfFormItems = album ? album.items.map(i => ({ id: i.id, url: i.url, type: i.media_type })) : [];
+        document.getElementById('pf-car').value = album ? album.name : '';
+        document.getElementById('pf-form-title').textContent = t(album ? 'pf_form_edit' : 'pf_add_title');
+        document.getElementById('pf-form-error').textContent = '';
+        document.getElementById('pf-upload-status').textContent = '';
+        renderPortfolioForm();
+        document.getElementById('pf-drawer').hidden = false;
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('pf-car').focus(), 50);
+    }
+
+    function closePortfolioForm() {
+        document.getElementById('pf-drawer').hidden = true;
+        document.body.style.overflow = '';
+    }
+
+    function renderPortfolioForm() {
+        document.getElementById('pf-grid-edit').innerHTML = pfFormItems.map((item, i) => `
+            <div class="image-thumb ${i === 0 ? 'cover' : ''}">
+                ${mediaThumb(item.url || item.preview, item.type)}
+                ${item.type === 'video' ? '<span class="pf-type-tag">🎬</span>' : ''}
+                <button type="button" class="remove-img" aria-label="${t('image_remove')}" onclick="removePortfolioFormItem(${i})">×</button>
+                ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
+            </div>`).join('');
+        document.getElementById('pf-drag-hint').textContent = pfFormItems.length > 1 ? t('drag_hint') : '';
     }
 
     function addPortfolioFiles(files) {
@@ -827,90 +806,101 @@
                 showToast(`${t('pf_too_big')} (${file.name})`, 'error');
                 continue;
             }
-            pfPending.push({ file, type, preview: URL.createObjectURL(file) });
+            pfFormItems.push({ file, type, preview: URL.createObjectURL(file) });
         }
-        document.getElementById('pf-upload-status').textContent = '';
-        renderPortfolioPending();
+        renderPortfolioForm();
     }
 
-    function removePortfolioPending(index) {
-        const [removed] = pfPending.splice(index, 1);
-        if (removed) URL.revokeObjectURL(removed.preview);
-        renderPortfolioPending();
+    function removePortfolioFormItem(index) {
+        const [removed] = pfFormItems.splice(index, 1);
+        if (removed && removed.preview) URL.revokeObjectURL(removed.preview);
+        renderPortfolioForm();
     }
 
-    function renderPortfolioPending() {
-        document.getElementById('pf-pending').innerHTML = pfPending.map((p, i) => `
-            <div class="image-thumb">
-                ${p.type === 'video' ? `<video src="${p.preview}" muted></video>` : `<img src="${p.preview}" alt="">`}
-                <span class="pf-type-tag">${p.type === 'video' ? '🎬' : '📷'}</span>
-                <button type="button" class="remove-img" aria-label="${t('image_remove')}" onclick="removePortfolioPending(${i})">×</button>
-            </div>`).join('');
+    // uploaded files live in the bucket; the original shop photos are site files and stay
+    async function removePortfolioFiles(urls) {
+        const marker = `/storage/v1/object/public/${PORTFOLIO_BUCKET}/`;
+        const paths = urls
+            .filter(url => url.includes(marker))
+            .map(url => decodeURIComponent(url.slice(url.indexOf(marker) + marker.length)));
+        if (paths.length) await sb.storage.from(PORTFOLIO_BUCKET).remove(paths);
     }
 
-    async function uploadPortfolio() {
-        const carInput = document.getElementById('pf-car');
+    async function savePortfolio(e) {
+        e.preventDefault();
+        const errEl = document.getElementById('pf-form-error');
         const statusEl = document.getElementById('pf-upload-status');
-        const btn = document.getElementById('pf-upload-btn');
-        const car_name = carInput.value.trim();
+        const btn = document.getElementById('pf-save-btn');
+        const car_name = document.getElementById('pf-car').value.trim();
+        errEl.textContent = '';
         if (!car_name) {
-            showToast(t('pf_car_required'), 'error');
-            carInput.focus();
+            errEl.textContent = t('pf_car_required');
+            document.getElementById('pf-car').focus();
             return;
         }
-        if (!pfPending.length) {
-            showToast(t('pf_files_required'), 'error');
+        if (!pfFormItems.length) {
+            errEl.textContent = t('pf_files_required');
             return;
         }
 
         btn.disabled = true;
-        let done = 0;
-        const total = pfPending.length;
+        btn.textContent = t('btn_saving');
         try {
-            // upload one by one; each finished file leaves the pending list,
-            // so pressing upload again after an error only retries the rest
-            while (pfPending.length) {
-                const p = pfPending[0];
-                statusEl.textContent = `${t('upload_uploading')} (${done + 1}/${total})`;
-                const ext = p.file.name.split('.').pop();
-                const path = `${p.type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-                const { error: upErr } = await sb.storage.from(PORTFOLIO_BUCKET).upload(path, p.file);
-                if (upErr) throw upErr;
-                const { data } = sb.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path);
-                const { error: dbErr } = await sb.from('portfolio_items').insert({ media_type: p.type, url: data.publicUrl, car_name });
-                if (dbErr) throw dbErr;
-                URL.revokeObjectURL(p.preview);
-                pfPending.shift();
-                done++;
+            // 1. upload new files (an item keeps its url, so a retry won't upload it twice)
+            const pending = pfFormItems.filter(i => i.file);
+            for (const [n, item] of pending.entries()) {
+                statusEl.textContent = `${t('upload_uploading')} (${n + 1}/${pending.length})`;
+                const ext = item.file.name.split('.').pop();
+                const path = `${item.type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                const { error } = await sb.storage.from(PORTFOLIO_BUCKET).upload(path, item.file);
+                if (error) throw error;
+                URL.revokeObjectURL(item.preview);
+                item.url = sb.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path).data.publicUrl;
+                delete item.file;
+                delete item.preview;
             }
             statusEl.textContent = '';
-            carInput.value = '';
-            showToast(t('pf_uploaded'));
+
+            // 2. files removed in the form
+            const album = pfEditKey ? findAlbum(pfEditKey) : null;
+            const keptIds = new Set(pfFormItems.map(i => i.id).filter(Boolean));
+            const removed = album ? album.items.filter(i => !keptIds.has(i.id)) : [];
+            if (removed.length) {
+                const { error } = await sb.from('portfolio_items').delete().in('id', removed.map(i => i.id));
+                if (error) throw error;
+                await removePortfolioFiles(removed.map(i => i.url));
+            }
+
+            // 3. save name + position of every file (new ones get inserted)
+            for (const [sort_order, item] of pfFormItems.entries()) {
+                const { data, error } = item.id
+                    ? await sb.from('portfolio_items').update({ car_name, sort_order }).eq('id', item.id).select('id')
+                    : await sb.from('portfolio_items').insert({ media_type: item.type, url: item.url, car_name, sort_order }).select('id');
+                if (error) throw error;
+                item.id = data[0].id;
+            }
+
+            closePortfolioForm();
+            showToast(t('toast_saved'));
+            refreshPortfolio();
         } catch (err) {
             console.error(err);
-            statusEl.textContent = t('upload_error') + err.message;
+            errEl.textContent = t('save_error') + err.message;
         } finally {
             btn.disabled = false;
-            renderPortfolioPending();
-            refreshPortfolio();
+            btn.textContent = t('btn_save');
         }
     }
 
-    async function deletePortfolioItem(id) {
-        const item = portfolioItems.find(i => i.id === id);
-        if (!item || !confirm(`${t('pf_confirm_delete')}\n\n${item.car_name || ''}`)) return;
-        const { error } = await sb.from('portfolio_items').delete().eq('id', id);
+    async function deletePortfolioAlbum(key) {
+        const album = findAlbum(key);
+        if (!album || !confirm(`${t('pf_confirm_delete')}\n\n${album.name || t('pf_no_name')}`)) return;
+        const { error } = await sb.from('portfolio_items').delete().in('id', album.items.map(i => i.id));
         if (error) {
             showToast(t('delete_error') + error.message, 'error');
             return;
         }
-        // uploaded files live in the bucket; the original shop photos are site files and stay
-        const marker = `/storage/v1/object/public/${PORTFOLIO_BUCKET}/`;
-        const at = item.url.indexOf(marker);
-        if (at !== -1) {
-            const path = decodeURIComponent(item.url.slice(at + marker.length));
-            await sb.storage.from(PORTFOLIO_BUCKET).remove([path]);
-        }
+        await removePortfolioFiles(album.items.map(i => i.url));
         showToast(t('toast_deleted'));
         refreshPortfolio();
     }
@@ -1157,22 +1147,32 @@
         renderImageGrid();
     }
 
-    function makeCover(index) {
-        const [img] = formImages.splice(index, 1);
-        formImages.unshift(img);
-        renderImageGrid();
-    }
-
     function renderImageGrid() {
         document.getElementById('image-grid').innerHTML = formImages.map((img, i) => `
             <div class="image-thumb ${i === 0 ? 'cover' : ''}">
                 <img src="${escHtml(img.url || img.preview)}" alt="">
                 <button type="button" class="remove-img" title="${t('image_remove')}" aria-label="${t('image_remove')}" onclick="removeImage(${i})">×</button>
-                ${i === 0
-                    ? `<div class="cover-tag">★ ${t('image_cover')}</div>`
-                    : `<button type="button" class="make-cover" onclick="makeCover(${i})">${t('image_make_cover')}</button>`}
+                ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>
         `).join('');
+        document.getElementById('image-drag-hint').textContent = formImages.length > 1 ? t('drag_hint') : '';
+    }
+
+    // press-and-hold (touch) or drag (mouse) a photo to move it; the first one is the cover
+    function makeSortable(gridId, getList, render) {
+        Sortable.create(document.getElementById(gridId), {
+            animation: 150,
+            delay: 200,
+            delayOnTouchOnly: true,
+            filter: '.remove-img',
+            preventOnFilter: false,
+            onEnd(evt) {
+                if (evt.oldIndex === evt.newIndex) return;
+                const list = getList();
+                list.splice(evt.newIndex, 0, list.splice(evt.oldIndex, 1)[0]);
+                render();
+            },
+        });
     }
 
     async function uploadImages() {
@@ -1223,6 +1223,9 @@
             addImages(e.dataTransfer.files);
         });
 
+        makeSortable('image-grid', () => formImages, renderImageGrid);
+        makeSortable('pf-grid-edit', () => pfFormItems, renderPortfolioForm);
+
         const pfDz = document.getElementById('pf-dropzone');
         ['dragenter', 'dragover'].forEach(ev => pfDz.addEventListener(ev, e => {
             e.preventDefault();
@@ -1240,6 +1243,7 @@
         updatePasswordToggleUI();
         updateFormText();
         renderImageGrid();
+        renderPortfolioForm();
         if (!document.getElementById('dashboard').hidden) {
             renderTabs();
             if (currentCategory === 'portfolio') renderPortfolioAdmin();
