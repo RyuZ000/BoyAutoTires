@@ -1,5 +1,9 @@
 {
+  "cleanUrls": true,
   "crons": [
-    { "path": "/api/keepalive", "schedule": "0 2 * * *" }
+    {
+      "path": "/api/keepalive",
+      "schedule": "0 2 * * *"
+    }
   ]
 }

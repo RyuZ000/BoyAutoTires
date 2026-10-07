@@ -26,11 +26,11 @@ const SITE_SOCIAL = [
 ];
 
 const SITE_NAV = [
-  { page: 'home', href: 'index.html', key: 'nav_home' },
-  { page: 'wheels', href: 'alloywheel.html', key: 'nav_wheels' },
-  { page: 'tires', href: 'tires.html', key: 'nav_tires' },
-  { page: 'shock', href: 'shock.html', key: 'nav_shock' },
-  { page: 'brake', href: 'brake.html', key: 'nav_brake' },
+  { page: 'home', href: '/', key: 'nav_home' },
+  { page: 'wheels', href: '/alloywheel', key: 'nav_wheels' },
+  { page: 'tires', href: '/tires', key: 'nav_tires' },
+  { page: 'shock', href: '/shock', key: 'nav_shock' },
+  { page: 'brake', href: '/brake', key: 'nav_brake' },
 ];
 
 function renderSiteHeader() {
@@ -54,8 +54,8 @@ function renderSiteHeader() {
             <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
           </div>
           <div class="staff-corner">
-            <a id="staff-login-link" href="admin.html" class="staff-btn" data-i18n="staff_login">🔒 Staff Login</a>
-            <a id="staff-admin-link" href="admin.html" class="staff-btn" style="display:none;" data-i18n="staff_admin">🛠 Admin Panel</a>
+            <a id="staff-login-link" href="/admin" class="staff-btn" data-i18n="staff_login">🔒 Staff Login</a>
+            <a id="staff-admin-link" href="/admin" class="staff-btn" style="display:none;" data-i18n="staff_admin">🛠 Admin Panel</a>
             <a id="staff-logout-link" href="#" class="staff-btn" style="display:none;" data-i18n="staff_logout" onclick="staffLogout(); return false;">Log out</a>
           </div>
         </div>
@@ -63,7 +63,7 @@ function renderSiteHeader() {
     </div>
     <header class="site-header">
       <div class="container">
-        <a href="index.html" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
+        <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
         <nav class="main-nav" id="main-nav">${navLinks}</nav>
         <a href="tel:${SITE_CONTACT.phoneTel}" class="header-cta" data-i18n="cta_call">📞 โทรเลย</a>
         <button type="button" class="menu-toggle" aria-label="Menu"
@@ -85,7 +85,7 @@ function renderSiteFooter() {
     <footer class="site-footer">
       <div class="container footer-grid">
         <div>
-          <a href="index.html" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
+          <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
           <p data-i18n="tagline"></p>
           <div class="footer-social">${social}</div>
         </div>

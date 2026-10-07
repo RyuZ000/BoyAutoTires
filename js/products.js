@@ -173,7 +173,7 @@ function initProductPage(category, defaultSort, options = {}) {
   searchEl.addEventListener('input', render);
   sortEl.addEventListener('change', render);
 
-  // search box on the home page links here as tires.html?q=...
+  // search box on the home page links here as /tires?q=...
   const initialQuery = new URLSearchParams(location.search).get('q');
   if (initialQuery) searchEl.value = initialQuery;
 

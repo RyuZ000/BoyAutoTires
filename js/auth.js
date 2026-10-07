@@ -22,7 +22,7 @@ async function initAuthUI() {
 
 async function staffLogout() {
   await sb.auth.signOut();
-  window.location.href = 'index.html';
+  window.location.href = '/';
 }
 
 // Keep the corner buttons in sync if the session changes in this tab
