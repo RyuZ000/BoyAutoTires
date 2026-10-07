@@ -195,6 +195,15 @@
         font-size: 18px; line-height: 30px; cursor: pointer;
     }
     .pf-admin-card .remove-img:hover { background: #d33; }
+    .pf-admin-card.open { grid-column: 1 / -1; }
+    .pf-admin-card.open > img, .pf-admin-card.open > video { max-width: 260px; }
+    .pf-admin-actions { display: flex; gap: 8px; padding: 0 10px 10px; }
+    .pf-admin-actions .btn-sm { flex: 1; }
+    .pf-album-files {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px;
+        padding: 0 10px 12px;
+    }
+    .pf-album-files .image-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .list-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .list-toolbar .field { max-width: 420px; border-radius: 999px; padding: 10px 18px; }
@@ -447,7 +456,9 @@
         <div class="pf-upload">
             <h2 data-i18n="pf_add_title">＋ เพิ่มผลงาน</h2>
             <label class="field-label" for="pf-car"><span data-i18n="pf_field_car">ชื่อรถ</span> <span class="req">*</span></label>
-            <input class="field" type="text" id="pf-car" data-i18n-placeholder="pf_car_ph">
+            <input class="field" type="text" id="pf-car" list="pf-car-list" autocomplete="off" data-i18n-placeholder="pf_car_ph">
+            <datalist id="pf-car-list"></datalist>
+            <span class="field-hint" data-i18n="pf_car_hint">ใช้ชื่อรถเดิม ไฟล์จะเข้าอัลบั้มเดียวกัน</span>
             <span class="field-label" data-i18n="pf_field_files">รูปภาพ / วิดีโอ</span>
             <label class="dropzone" id="pf-dropzone">
                 <input type="file" id="pf-file" class="visually-hidden" accept="image/*,video/*" multiple onchange="addPortfolioFiles(this.files); this.value='';">
@@ -549,6 +560,7 @@
 <script src="js/i18n.js"></script>
 <script src="js/store-status.js"></script>
 <script src="js/search.js"></script>
+<script src="js/portfolio.js"></script>
 <script>
     const CATEGORIES = [
         { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
@@ -682,7 +694,7 @@
     function renderTabs() {
         const tabs = [
             ...CATEGORIES.map(c => ({ ...c, count: products.filter(p => p.category === c.cat).length })),
-            { cat: 'portfolio', key: 'tab_portfolio', icon: '🏆', count: portfolioItems.length },
+            { cat: 'portfolio', key: 'tab_portfolio', icon: '🏆', count: groupPortfolio(portfolioItems).length },
         ];
         document.getElementById('cat-tabs').innerHTML = tabs.map(c => `
                 <button type="button" class="cat-tab ${c.cat === currentCategory ? 'active' : ''}" onclick="switchTab('${c.cat}')">
@@ -727,30 +739,84 @@
         renderPortfolioAdmin();
     }
 
+    // one card per car (album); "manage" shows the album's files so single ones can be removed
+    const pfOpenAlbums = new Set();
+
     function renderPortfolioAdmin() {
-        const query = document.getElementById('pf-admin-search').value.trim().toLowerCase();
-        const list = portfolioItems.filter(i => textMatches(i.car_name, query));
+        const query = document.getElementById('pf-admin-search').value;
+        const all = groupPortfolio(portfolioItems);
+        const albums = all.filter(a => textMatches(a.name, query));
         const statusEl = document.getElementById('pf-status');
-        document.getElementById('pf-count').textContent = `${list.length} ${t('pf_count_suffix')}`;
-        if (!list.length) {
-            statusEl.textContent = t(portfolioItems.length ? 'list_no_match' : 'pf_empty_admin');
-            statusEl.hidden = false;
-        } else {
-            statusEl.hidden = true;
-        }
-        document.getElementById('pf-admin-grid').innerHTML = list.map(i => `
-            <div class="pf-admin-card">
-                ${i.media_type === 'video'
-                    ? `<video src="${escHtml(i.url)}#t=0.1" controls playsinline preload="metadata"></video>`
-                    : `<img src="${escHtml(i.url)}" alt="" loading="lazy">`}
-                <span class="pf-type-tag">${i.media_type === 'video' ? '🎬 ' + t('pf_tab_video') : '📷 ' + t('pf_tab_photo')}</span>
-                <button type="button" class="remove-img" title="${t('btn_delete')}" aria-label="${t('btn_delete')}" onclick="deletePortfolioItem('${i.id}')">×</button>
+        document.getElementById('pf-count').textContent = `${albums.length} ${t('pf_album_suffix')}`;
+        statusEl.textContent = t(all.length ? 'list_no_match' : 'pf_empty_admin');
+        statusEl.hidden = albums.length > 0;
+
+        document.getElementById('pf-car-list').innerHTML =
+            all.filter(a => a.name).map(a => `<option value="${escHtml(a.name)}">`).join('');
+
+        document.getElementById('pf-admin-grid').innerHTML = albums.map(a => {
+            const open = pfOpenAlbums.has(a.key);
+            const cover = a.cover.media_type === 'video'
+                ? `<video src="${escHtml(a.cover.url)}#t=0.1" muted playsinline preload="metadata"></video>`
+                : `<img src="${escHtml(a.cover.url)}" alt="" loading="lazy">`;
+            return `
+            <div class="pf-admin-card ${open ? 'open' : ''}">
+                ${cover}
+                <span class="pf-type-tag">${a.photos.length ? '📷 ' + a.photos.length : ''} ${a.videos.length ? '🎬 ' + a.videos.length : ''}</span>
                 <div class="pf-admin-body">
-                    <input class="field" type="text" value="${escHtml(i.car_name)}" placeholder="${escHtml(t('pf_car_ph'))}"
-                           onchange="renamePortfolioItem('${i.id}', this)" aria-label="${escHtml(t('pf_field_car'))}">
+                    <input class="field" type="text" value="${escHtml(a.name)}" placeholder="${escHtml(t('pf_no_name'))}"
+                           onchange="renameAlbum('${a.key}', this)" aria-label="${escHtml(t('pf_field_car'))}">
                 </div>
-            </div>`).join('');
+                <div class="pf-admin-actions">
+                    <button type="button" class="btn-sm" onclick="addToAlbum('${a.key}')">${t('pf_add_files')}</button>
+                    <button type="button" class="btn-sm" onclick="toggleAlbum('${a.key}')">${t(open ? 'pf_manage_close' : 'pf_manage')}</button>
+                </div>
+                ${open ? `<div class="pf-album-files">${a.items.map(i => `
+                    <div class="image-thumb">
+                        ${i.media_type === 'video'
+                            ? `<video src="${escHtml(i.url)}#t=0.1" muted playsinline preload="metadata"></video>`
+                            : `<img src="${escHtml(i.url)}" alt="" loading="lazy">`}
+                        <span class="pf-type-tag">${i.media_type === 'video' ? '🎬' : '📷'}</span>
+                        <button type="button" class="remove-img" title="${t('btn_delete')}" aria-label="${t('btn_delete')}" onclick="deletePortfolioItem('${i.id}')">×</button>
+                    </div>`).join('')}</div>` : ''}
+            </div>`;
+        }).join('');
         renderPortfolioPending();
+    }
+
+    function findAlbum(key) {
+        return groupPortfolio(portfolioItems).find(a => a.key === key);
+    }
+
+    function toggleAlbum(key) {
+        if (pfOpenAlbums.has(key)) pfOpenAlbums.delete(key);
+        else pfOpenAlbums.add(key);
+        renderPortfolioAdmin();
+    }
+
+    // fill the upload box with this car's name and open the file picker
+    function addToAlbum(key) {
+        const album = findAlbum(key);
+        const carInput = document.getElementById('pf-car');
+        carInput.value = album ? album.name : '';
+        document.querySelector('.pf-upload').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('pf-file').click();
+    }
+
+    // renaming an album renames every file in it (and merges it into another album with that name)
+    async function renameAlbum(key, input) {
+        const album = findAlbum(key);
+        if (!album) return;
+        const car_name = input.value.trim();
+        const ids = album.items.map(i => i.id);
+        const { error } = await sb.from('portfolio_items').update({ car_name }).in('id', ids);
+        if (error) {
+            showToast(t('save_error') + error.message, 'error');
+            input.value = album.name;
+            return;
+        }
+        showToast(t('toast_saved'));
+        refreshPortfolio();
     }
 
     function addPortfolioFiles(files) {
@@ -828,18 +894,6 @@
             renderPortfolioPending();
             refreshPortfolio();
         }
-    }
-
-    async function renamePortfolioItem(id, input) {
-        const car_name = input.value.trim();
-        const { error } = await sb.from('portfolio_items').update({ car_name }).eq('id', id);
-        if (error) {
-            showToast(t('save_error') + error.message, 'error');
-            return;
-        }
-        const item = portfolioItems.find(i => i.id === id);
-        if (item) item.car_name = car_name;
-        showToast(t('toast_saved'));
     }
 
     async function deletePortfolioItem(id) {

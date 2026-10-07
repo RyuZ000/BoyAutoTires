@@ -39,9 +39,10 @@
     <script src="js/auth.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/search.js"></script>
+    <script src="js/portfolio.js"></script>
     <script src="js/products.js"></script>
     <script>
-        // photos and videos come from the portfolio_items table (added in the admin page)
+        // portfolio_items rows (added in the admin page), shown as one album per car (js/portfolio.js)
         const PF_TABS = [
             { type: 'all', key: 'pf_tab_all' },
             { type: 'photo', key: 'pf_tab_photo' },
@@ -52,48 +53,55 @@
         let pfLoaded = false;
         const pfSearch = document.getElementById('pf-search');
 
-        function pfMatches(item) {
-            return textMatches(item.car_name, pfSearch.value);
+        // albums matching the search, each limited to the selected tab's media type
+        function visibleAlbums(type) {
+            return groupPortfolio(pfItems)
+                .filter(a => textMatches(a.name, pfSearch.value))
+                .map(a => {
+                    const items = type === 'photo' ? a.photos : type === 'video' ? a.videos : a.items;
+                    return { ...a, items, cover: items.find(i => i.media_type === 'photo') || items[0] };
+                })
+                .filter(a => a.items.length);
         }
 
         function renderPortfolio() {
-            const found = pfItems.filter(pfMatches);
-            document.getElementById('pf-tabs').innerHTML = PF_TABS.map(tab => {
-                const count = tab.type === 'all' ? found.length : found.filter(i => i.media_type === tab.type).length;
-                return `<button type="button" class="cat-chip ${tab.type === pfType ? 'active' : ''}" onclick="setPfType('${tab.type}')">${t(tab.key)} <span class="pf-count">${count}</span></button>`;
-            }).join('');
+            document.getElementById('pf-tabs').innerHTML = PF_TABS.map(tab =>
+                `<button type="button" class="cat-chip ${tab.type === pfType ? 'active' : ''}" onclick="setPfType('${tab.type}')">${t(tab.key)} <span class="pf-count">${visibleAlbums(tab.type).length}</span></button>`
+            ).join('');
 
             const grid = document.getElementById('pf-grid');
             if (!pfLoaded) {
                 grid.innerHTML = `<p class="products-status">${t('products_loading')}</p>`;
                 return;
             }
-            const list = found.filter(i => pfType === 'all' || i.media_type === pfType);
-            if (!list.length) {
+            const albums = visibleAlbums(pfType);
+            if (!albums.length) {
                 grid.innerHTML = `<p class="products-status">${t(pfItems.length ? 'pf_no_match' : 'pf_empty')}</p>`;
                 return;
             }
 
-            // the lightbox (js/products.js) pages through the photos currently shown
-            const photos = list.filter(i => i.media_type === 'photo');
-            galleryData.portfolio = {
-                name: '',
-                images: photos.map(i => i.url),
-                names: photos.map(i => i.car_name),
-            };
-            grid.innerHTML = list.map(item => {
-                const caption = `<div class="pf-caption">${item.media_type === 'video' ? '🎬' : '📷'} ${escapeHtml(item.car_name || t('pf_no_name'))}</div>`;
-                if (item.media_type === 'video') {
-                    return `<figure class="pf-card">
-                        <video src="${escapeHtml(item.url)}#t=0.1" controls playsinline preload="metadata"></video>
-                        ${caption}
-                    </figure>`;
-                }
+            grid.innerHTML = albums.map((a, n) => {
+                const name = a.name || t('pf_no_name');
+                // the lightbox (js/products.js) pages through the album's photos and videos
+                galleryData['pf' + n] = {
+                    name,
+                    images: a.items.map(i => i.url),
+                    types: a.items.map(i => i.media_type),
+                };
+                const photos = a.items.filter(i => i.media_type === 'photo').length;
+                const videos = a.items.length - photos;
+                const cover = a.cover.media_type === 'video'
+                    ? `<video src="${escapeHtml(a.cover.url)}#t=0.1" muted playsinline preload="metadata"></video><span class="pf-play">▶</span>`
+                    : `<img src="${escapeHtml(a.cover.url)}" alt="${escapeHtml(name)}" loading="lazy">`;
                 return `<figure class="pf-card">
-                    <button type="button" class="pf-photo" onclick="openLightbox('portfolio', ${photos.indexOf(item)})">
-                        <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.car_name)}" loading="lazy">
+                    <button type="button" class="pf-photo" onclick="openLightbox('pf${n}')" aria-label="${escapeHtml(name)}">
+                        ${cover}
+                        <span class="pf-badges">
+                            ${photos ? `<span>📷 ${photos}</span>` : ''}
+                            ${videos ? `<span>🎬 ${videos}</span>` : ''}
+                        </span>
                     </button>
-                    ${caption}
+                    <figcaption class="pf-caption">${escapeHtml(name)}</figcaption>
                 </figure>`;
             }).join('');
         }

@@ -191,6 +191,7 @@ function initProductPage(category, defaultSort, options = {}) {
 
 let lbImages = [];
 let lbNames = null; // optional caption per image (portfolio), else the product name
+let lbTypes = null; // optional 'photo' | 'video' per item (portfolio albums); default photo
 let lbIndex = 0;
 let lbTouchX = null;
 
@@ -205,6 +206,7 @@ function ensureLightbox() {
     <button type="button" class="lb-btn lb-close" onclick="closeLightbox()">×</button>
     <button type="button" class="lb-btn lb-prev" onclick="stepLightbox(-1)">‹</button>
     <img class="lb-img" alt="">
+    <video class="lb-img lb-video" controls playsinline style="display:none"></video>
     <button type="button" class="lb-btn lb-next" onclick="stepLightbox(1)">›</button>
     <div class="lb-caption"></div>
   `;
@@ -226,13 +228,14 @@ function openLightbox(productId, start = 0) {
   if (!product || !product.images.length) return;
   lbImages = product.images;
   lbNames = product.names || null;
+  lbTypes = product.types || null;
   lbIndex = start;
 
   const lb = ensureLightbox();
   lb.querySelector('.lb-close').setAttribute('aria-label', t('lb_close'));
   lb.querySelector('.lb-prev').setAttribute('aria-label', t('lb_prev'));
   lb.querySelector('.lb-next').setAttribute('aria-label', t('lb_next'));
-  lb.querySelector('.lb-img').alt = product.name || '';
+  lb.querySelector('img.lb-img').alt = product.name || '';
   lb.dataset.name = product.name || '';
   lb.classList.toggle('single', lbImages.length < 2);
   lb.classList.add('open');
@@ -242,7 +245,20 @@ function openLightbox(productId, start = 0) {
 
 function showLightboxImage() {
   const lb = document.getElementById('lightbox');
-  lb.querySelector('.lb-img').src = lbImages[lbIndex];
+  const img = lb.querySelector('img.lb-img');
+  const video = lb.querySelector('.lb-video');
+  const isVideo = !!lbTypes && lbTypes[lbIndex] === 'video';
+  video.pause();
+  img.style.display = isVideo ? 'none' : '';
+  video.style.display = isVideo ? '' : 'none';
+  if (isVideo) {
+    video.src = lbImages[lbIndex];
+    img.removeAttribute('src');
+  } else {
+    video.removeAttribute('src');
+    video.load();
+    img.src = lbImages[lbIndex];
+  }
   const counter = lbImages.length > 1 ? ` · ${lbIndex + 1} / ${lbImages.length}` : '';
   const name = lbNames ? lbNames[lbIndex] || '' : lb.dataset.name;
   lb.querySelector('.lb-caption').textContent = name + counter;
@@ -257,6 +273,7 @@ function stepLightbox(dir) {
 function closeLightbox() {
   const lb = document.getElementById('lightbox');
   if (!lb) return;
+  lb.querySelector('.lb-video').pause();
   lb.classList.remove('open');
   document.body.style.overflow = '';
 }
