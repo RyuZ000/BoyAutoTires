@@ -12,6 +12,11 @@ const SITE_CONTACT = {
   phone2Tel: '+66811600020',
   line: 'https://line.me/ti/p/yWkHxGNvL2',
   messenger: 'https://m.me/BOYAUTOTIRES',
+  // contact page (/contact). mapQuery is what Google Maps searches for to place the pin;
+  // address / hours are shown only when filled in.
+  mapQuery: 'BoyAutoTires',
+  address: '',
+  hours: '',
 };
 
 const MESSENGER_ICON = `<svg viewBox="0 0 36 36" aria-hidden="true"><path fill="#fff" d="M18 4C10.27 4 4 9.8 4 16.96c0 4.07 2.03 7.7 5.2 10.08V32l4.75-2.6c1.27.35 2.6.54 4.05.54 7.73 0 14-5.8 14-12.98C32 9.8 25.73 4 18 4zm1.39 17.47l-3.57-3.8-6.96 3.8 7.66-8.13 3.65 3.8 6.88-3.8-7.66 8.13z"/></svg>`;
@@ -33,13 +38,13 @@ const SITE_NAV = [
   { page: 'shock', href: '/shock', key: 'nav_shock', product: true },
   { page: 'brake', href: '/brake', key: 'nav_brake', product: true },
   { page: 'portfolio', href: '/portfolio', key: 'nav_portfolio' },
+  { page: 'contact', href: '/contact', key: 'menu_contact' },
 ];
 
 // ☰ menu (top left). Items without href are shown as "coming soon".
 const SITE_MENU = [
   { key: 'menu_about' },
   { key: 'menu_blog' },
-  { key: 'menu_contact', href: '#contact' },
 ];
 
 function renderSiteHeader() {

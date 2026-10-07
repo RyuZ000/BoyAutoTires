@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดต่อเรา (Contact Us) - BoyAutoTires</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="contact">
+    <div id="site-header"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb"><a href="/" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="menu_contact"></span></div>
+            <h1 class="page-title" data-i18n="menu_contact">ติดต่อเรา</h1>
+            <p class="page-sub" data-i18n="contact_sub"></p>
+        </div>
+    </section>
+
+    <main class="container contact-page">
+        <div class="contact-cards" id="contact-cards"></div>
+
+        <section class="contact-map">
+            <h2 data-i18n="contact_map">แผนที่</h2>
+            <iframe id="contact-map" title="Google Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/i18n.js"></script>
+    <script>
+        // everything comes from SITE_CONTACT / SITE_SOCIAL in js/layout.js
+        const c = SITE_CONTACT;
+        const q = encodeURIComponent(c.mapQuery);
+        const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
+        document.getElementById('contact-map').src = `https://www.google.com/maps?q=${q}&output=embed`;
+
+        function renderContactCards() {
+            const cards = [
+                {
+                    icon: '📞', title: t('contact_phone'),
+                    body: `<a href="tel:${c.phoneTel}">${c.phone}</a><a href="tel:${c.phone2Tel}">${c.phone2}</a>`,
+                },
+                {
+                    icon: '📍', title: t('contact_location'),
+                    body: `${c.address ? `<p>${c.address}</p>` : ''}
+                           <a href="${directionsUrl}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>`,
+                },
+                {
+                    icon: '💬', title: t('contact_chat'),
+                    body: `<a href="${c.line}" target="_blank" rel="noopener" class="contact-btn line">${t('cta_line')}</a>
+                           <a href="${c.messenger}" target="_blank" rel="noopener" class="contact-btn messenger">${t('cta_messenger')}</a>`,
+                },
+                c.hours && { icon: '🕒', title: t('contact_hours'), body: `<p>${c.hours}</p>` },
+                {
+                    icon: '🌐', title: t('contact_social'),
+                    body: `<div class="contact-social">${SITE_SOCIAL.map(s =>
+                        `<a href="${s.href}" target="_blank" rel="noopener" title="${s.title}"><img src="${s.img}" alt="${s.title}"></a>`
+                    ).join('')}</div>`,
+                },
+            ].filter(Boolean);
+
+            document.getElementById('contact-cards').innerHTML = cards.map(card => `
+                <div class="contact-card">
+                    <div class="contact-icon">${card.icon}</div>
+                    <h3>${card.title}</h3>
+                    <div class="contact-body">${card.body}</div>
+                </div>`).join('');
+        }
+
+        window.onLanguageChange = renderContactCards;
+        document.addEventListener('DOMContentLoaded', renderContactCards);
+    </script>
+</body>
+</html>
