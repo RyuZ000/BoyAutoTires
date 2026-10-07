@@ -248,7 +248,9 @@ function openLightbox(productId, start = 0) {
 
   const lb = ensureLightbox();
   lb.querySelector('.lb-close').setAttribute('aria-label', t('lb_close'));
-  lb.querySelector('.lb-hint-text').textContent = t('lb_swipe_hint');
+  // phones/tablets swipe; computers use the mouse wheel or arrow keys
+  const touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  lb.querySelector('.lb-hint-text').textContent = t(touch ? 'lb_swipe_hint' : 'lb_desktop_hint');
   lb.querySelector('.lb-track').innerHTML = lbItems.map(item => `
     <div class="lb-slide">
       ${item.type === 'video'

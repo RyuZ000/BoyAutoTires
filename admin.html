@@ -795,7 +795,7 @@
                 <button type="button" class="remove-img" aria-label="${t('image_remove')}" onclick="removePortfolioFormItem(${i})">×</button>
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>`).join('');
-        document.getElementById('pf-drag-hint').textContent = pfFormItems.length > 1 ? t('drag_hint') : '';
+        document.getElementById('pf-drag-hint').textContent = pfFormItems.length > 1 ? dragHint() : '';
     }
 
     function addPortfolioFiles(files) {
@@ -1155,7 +1155,13 @@
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>
         `).join('');
-        document.getElementById('image-drag-hint').textContent = formImages.length > 1 ? t('drag_hint') : '';
+        document.getElementById('image-drag-hint').textContent = formImages.length > 1 ? dragHint() : '';
+    }
+
+    // how to reorder, worded for the device in hand
+    function dragHint() {
+        const touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        return t(touch ? 'drag_hint' : 'drag_hint_mouse');
     }
 
     // press-and-hold (touch) or drag (mouse) a photo to move it; the first one is the cover
