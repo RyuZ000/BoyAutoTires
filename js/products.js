@@ -16,6 +16,37 @@ function getProductImages(p) {
   return p.image_url ? [p.image_url] : [];
 }
 
+// query is already trimmed + lowercased. A query of only digits, spaces, "/", "-"
+// or "r" (e.g. "2656018", "265 60 18", "265/60r18") is also matched against the
+// size's digits, so "2656018" finds "265/60R18" and "265/60/R18".
+function productMatches(p, query) {
+  if (!query) return true;
+  const name = (p.name || '').toLowerCase();
+  const size = (p.size || '').toLowerCase();
+  if (name.includes(query) || size.includes(query)) return true;
+  if (!/^[\d\s\/\-r.]+$/.test(query)) return false;
+  const digits = query.replace(/\D/g, '');
+  return digits !== '' && size.replace(/\D/g, '').includes(digits);
+}
+
+// While the customer types only digits, shows them as a tire size:
+// "2656018" -> "265/60/R18". Anything with letters (a product name) is left alone.
+// Separators are only added once the next digit is typed, so backspace still works.
+// isActive (optional) turns the mask off, e.g. when another category is selected.
+function attachTireSizeMask(input, isActive = () => true) {
+  if (!input) return;
+  input.addEventListener('input', () => {
+    if (!isActive()) return;
+    if (input.selectionStart !== input.value.length) return; // editing mid-text: don't move the caret
+    if (!/^[\d\s\/r]*$/i.test(input.value)) return;
+    const d = input.value.replace(/\D/g, '').slice(0, 7);
+    let out = d.slice(0, 3);
+    if (d.length > 3) out += '/' + d.slice(3, 5);
+    if (d.length > 5) out += '/R' + d.slice(5, 7);
+    if (out !== input.value) input.value = out;
+  });
+}
+
 // product id -> { name, images }, filled on render, read by the lightbox
 const galleryData = {};
 
@@ -60,7 +91,10 @@ function renderProductCards(data, gridId) {
 
 // Wires up a category page (tires / wheels / shock / brake). The page needs
 // #cat-chips, #shop-search, #shop-sort, #shop-count and #products-grid.
-function initProductPage(category, defaultSort) {
+// options.filter(p)       extra filter on top of search (e.g. the shock sidebar)
+// options.onLoad(products) called once products are fetched
+// Returns { render } so the page can re-render when its own filters change.
+function initProductPage(category, defaultSort, options = {}) {
   const searchEl = document.getElementById('shop-search');
   const sortEl = document.getElementById('shop-sort');
   let allProducts = [];
@@ -99,16 +133,12 @@ function initProductPage(category, defaultSort) {
     const dir = dirName === 'desc' ? -1 : 1;
 
     const list = allProducts
-      .filter(p => {
-        const name = (p.name || '').toLowerCase();
-        const size = (p.size || '').toLowerCase();
-        return !query || name.includes(query) || size.includes(query);
-      })
+      .filter(p => productMatches(p, query) && (!options.filter || options.filter(p)))
       .sort((a, b) => compare(a, b, field, dir));
 
     document.getElementById('shop-count').textContent = `${list.length} ${t('list_count_suffix')}`;
 
-    if (query && list.length === 0) {
+    if ((query || options.filter) && list.length === 0 && allProducts.length) {
       document.getElementById('products-grid').innerHTML = `<p class="products-status">${t('search_no_results')}</p>`;
       return;
     }
@@ -133,10 +163,13 @@ function initProductPage(category, defaultSort) {
 
     allProducts = data || [];
     loaded = true;
+    if (options.onLoad) options.onLoad(allProducts);
     render();
   }
 
   sortEl.value = defaultSort;
+  // must run before render so the search sees the formatted size
+  if (category === 'tires') attachTireSizeMask(searchEl);
   searchEl.addEventListener('input', render);
   sortEl.addEventListener('change', render);
 
@@ -146,11 +179,13 @@ function initProductPage(category, defaultSort) {
 
   window.onLanguageChange = () => {
     renderChips();
+    if (options.onLanguageChange) options.onLanguageChange();
     render();
   };
 
   renderChips();
   fetchProducts();
+  return { render };
 }
 
 /* ---------------- Lightbox (full-screen image viewer) ---------------- */

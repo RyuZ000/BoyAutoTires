@@ -82,6 +82,20 @@
             cursor: pointer;
         }
         .hero-search button:hover { background: #1f5fcf; }
+        .hero-search-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .hero-search-cats button {
+            border: 1px solid rgba(255,255,255,.45);
+            background: rgba(255,255,255,.12);
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+        .hero-search-cats button:hover { background: rgba(255,255,255,.25); }
+        .hero-search-cats button.active { background: #fff; border-color: #fff; color: var(--blue); }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
         .btn {
             display: inline-flex;
@@ -234,8 +248,14 @@
             <span class="hero-kicker" data-i18n="hero_kicker">ล้อแม็ก · ยาง · โช้คอัพ · เบรก</span>
             <h1 data-i18n="hero_title">ศูนย์รวมช่วงล่างครบวงจร</h1>
             <p data-i18n="hero_sub"></p>
+            <div class="hero-search-cats" id="hero-cats">
+                <button type="button" data-cat="wheels" data-i18n="nav_wheels">ล้อแม็ก</button>
+                <button type="button" data-cat="tires" data-i18n="nav_tires" class="active">ยาง</button>
+                <button type="button" data-cat="shock" data-i18n="nav_shock">โช้คอัพ</button>
+                <button type="button" data-cat="brake" data-i18n="nav_brake">เบรก</button>
+            </div>
             <form class="hero-search" onsubmit="heroSearch(event)">
-                <input type="text" id="hero-q" data-i18n-placeholder="hero_search_placeholder" placeholder="ค้นหาไซส์ยาง">
+                <input type="text" id="hero-q" data-i18n-placeholder="search_placeholder" placeholder="พิมพ์ไซส์ยาง เช่น 2656018 หรือชื่อยาง">
                 <button type="submit" data-i18n="hero_search_btn">ค้นหา</button>
             </form>
             <div class="hero-actions">
@@ -351,11 +371,27 @@
         showHero(0);
         setInterval(() => showHero((heroIndex + 1) % heroSlides.length), 5000);
 
-        // hero search -> tires page with ?q=
+        // hero search: pick a category, then search that category's page with ?q=
+        let heroCat = 'tires';
+        const heroQ = document.getElementById('hero-q');
+        document.querySelectorAll('#hero-cats button').forEach(btn => {
+            btn.onclick = () => {
+                heroCat = btn.dataset.cat;
+                document.querySelectorAll('#hero-cats button').forEach(b => b.classList.toggle('active', b === btn));
+                // tires get the size hint, the other categories the generic one
+                heroQ.setAttribute('data-i18n-placeholder', heroCat === 'tires' ? 'search_placeholder' : 'search_placeholder_generic');
+                heroQ.placeholder = t(heroQ.getAttribute('data-i18n-placeholder'));
+                heroQ.focus();
+            };
+        });
+        // the 265/60/R18 auto-format only applies while "tires" is selected
+        attachTireSizeMask(heroQ, () => heroCat === 'tires');
+
         function heroSearch(e) {
             e.preventDefault();
-            const q = document.getElementById('hero-q').value.trim();
-            location.href = 'tires.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+            const q = heroQ.value.trim();
+            const href = SITE_NAV.find(n => n.page === heroCat).href;
+            location.href = href + (q ? '?q=' + encodeURIComponent(q) : '');
         }
 
         // newest products across all categories

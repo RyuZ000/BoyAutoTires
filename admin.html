@@ -408,6 +408,15 @@
                 </div>
             </div>
 
+            <div id="vehicle-field">
+                <label class="field-label" for="f-vehicle" data-i18n="field_vehicle">ประเภทรถ</label>
+                <select class="field" id="f-vehicle">
+                    <option value="" data-i18n="vehicle_none">— ไม่ระบุ —</option>
+                    <option value="pickup" data-i18n="vehicle_pickup">รถกระบะ / SUV / รถตู้</option>
+                    <option value="sedan" data-i18n="vehicle_sedan">รถเก๋ง</option>
+                </select>
+            </div>
+
             <label class="field-label" for="f-desc" data-i18n="field_desc">รายละเอียด</label>
             <textarea class="field" id="f-desc" data-i18n-placeholder="placeholder_desc"></textarea>
 
@@ -680,6 +689,7 @@
         document.getElementById('f-size').value = editing ? p.size || '' : '';
         document.getElementById('f-desc').value = editing ? p.description || '' : '';
         document.getElementById('f-price').value = editing ? p.price ?? '' : '';
+        document.getElementById('f-vehicle').value = editing ? p.vehicle_type || '' : '';
         document.getElementById('f-instock').checked = editing ? !!p.in_stock : true;
         document.getElementById('upload-status').textContent = '';
         document.getElementById('form-error').textContent = '';
@@ -696,6 +706,8 @@
         document.getElementById('form-cat').textContent = `${c.icon} ${t(c.key)}`;
         document.getElementById('form-title').textContent = t(editing ? 'form_title_edit' : 'form_title_add');
         document.getElementById('f-size').placeholder = t('size_ph_' + currentCategory);
+        // vehicle type is only used by the shock page's filter
+        document.getElementById('vehicle-field').hidden = currentCategory !== 'shock';
         document.getElementById('drawer-close').setAttribute('aria-label', t('btn_cancel'));
     }
 
@@ -761,6 +773,11 @@
                 image_urls,
                 in_stock
             };
+            // only sent for shocks, so the other categories keep working
+            // even before supabase-add-vehicle-type-column.sql has been run
+            if (currentCategory === 'shock') {
+                payload.vehicle_type = document.getElementById('f-vehicle').value || null;
+            }
 
             const { error } = id
                 ? await sb.from('products').update(payload).eq('id', id)

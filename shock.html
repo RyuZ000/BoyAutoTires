@@ -23,6 +23,27 @@
 
     <main class="container shop">
         <nav class="cat-chips" id="cat-chips"></nav>
+        <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="shop-filters" data-i18n="filter_title">คัดกรอง</button>
+        <div class="shop-layout">
+        <aside class="shop-filters" id="shop-filters">
+            <div class="filter-head">
+                <h2 data-i18n="filter_title">คัดกรอง</h2>
+                <button type="button" class="filter-clear" id="filter-clear" data-i18n="filter_clear">ล้างตัวกรอง</button>
+            </div>
+            <div class="filter-group">
+                <h3 data-i18n="filter_vehicle">ประเภทรถ</h3>
+                <div id="vehicle-options"></div>
+            </div>
+            <div class="filter-group">
+                <h3 data-i18n="filter_price">ช่วงราคา (บาท)</h3>
+                <div class="price-range">
+                    <input type="number" id="price-min" min="0" inputmode="numeric" data-i18n-placeholder="price_min" placeholder="ต่ำสุด">
+                    <span>–</span>
+                    <input type="number" id="price-max" min="0" inputmode="numeric" data-i18n-placeholder="price_max" placeholder="สูงสุด">
+                </div>
+            </div>
+        </aside>
+        <div class="shop-main">
         <div class="shop-toolbar">
             <div class="shop-search">
                 <input type="search" id="shop-search" data-i18n-placeholder="search_placeholder_generic" placeholder="ค้นหาชื่อสินค้า หรือไซส์...">
@@ -39,6 +60,8 @@
             <span class="shop-count" id="shop-count"></span>
         </div>
         <div class="products-grid" id="products-grid"></div>
+        </div>
+        </div>
     </main>
 
     <div id="site-footer"></div>
@@ -50,7 +73,65 @@
     <script src="js/i18n.js"></script>
     <script src="js/products.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => initProductPage('shock', 'newest'));
+        // sidebar filters: vehicle type (products.vehicle_type) + price range
+        const VEHICLE_TYPES = [
+            { value: '', key: 'vehicle_all' },
+            { value: 'pickup', key: 'vehicle_pickup' },
+            { value: 'sedan', key: 'vehicle_sedan' },
+        ];
+        let vehicle = '';
+        let shockProducts = [];
+        let page;
+        const priceMin = document.getElementById('price-min');
+        const priceMax = document.getElementById('price-max');
+
+        function shockFilter(p) {
+            if (vehicle && p.vehicle_type !== vehicle) return false;
+            const min = priceMin.value === '' ? null : Number(priceMin.value);
+            const max = priceMax.value === '' ? null : Number(priceMax.value);
+            if (min === null && max === null) return true;
+            if (p.price == null) return false; // "ask for price" items can't match a price range
+            return (min === null || p.price >= min) && (max === null || p.price <= max);
+        }
+
+        function renderVehicleOptions() {
+            document.getElementById('vehicle-options').innerHTML = VEHICLE_TYPES.map(v => {
+                const count = v.value ? shockProducts.filter(p => p.vehicle_type === v.value).length : shockProducts.length;
+                return `<label class="filter-option">
+                    <input type="radio" name="vehicle" value="${v.value}" ${v.value === vehicle ? 'checked' : ''}>
+                    <span>${t(v.key)}</span><span class="filter-count">${count}</span>
+                </label>`;
+            }).join('');
+        }
+
+        document.getElementById('vehicle-options').addEventListener('change', e => {
+            vehicle = e.target.value;
+            page.render();
+        });
+        priceMin.addEventListener('input', () => page.render());
+        priceMax.addEventListener('input', () => page.render());
+        document.getElementById('filter-clear').onclick = () => {
+            vehicle = '';
+            priceMin.value = '';
+            priceMax.value = '';
+            renderVehicleOptions();
+            page.render();
+        };
+        // phones: the sidebar is hidden behind the "filter" button
+        const filterToggle = document.getElementById('filter-toggle');
+        filterToggle.onclick = () => {
+            const open = document.getElementById('shop-filters').classList.toggle('open');
+            filterToggle.setAttribute('aria-expanded', open);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderVehicleOptions();
+            page = initProductPage('shock', 'newest', {
+                filter: shockFilter,
+                onLoad: products => { shockProducts = products; renderVehicleOptions(); },
+                onLanguageChange: renderVehicleOptions,
+            });
+        });
     </script>
 </body>
 </html>

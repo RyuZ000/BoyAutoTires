@@ -261,6 +261,67 @@ body[data-page="brake"] .page-hero {
     .shop-sort { flex: 1; min-width: 0; }
 }
 
+/* ---------------- Shop page: filter sidebar (shock.html) ---------------- */
+.shop-layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 22px; align-items: start; }
+.shop-filters {
+    position: sticky;
+    top: 90px;
+    padding: 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+.filter-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.filter-head h2 { margin: 0; font-size: 18px; }
+.filter-clear { border: none; background: none; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; padding: 0; }
+.filter-clear:hover { color: var(--gold); }
+.filter-group { padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--line); }
+.filter-group h3 { margin: 0 0 10px; font-size: 14px; color: var(--muted); font-weight: 600; }
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 15px;
+    cursor: pointer;
+}
+.filter-option input { accent-color: var(--gold); width: 16px; height: 16px; margin: 0; }
+.filter-option:hover span:first-of-type { color: var(--gold); }
+.filter-count { margin-left: auto; color: var(--muted); font-size: 13px; }
+.price-range { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.price-range input {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(77, 163, 255, 0.25);
+    background: #070d1c;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+.price-range input:focus { border-color: var(--gold); }
+.filter-toggle {
+    display: none;
+    margin-bottom: 14px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+.filter-toggle::before { content: '⚙ '; }
+@media (max-width: 860px) {
+    .shop-layout { grid-template-columns: minmax(0, 1fr); }
+    .filter-toggle { display: inline-block; }
+    .shop-filters { display: none; position: static; }
+    .shop-filters.open { display: block; }
+}
+
 /* ---------------- Footer ---------------- */
 .site-footer {
     background: #02040a;
