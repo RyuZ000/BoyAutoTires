@@ -141,6 +141,27 @@
     .cat-tab.active .count { background: var(--gold); color: #111; }
     @media (max-width: 760px) { .cat-tabs { grid-template-columns: repeat(2, 1fr); } }
 
+    /* shop open/closed switch */
+    .store-panel {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px;
+        padding: 14px 16px; margin-bottom: 18px;
+        border-radius: 14px; border: 1px solid var(--line); background: var(--panel);
+    }
+    .store-panel h2 { margin: 0; font-size: 16px; }
+    .store-modes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .store-mode {
+        padding: 8px 14px; border-radius: 999px;
+        border: 1px solid var(--line); background: transparent; color: var(--text);
+        font: inherit; font-weight: 600; font-size: 14px; cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+    .store-mode:hover { border-color: rgba(245, 197, 24, 0.4); }
+    .store-mode.active { border-color: var(--gold); background: rgba(245, 197, 24, 0.12); color: var(--gold); }
+    .store-mode:disabled { opacity: .6; cursor: wait; }
+    .store-now { font-size: 14px; color: var(--muted); }
+    .store-now b.open { color: #2ee07a; }
+    .store-now b.closed { color: #ff7a7a; }
+
     .list-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .list-toolbar .field { max-width: 420px; border-radius: 999px; padding: 10px 18px; }
     .list-toolbar .muted { font-size: 14px; white-space: nowrap; }
@@ -369,6 +390,12 @@
         <button type="button" class="btn btn-gold" onclick="openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
     </div>
 
+    <div class="store-panel">
+        <h2 data-i18n="store_panel_title">สถานะร้านวันนี้</h2>
+        <div class="store-modes" id="store-modes"></div>
+        <span class="store-now" id="store-now"></span>
+    </div>
+
     <div class="cat-tabs" id="cat-tabs"></div>
 
     <div class="list-toolbar">
@@ -456,6 +483,7 @@
 <script src="js/supabase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/i18n.js"></script>
+<script src="js/store-status.js"></script>
 <script>
     const CATEGORIES = [
         { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
@@ -519,8 +547,43 @@
         const isLoggedIn = await initAuthUI();
         document.getElementById('login-view').hidden = isLoggedIn;
         document.getElementById('dashboard').hidden = !isLoggedIn;
-        if (isLoggedIn) refreshList();
+        if (isLoggedIn) {
+            refreshList();
+            loadStoreSwitch();
+        }
         else document.getElementById('login-email').focus();
+    }
+
+    // ---- Shop open/closed switch (js/store-status.js) ----
+    let storeSetting = null;
+
+    async function loadStoreSwitch() {
+        storeSetting = await fetchStoreSetting();
+        renderStoreSwitch();
+    }
+
+    function renderStoreSwitch() {
+        const status = getStoreStatus(storeSetting);
+        // a forced mode from an earlier day has expired, so it shows as auto
+        const mode = status.manual ? storeSetting.mode : 'auto';
+        document.getElementById('store-modes').innerHTML = ['auto', 'open', 'closed'].map(m =>
+            `<button type="button" class="store-mode ${m === mode ? 'active' : ''}" onclick="setStoreMode('${m}')">${t('store_mode_' + m)}</button>`
+        ).join('');
+        const note = status.manual ? t('store_manual_note') : `${t('store_by_hours')} ${storeHoursText()}`;
+        document.getElementById('store-now').innerHTML =
+            `${t('store_now_label')} <b class="${status.open ? 'open' : 'closed'}">${t(status.open ? 'store_open_now' : 'store_closed_now')}</b> (${escHtml(note)})`;
+    }
+
+    async function setStoreMode(mode) {
+        document.querySelectorAll('.store-mode').forEach(b => b.disabled = true);
+        const { error } = await saveStoreMode(mode);
+        if (error) {
+            console.error(error);
+            showToast(t('store_save_error') + error.message, 'error');
+        } else {
+            showToast(t('toast_store_saved'));
+        }
+        await loadStoreSwitch();
     }
 
     async function handleLogin(e) {
@@ -889,6 +952,7 @@
         if (!document.getElementById('dashboard').hidden) {
             renderTabs();
             renderList();
+            renderStoreSwitch();
         }
     }
 

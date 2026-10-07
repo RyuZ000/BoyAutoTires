@@ -402,6 +402,20 @@ body[data-page="brake"] .page-hero {
 .contact-body { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .contact-body p { margin: 0; color: var(--muted); line-height: 1.6; }
 .contact-body .contact-hours { color: var(--text); font-size: 20px; font-weight: 700; }
+.store-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+}
+.store-badge:empty { display: none; }
+.store-badge::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.store-badge.open { background: rgba(6, 199, 85, 0.15); color: #2ee07a; }
+.store-badge.open::before { box-shadow: 0 0 0 3px rgba(46, 224, 122, 0.25); }
+.store-badge.closed { background: rgba(255, 82, 82, 0.15); color: #ff7a7a; }
 .contact-body > a:not(.contact-btn) { color: var(--text); text-decoration: none; font-size: 20px; font-weight: 700; }
 .contact-body > a:not(.contact-btn):hover { color: var(--gold); }
 .contact-btn {

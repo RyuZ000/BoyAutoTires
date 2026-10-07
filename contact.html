@@ -37,8 +37,10 @@
     <script src="js/layout.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/i18n.js"></script>
+    <script src="js/store-status.js"></script>
     <script>
         // everything comes from SITE_CONTACT / SITE_SOCIAL in js/layout.js
+        // and STORE_HOURS in js/store-status.js
         const c = SITE_CONTACT;
         const q = encodeURIComponent(c.mapQuery);
         const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
@@ -60,7 +62,11 @@
                     body: `<a href="${c.line}" target="_blank" rel="noopener" class="contact-btn line">${t('cta_line')}</a>
                            <a href="${c.messenger}" target="_blank" rel="noopener" class="contact-btn messenger">${t('cta_messenger')}</a>`,
                 },
-                c.hours && { icon: '🕒', title: t('contact_hours'), body: `<p class="contact-hours">${c.hours}</p>` },
+                {
+                    icon: '🕒', title: t('contact_hours'),
+                    body: `<span class="store-badge" id="store-badge"></span>
+                           <p class="contact-hours">${storeHoursText()}</p>`,
+                },
                 {
                     icon: '🌐', title: t('contact_social'),
                     body: `<div class="contact-social">${SITE_SOCIAL.map(s =>
@@ -75,10 +81,31 @@
                     <h3>${card.title}</h3>
                     <div class="contact-body">${card.body}</div>
                 </div>`).join('');
+            renderStoreBadge();
+        }
+
+        // open/closed badge: follows the clock, unless staff overrode it for today
+        let storeSetting = null;
+        function renderStoreBadge() {
+            const badge = document.getElementById('store-badge');
+            if (!badge) return;
+            const status = getStoreStatus(storeSetting);
+            badge.className = 'store-badge ' + (status.open ? 'open' : 'closed');
+            badge.textContent = t(status.open ? 'store_open_now' : 'store_closed_now');
+        }
+        async function refreshStoreStatus() {
+            storeSetting = await fetchStoreSetting();
+            renderStoreBadge();
         }
 
         window.onLanguageChange = renderContactCards;
-        document.addEventListener('DOMContentLoaded', renderContactCards);
+        document.addEventListener('DOMContentLoaded', () => {
+            renderContactCards();
+            refreshStoreStatus();
+            // re-check every minute so the badge flips at opening/closing time
+            // and picks up a change made in the admin page
+            setInterval(refreshStoreStatus, 60 * 1000);
+        });
     </script>
 </body>
 </html>
