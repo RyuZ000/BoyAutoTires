@@ -430,6 +430,13 @@ body[data-page="brake"] .page-hero {
     transition: transform .2s;
 }
 .contact-btn:hover { transform: translateY(-2px); }
+/* in the narrow cards, buttons fill the card width and may wrap (e.g. "Chat on Messenger" in English) */
+.contact-body .contact-btn {
+    align-self: stretch;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
+}
 .contact-btn.gold { background: var(--gold); color: #111; }
 .contact-btn.line { background: #06c755; color: #fff; }
 .contact-btn.messenger { background: linear-gradient(45deg, #0099ff, #a033ff 60%, #ff5280 90%, #ff7061); color: #fff; }
