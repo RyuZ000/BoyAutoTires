@@ -21,12 +21,11 @@ function getProductImages(p) {
 // size's digits, so "2656018" finds "265/60R18" and "265/60/R18".
 function productMatches(p, query) {
   if (!query) return true;
-  const name = (p.name || '').toLowerCase();
-  const size = (p.size || '').toLowerCase();
-  if (name.includes(query) || size.includes(query)) return true;
+  // textMatches (js/search.js) also ignores spaces: "bfgoodrich" finds "BF Goodrich"
+  if (textMatches(p.name, query) || textMatches(p.size, query)) return true;
   if (!/^[\d\s\/\-r.]+$/.test(query)) return false;
   const digits = query.replace(/\D/g, '');
-  return digits !== '' && size.replace(/\D/g, '').includes(digits);
+  return digits !== '' && (p.size || '').replace(/\D/g, '').includes(digits);
 }
 
 // While the customer types only digits, shows them as a tire size:
@@ -191,6 +190,7 @@ function initProductPage(category, defaultSort, options = {}) {
 /* ---------------- Lightbox (full-screen image viewer) ---------------- */
 
 let lbImages = [];
+let lbNames = null; // optional caption per image (portfolio), else the product name
 let lbIndex = 0;
 let lbTouchX = null;
 
@@ -225,6 +225,7 @@ function openLightbox(productId, start = 0) {
   const product = galleryData[productId];
   if (!product || !product.images.length) return;
   lbImages = product.images;
+  lbNames = product.names || null;
   lbIndex = start;
 
   const lb = ensureLightbox();
@@ -243,7 +244,8 @@ function showLightboxImage() {
   const lb = document.getElementById('lightbox');
   lb.querySelector('.lb-img').src = lbImages[lbIndex];
   const counter = lbImages.length > 1 ? ` · ${lbIndex + 1} / ${lbImages.length}` : '';
-  lb.querySelector('.lb-caption').textContent = lb.dataset.name + counter;
+  const name = lbNames ? lbNames[lbIndex] || '' : lb.dataset.name;
+  lb.querySelector('.lb-caption').textContent = name + counter;
 }
 
 function stepLightbox(dir) {

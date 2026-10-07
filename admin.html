@@ -116,7 +116,7 @@
     .dash-head h1 { margin: 0; font-size: clamp(24px, 4vw, 32px); }
     .dash-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; max-width: 560px; }
 
-    .cat-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+    .cat-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 18px; }
     .cat-tab {
         display: flex; align-items: center; gap: 10px;
         padding: 14px 16px;
@@ -161,6 +161,40 @@
     .store-now { font-size: 14px; color: var(--muted); }
     .store-now b.open { color: #2ee07a; }
     .store-now b.closed { color: #ff7a7a; }
+
+    /* portfolio (ผลงาน) tab */
+    .pf-upload {
+        padding: 18px; margin-bottom: 18px;
+        border-radius: 14px; border: 1px solid var(--line); background: var(--panel);
+    }
+    .pf-upload h2 { margin: 0; font-size: 18px; }
+    .pf-upload .field-label:first-of-type { margin-top: 12px; }
+    .pf-pending { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 12px; }
+    .pf-pending:empty { display: none; }
+    .pf-pending .image-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pf-type-tag {
+        position: absolute; left: 5px; top: 5px;
+        background: rgba(0, 0, 0, 0.75); color: #fff;
+        font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 8px;
+    }
+    .pf-upload-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+    #pf-upload-status { font-size: 13px; color: var(--muted); }
+    .pf-admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .pf-admin-card {
+        position: relative;
+        background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+    }
+    .pf-admin-card img, .pf-admin-card video { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: #000; }
+    .pf-admin-body { display: flex; gap: 8px; padding: 10px; }
+    .pf-admin-body .field { padding: 8px 10px; font-size: 14px; }
+    .pf-admin-card .remove-img {
+        position: absolute; top: 6px; right: 6px;
+        width: 30px; height: 30px; padding: 0;
+        border: none; border-radius: 50%;
+        background: rgba(0, 0, 0, 0.75); color: #fff;
+        font-size: 18px; line-height: 30px; cursor: pointer;
+    }
+    .pf-admin-card .remove-img:hover { background: #d33; }
 
     .list-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .list-toolbar .field { max-width: 420px; border-radius: 999px; padding: 10px 18px; }
@@ -387,7 +421,7 @@
             <h1 data-i18n="dash_title">จัดการสินค้า</h1>
             <p data-i18n="dash_sub"></p>
         </div>
-        <button type="button" class="btn btn-gold" onclick="openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
+        <button type="button" class="btn btn-gold" id="add-product-btn" onclick="openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
     </div>
 
     <div class="store-panel">
@@ -398,13 +432,43 @@
 
     <div class="cat-tabs" id="cat-tabs"></div>
 
-    <div class="list-toolbar">
-        <input type="search" class="field" id="list-search" data-i18n-placeholder="list_search" oninput="renderList()">
-        <span class="muted" id="list-count"></span>
+    <div id="products-view">
+        <div class="list-toolbar">
+            <input type="search" class="field" id="list-search" data-i18n-placeholder="list_search" oninput="renderList()">
+            <span class="muted" id="list-count"></span>
+        </div>
+
+        <div class="status-msg" id="list-status"></div>
+        <div class="product-list" id="product-list"></div>
     </div>
 
-    <div class="status-msg" id="list-status"></div>
-    <div class="product-list" id="product-list"></div>
+    <!-- portfolio photos/videos shown on /portfolio -->
+    <section id="portfolio-view" hidden>
+        <div class="pf-upload">
+            <h2 data-i18n="pf_add_title">＋ เพิ่มผลงาน</h2>
+            <label class="field-label" for="pf-car"><span data-i18n="pf_field_car">ชื่อรถ</span> <span class="req">*</span></label>
+            <input class="field" type="text" id="pf-car" data-i18n-placeholder="pf_car_ph">
+            <span class="field-label" data-i18n="pf_field_files">รูปภาพ / วิดีโอ</span>
+            <label class="dropzone" id="pf-dropzone">
+                <input type="file" id="pf-file" class="visually-hidden" accept="image/*,video/*" multiple onchange="addPortfolioFiles(this.files); this.value='';">
+                <span class="dz-icon">📷 🎬</span>
+                <span class="dz-text" data-i18n="pf_dz_text">กดเพื่อเลือกรูปหรือวิดีโอ หรือลากมาวางตรงนี้</span>
+                <small data-i18n="pf_dz_hint">เลือกได้หลายไฟล์ · วิดีโอไม่เกิน 50 MB ต่อไฟล์</small>
+            </label>
+            <div class="pf-pending" id="pf-pending"></div>
+            <div class="pf-upload-foot">
+                <button type="button" class="btn btn-gold" id="pf-upload-btn" onclick="uploadPortfolio()" data-i18n="pf_upload_btn">อัปโหลด</button>
+                <span id="pf-upload-status"></span>
+            </div>
+        </div>
+
+        <div class="list-toolbar">
+            <input type="search" class="field" id="pf-admin-search" data-i18n-placeholder="pf_search" oninput="renderPortfolioAdmin()">
+            <span class="muted" id="pf-count"></span>
+        </div>
+        <div class="status-msg" id="pf-status" hidden></div>
+        <div class="pf-admin-grid" id="pf-admin-grid"></div>
+    </section>
 </main>
 
 <!-- ===================== ADD / EDIT DRAWER ===================== -->
@@ -484,6 +548,7 @@
 <script src="js/auth.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/store-status.js"></script>
+<script src="js/search.js"></script>
 <script>
     const CATEGORIES = [
         { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
@@ -549,6 +614,7 @@
         document.getElementById('dashboard').hidden = !isLoggedIn;
         if (isLoggedIn) {
             refreshList();
+            refreshPortfolio();
             loadStoreSwitch();
         }
         else document.getElementById('login-email').focus();
@@ -614,22 +680,185 @@
 
     // ---- Category tabs ----
     function renderTabs() {
-        document.getElementById('cat-tabs').innerHTML = CATEGORIES.map(c => {
-            const count = products.filter(p => p.category === c.cat).length;
-            return `
+        const tabs = [
+            ...CATEGORIES.map(c => ({ ...c, count: products.filter(p => p.category === c.cat).length })),
+            { cat: 'portfolio', key: 'tab_portfolio', icon: '🏆', count: portfolioItems.length },
+        ];
+        document.getElementById('cat-tabs').innerHTML = tabs.map(c => `
                 <button type="button" class="cat-tab ${c.cat === currentCategory ? 'active' : ''}" onclick="switchTab('${c.cat}')">
                     <span class="icon">${c.icon}</span>
                     <span>${t(c.key)}</span>
-                    <span class="count">${count}</span>
-                </button>`;
-        }).join('');
+                    <span class="count">${c.count}</span>
+                </button>`).join('');
     }
 
     function switchTab(cat) {
         currentCategory = cat;
+        const isPortfolio = cat === 'portfolio';
+        document.getElementById('products-view').hidden = isPortfolio;
+        document.getElementById('portfolio-view').hidden = !isPortfolio;
+        document.getElementById('add-product-btn').hidden = isPortfolio;
         document.getElementById('list-search').value = '';
         renderTabs();
-        renderList();
+        if (isPortfolio) renderPortfolioAdmin();
+        else renderList();
+    }
+
+    // ---- Portfolio (ผลงาน): photos/videos + car name, shown on /portfolio ----
+    const PORTFOLIO_BUCKET = 'portfolio';
+    const PORTFOLIO_MAX_BYTES = 50 * 1024 * 1024; // bucket limit (supabase-add-portfolio.sql)
+    let portfolioItems = [];
+    let pfPending = []; // { file, preview, type } waiting to be uploaded
+
+    async function refreshPortfolio() {
+        const { data, error } = await sb
+            .from('portfolio_items')
+            .select('*')
+            .order('created_at', { ascending: false });
+        const statusEl = document.getElementById('pf-status');
+        if (error) {
+            console.error(error);
+            statusEl.textContent = t('pf_load_error');
+            statusEl.hidden = false;
+            return;
+        }
+        portfolioItems = data || [];
+        renderTabs();
+        renderPortfolioAdmin();
+    }
+
+    function renderPortfolioAdmin() {
+        const query = document.getElementById('pf-admin-search').value.trim().toLowerCase();
+        const list = portfolioItems.filter(i => textMatches(i.car_name, query));
+        const statusEl = document.getElementById('pf-status');
+        document.getElementById('pf-count').textContent = `${list.length} ${t('pf_count_suffix')}`;
+        if (!list.length) {
+            statusEl.textContent = t(portfolioItems.length ? 'list_no_match' : 'pf_empty_admin');
+            statusEl.hidden = false;
+        } else {
+            statusEl.hidden = true;
+        }
+        document.getElementById('pf-admin-grid').innerHTML = list.map(i => `
+            <div class="pf-admin-card">
+                ${i.media_type === 'video'
+                    ? `<video src="${escHtml(i.url)}#t=0.1" controls playsinline preload="metadata"></video>`
+                    : `<img src="${escHtml(i.url)}" alt="" loading="lazy">`}
+                <span class="pf-type-tag">${i.media_type === 'video' ? '🎬 ' + t('pf_tab_video') : '📷 ' + t('pf_tab_photo')}</span>
+                <button type="button" class="remove-img" title="${t('btn_delete')}" aria-label="${t('btn_delete')}" onclick="deletePortfolioItem('${i.id}')">×</button>
+                <div class="pf-admin-body">
+                    <input class="field" type="text" value="${escHtml(i.car_name)}" placeholder="${escHtml(t('pf_car_ph'))}"
+                           onchange="renamePortfolioItem('${i.id}', this)" aria-label="${escHtml(t('pf_field_car'))}">
+                </div>
+            </div>`).join('');
+        renderPortfolioPending();
+    }
+
+    function addPortfolioFiles(files) {
+        for (const file of files) {
+            const type = file.type.startsWith('video/') ? 'video' : file.type.startsWith('image/') ? 'photo' : null;
+            if (!type) continue;
+            if (file.size > PORTFOLIO_MAX_BYTES) {
+                showToast(`${t('pf_too_big')} (${file.name})`, 'error');
+                continue;
+            }
+            pfPending.push({ file, type, preview: URL.createObjectURL(file) });
+        }
+        document.getElementById('pf-upload-status').textContent = '';
+        renderPortfolioPending();
+    }
+
+    function removePortfolioPending(index) {
+        const [removed] = pfPending.splice(index, 1);
+        if (removed) URL.revokeObjectURL(removed.preview);
+        renderPortfolioPending();
+    }
+
+    function renderPortfolioPending() {
+        document.getElementById('pf-pending').innerHTML = pfPending.map((p, i) => `
+            <div class="image-thumb">
+                ${p.type === 'video' ? `<video src="${p.preview}" muted></video>` : `<img src="${p.preview}" alt="">`}
+                <span class="pf-type-tag">${p.type === 'video' ? '🎬' : '📷'}</span>
+                <button type="button" class="remove-img" aria-label="${t('image_remove')}" onclick="removePortfolioPending(${i})">×</button>
+            </div>`).join('');
+    }
+
+    async function uploadPortfolio() {
+        const carInput = document.getElementById('pf-car');
+        const statusEl = document.getElementById('pf-upload-status');
+        const btn = document.getElementById('pf-upload-btn');
+        const car_name = carInput.value.trim();
+        if (!car_name) {
+            showToast(t('pf_car_required'), 'error');
+            carInput.focus();
+            return;
+        }
+        if (!pfPending.length) {
+            showToast(t('pf_files_required'), 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        let done = 0;
+        const total = pfPending.length;
+        try {
+            // upload one by one; each finished file leaves the pending list,
+            // so pressing upload again after an error only retries the rest
+            while (pfPending.length) {
+                const p = pfPending[0];
+                statusEl.textContent = `${t('upload_uploading')} (${done + 1}/${total})`;
+                const ext = p.file.name.split('.').pop();
+                const path = `${p.type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                const { error: upErr } = await sb.storage.from(PORTFOLIO_BUCKET).upload(path, p.file);
+                if (upErr) throw upErr;
+                const { data } = sb.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path);
+                const { error: dbErr } = await sb.from('portfolio_items').insert({ media_type: p.type, url: data.publicUrl, car_name });
+                if (dbErr) throw dbErr;
+                URL.revokeObjectURL(p.preview);
+                pfPending.shift();
+                done++;
+            }
+            statusEl.textContent = '';
+            carInput.value = '';
+            showToast(t('pf_uploaded'));
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = t('upload_error') + err.message;
+        } finally {
+            btn.disabled = false;
+            renderPortfolioPending();
+            refreshPortfolio();
+        }
+    }
+
+    async function renamePortfolioItem(id, input) {
+        const car_name = input.value.trim();
+        const { error } = await sb.from('portfolio_items').update({ car_name }).eq('id', id);
+        if (error) {
+            showToast(t('save_error') + error.message, 'error');
+            return;
+        }
+        const item = portfolioItems.find(i => i.id === id);
+        if (item) item.car_name = car_name;
+        showToast(t('toast_saved'));
+    }
+
+    async function deletePortfolioItem(id) {
+        const item = portfolioItems.find(i => i.id === id);
+        if (!item || !confirm(`${t('pf_confirm_delete')}\n\n${item.car_name || ''}`)) return;
+        const { error } = await sb.from('portfolio_items').delete().eq('id', id);
+        if (error) {
+            showToast(t('delete_error') + error.message, 'error');
+            return;
+        }
+        // uploaded files live in the bucket; the original shop photos are site files and stay
+        const marker = `/storage/v1/object/public/${PORTFOLIO_BUCKET}/`;
+        const at = item.url.indexOf(marker);
+        if (at !== -1) {
+            const path = decodeURIComponent(item.url.slice(at + marker.length));
+            await sb.storage.from(PORTFOLIO_BUCKET).remove([path]);
+        }
+        showToast(t('toast_deleted'));
+        refreshPortfolio();
     }
 
     // ---- List ----
@@ -664,11 +893,8 @@
         const query = document.getElementById('list-search').value.trim().toLowerCase();
 
         const inCategory = products.filter(p => p.category === currentCategory);
-        const list = inCategory.filter(p =>
-            !query ||
-            (p.name || '').toLowerCase().includes(query) ||
-            (p.size || '').toLowerCase().includes(query)
-        );
+        // js/search.js: ignores case and spaces
+        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query));
 
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
 
@@ -942,6 +1168,17 @@
             e.preventDefault();
             addImages(e.dataTransfer.files);
         });
+
+        const pfDz = document.getElementById('pf-dropzone');
+        ['dragenter', 'dragover'].forEach(ev => pfDz.addEventListener(ev, e => {
+            e.preventDefault();
+            pfDz.classList.add('drag');
+        }));
+        ['dragleave', 'drop'].forEach(ev => pfDz.addEventListener(ev, () => pfDz.classList.remove('drag')));
+        pfDz.addEventListener('drop', e => {
+            e.preventDefault();
+            addPortfolioFiles(e.dataTransfer.files);
+        });
     });
 
     function onLanguageChange() {
@@ -951,7 +1188,8 @@
         renderImageGrid();
         if (!document.getElementById('dashboard').hidden) {
             renderTabs();
-            renderList();
+            if (currentCategory === 'portfolio') renderPortfolioAdmin();
+            else renderList();
             renderStoreSwitch();
         }
     }
