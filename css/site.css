@@ -387,7 +387,7 @@ body[data-page="brake"] .page-hero {
 .contact-page { padding-top: 32px; padding-bottom: 48px; }
 .contact-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
     margin-bottom: 32px;
 }
@@ -401,6 +401,7 @@ body[data-page="brake"] .page-hero {
 .contact-card h3 { margin: 0 0 12px; font-size: 18px; }
 .contact-body { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .contact-body p { margin: 0; color: var(--muted); line-height: 1.6; }
+.contact-body .contact-hours { color: var(--text); font-size: 20px; font-weight: 700; }
 .contact-body > a:not(.contact-btn) { color: var(--text); text-decoration: none; font-size: 20px; font-weight: 700; }
 .contact-body > a:not(.contact-btn):hover { color: var(--gold); }
 .contact-btn {

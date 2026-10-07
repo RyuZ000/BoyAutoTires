@@ -60,7 +60,7 @@
                     body: `<a href="${c.line}" target="_blank" rel="noopener" class="contact-btn line">${t('cta_line')}</a>
                            <a href="${c.messenger}" target="_blank" rel="noopener" class="contact-btn messenger">${t('cta_messenger')}</a>`,
                 },
-                c.hours && { icon: '🕒', title: t('contact_hours'), body: `<p>${c.hours}</p>` },
+                c.hours && { icon: '🕒', title: t('contact_hours'), body: `<p class="contact-hours">${c.hours}</p>` },
                 {
                     icon: '🌐', title: t('contact_social'),
                     body: `<div class="contact-social">${SITE_SOCIAL.map(s =>
