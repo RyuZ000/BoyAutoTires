@@ -160,14 +160,17 @@
         .cat-card img {
             width: 100%; height: 100%;
             object-fit: cover;
-            transition: transform .5s ease;
+            transition: transform .5s ease, opacity .4s ease;
         }
+        .cat-card img.fading { opacity: 0; }
         .cat-card:hover img { transform: scale(1.06); }
         .cat-card .cat-info {
             position: absolute;
             inset: auto 0 0 0;
-            padding: 18px;
-            background: linear-gradient(0deg, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0) 100%);
+            padding: 60px 18px 18px;
+            /* dark enough to keep white text readable on light photos (e.g. wheels on white) */
+            background: linear-gradient(0deg, rgba(5,8,16,0.97) 0%, rgba(5,8,16,0.88) 45%, rgba(5,8,16,0) 100%);
+            text-shadow: 0 1px 6px rgba(0,0,0,.6);
         }
         .cat-card h3 { margin: 0 0 4px; font-size: 22px; color: #fff; }
         .cat-card p { margin: 0 0 10px; font-size: 13px; color: #cfdcf3; }
@@ -278,11 +281,11 @@
             </div>
             <div class="cat-grid">
                 <a href="/alloywheel" class="cat-card">
-                    <img src="Photo Somza/Somza5.jpg" alt="" data-cat="wheels" loading="lazy">
+                    <img src="Photo Category/wheels-jager-blaze-20.jpg" alt="" data-cat="wheels" loading="lazy">
                     <div class="cat-info"><h3 data-i18n="nav_wheels">ล้อแม็ก</h3><p data-i18n="cat_wheels_desc"></p><span data-i18n="cat_view"></span></div>
                 </a>
                 <a href="/tires" class="cat-card">
-                    <img src="Photo Somza/Somza2.jpg" alt="" data-cat="tires" loading="lazy">
+                    <img src="Photo Category/tires-bfgoodrich-20.jpg" alt="" data-cat="tires" loading="lazy">
                     <div class="cat-info"><h3 data-i18n="nav_tires">ยาง</h3><p data-i18n="cat_tires_desc"></p><span data-i18n="cat_view"></span></div>
                 </a>
                 <a href="/shock" class="cat-card">
@@ -290,7 +293,7 @@
                     <div class="cat-info"><h3 data-i18n="nav_shock">โช้คอัพ</h3><p data-i18n="cat_shock_desc"></p><span data-i18n="cat_view"></span></div>
                 </a>
                 <a href="/brake" class="cat-card">
-                    <img src="Photo Somza/Somza4.jpg" alt="" data-cat="brake" loading="lazy">
+                    <img src="Photo Somza/Somza2.jpg" alt="" data-cat="brake" loading="lazy">
                     <div class="cat-info"><h3 data-i18n="nav_brake">เบรก</h3><p data-i18n="cat_brake_desc"></p><span data-i18n="cat_view"></span></div>
                 </a>
             </div>
@@ -418,14 +421,42 @@
                 return;
             }
             renderProductCards(latestProducts, 'latest-grid');
-            useProductImagesForCategories(latestProducts);
         }
 
-        // swap category card photos for a real product photo when one exists
-        function useProductImagesForCategories(products) {
-            document.querySelectorAll('.cat-card img[data-cat]').forEach(img => {
-                const p = products.find(p => p.category === img.dataset.cat && getProductImages(p).length);
-                if (p) img.src = getProductImages(p)[0];
+        // category cards rotate through: the card's own photo, then the cover photo
+        // of every in-stock product in that category
+        const CAT_ROTATE_MS = 4000;
+        async function rotateCategoryImages() {
+            const { data, error } = await sb
+                .from('products')
+                .select('category, image_url, image_urls')
+                .eq('in_stock', true)
+                .order('created_at', { ascending: false });
+            if (error) {
+                console.error('rotateCategoryImages error:', error);
+                return;
+            }
+            document.querySelectorAll('.cat-card img[data-cat]').forEach((img, cardIndex) => {
+                const photos = [img.getAttribute('src')];
+                (data || []).forEach(p => {
+                    const cover = getProductImages(p)[0];
+                    if (p.category === img.dataset.cat && cover && !photos.includes(cover)) photos.push(cover);
+                });
+                if (photos.length < 2) return;
+
+                let i = 0;
+                const next = () => {
+                    i = (i + 1) % photos.length;
+                    const target = photos[i];
+                    const pre = new Image();
+                    pre.onload = () => {
+                        img.classList.add('fading');
+                        setTimeout(() => { img.src = target; img.classList.remove('fading'); }, 400);
+                    };
+                    pre.src = target;
+                };
+                // stagger the cards so they don't all change at the same moment
+                setTimeout(() => setInterval(next, CAT_ROTATE_MS), cardIndex * 1000);
             });
         }
 
@@ -433,7 +464,10 @@
             if (latestProducts.length) renderProductCards(latestProducts, 'latest-grid');
         }
 
-        document.addEventListener('DOMContentLoaded', loadLatest);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLatest();
+            rotateCategoryImages();
+        });
     </script>
 </body>
 </html>
