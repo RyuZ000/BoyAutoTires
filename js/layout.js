@@ -25,12 +25,21 @@ const SITE_SOCIAL = [
   { title: 'Shopee', href: 'https://shopee.co.th/mj_jeab', img: 'Photo Social/Shopee.jpg' },
 ];
 
+// product: true = a shop category (shown as category chips and in the footer's product list)
 const SITE_NAV = [
   { page: 'home', href: '/', key: 'nav_home' },
-  { page: 'wheels', href: '/alloywheel', key: 'nav_wheels' },
-  { page: 'tires', href: '/tires', key: 'nav_tires' },
-  { page: 'shock', href: '/shock', key: 'nav_shock' },
-  { page: 'brake', href: '/brake', key: 'nav_brake' },
+  { page: 'wheels', href: '/alloywheel', key: 'nav_wheels', product: true },
+  { page: 'tires', href: '/tires', key: 'nav_tires', product: true },
+  { page: 'shock', href: '/shock', key: 'nav_shock', product: true },
+  { page: 'brake', href: '/brake', key: 'nav_brake', product: true },
+  { page: 'portfolio', href: '/portfolio', key: 'nav_portfolio' },
+];
+
+// ☰ menu (top left). Items without href are shown as "coming soon".
+const SITE_MENU = [
+  { key: 'menu_about' },
+  { key: 'menu_blog' },
+  { key: 'menu_contact', href: '#contact' },
 ];
 
 function renderSiteHeader() {
@@ -39,6 +48,10 @@ function renderSiteHeader() {
   const current = document.body.dataset.page;
   const navLinks = SITE_NAV.map(n =>
     `<a href="${n.href}" data-i18n="${n.key}" class="${n.page === current ? 'active' : ''}">${n.key}</a>`
+  ).join('');
+  const menuItems = SITE_MENU.map(m => m.href
+    ? `<a href="${m.href}" data-i18n="${m.key}">${m.key}</a>`
+    : `<span class="menu-soon"><span data-i18n="${m.key}">${m.key}</span><small data-i18n="menu_soon">เร็วๆ นี้</small></span>`
   ).join('');
 
   el.outerHTML = `
@@ -63,26 +76,46 @@ function renderSiteHeader() {
     </div>
     <header class="site-header">
       <div class="container">
-        <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
-        <nav class="main-nav" id="main-nav">${navLinks}</nav>
+        <div class="header-left">
+          <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Menu"
+                  aria-expanded="false" aria-controls="site-menu">☰</button>
+          <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
+        </div>
+        <nav class="main-nav">${navLinks}</nav>
         <a href="tel:${SITE_CONTACT.phoneTel}" class="header-cta" data-i18n="cta_call">📞 โทรเลย</a>
-        <button type="button" class="menu-toggle" aria-label="Menu"
-                onclick="document.getElementById('main-nav').classList.toggle('open')">☰</button>
+        <div class="site-menu" id="site-menu" hidden>
+          <nav class="site-menu-nav">${navLinks}</nav>
+          ${menuItems}
+        </div>
       </div>
     </header>
   `;
+
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('site-menu');
+  const setOpen = open => {
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', open);
+  };
+  toggle.onclick = () => setOpen(menu.hidden);
+  menu.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
+  document.addEventListener('click', e => {
+    if (!menu.hidden && !menu.contains(e.target) && e.target !== toggle) setOpen(false);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
 }
 
 function renderSiteFooter() {
   const el = document.getElementById('site-footer');
   if (!el) return;
-  const navItems = SITE_NAV.map(n => `<li><a href="${n.href}" data-i18n="${n.key}">${n.key}</a></li>`).join('');
+  const navItems = SITE_NAV.filter(n => n.product)
+    .map(n => `<li><a href="${n.href}" data-i18n="${n.key}">${n.key}</a></li>`).join('');
   const social = SITE_SOCIAL.map(s =>
     `<a href="${s.href}" target="_blank" rel="noopener" title="${s.title}"><img src="${s.img}" alt="${s.title}"></a>`
   ).join('');
 
   el.outerHTML = `
-    <footer class="site-footer">
+    <footer class="site-footer" id="contact">
       <div class="container footer-grid">
         <div>
           <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>

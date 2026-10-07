@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผลงาน (Portfolio) - BoyAutoTires</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="portfolio">
+    <div id="site-header"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb"><a href="/" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="nav_portfolio"></span></div>
+            <h1 class="page-title" data-i18n="page_title_portfolio">ผลงานของเรา</h1>
+            <p class="page-sub" data-i18n="portfolio_sub"></p>
+        </div>
+    </section>
+
+    <main class="container shop">
+        <div class="portfolio-grid" id="portfolio-grid">
+            <video class="pf-video" autoplay muted loop playsinline controls>
+                <source src="Video Somza/Somza1.mp4" type="video/mp4">
+            </video>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        // add new work here: photos go in "Photo Somza", videos in "Video Somza"
+        const PORTFOLIO_PHOTOS = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `Photo Somza/Somza${n}.jpg`);
+
+        // reuse the product lightbox (js/products.js) for full-screen photos
+        galleryData.portfolio = { name: 'BoyAutoTires', images: PORTFOLIO_PHOTOS };
+        document.getElementById('portfolio-grid').insertAdjacentHTML('beforeend', PORTFOLIO_PHOTOS.map((src, i) =>
+            `<button type="button" class="pf-photo" onclick="openLightbox('portfolio', ${i})">
+                <img src="${src}" alt="" loading="lazy">
+            </button>`
+        ).join(''));
+    </script>
+</body>
+</html>

@@ -103,7 +103,7 @@ function initProductPage(category, defaultSort, options = {}) {
   function renderChips() {
     // SITE_NAV comes from js/layout.js
     document.getElementById('cat-chips').innerHTML = SITE_NAV
-      .filter(n => n.page !== 'home')
+      .filter(n => n.product)
       .map(n => `<a href="${n.href}" class="cat-chip ${n.page === document.body.dataset.page ? 'active' : ''}">${t(n.key)}</a>`)
       .join('');
   }
@@ -221,11 +221,11 @@ function ensureLightbox() {
   return lb;
 }
 
-function openLightbox(productId) {
+function openLightbox(productId, start = 0) {
   const product = galleryData[productId];
   if (!product || !product.images.length) return;
   lbImages = product.images;
-  lbIndex = 0;
+  lbIndex = start;
 
   const lb = ensureLightbox();
   lb.querySelector('.lb-close').setAttribute('aria-label', t('lb_close'));
