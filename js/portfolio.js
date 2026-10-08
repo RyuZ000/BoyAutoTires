@@ -9,7 +9,8 @@ function carKey(name) {
   return (name || '').toLowerCase().replace(/[\s\-_./]+/g, '');
 }
 
-// items: rows sorted newest first. Returns albums sorted by their newest item:
+// items: rows sorted newest first. Returns albums in album_order (set by dragging
+// in admin; albums without one come last, newest first):
 // { key, name, items, photos, videos, cover }
 // Inside an album, items follow sort_order (set by dragging in admin); the first one is the cover.
 function groupPortfolio(items) {
@@ -20,6 +21,7 @@ function groupPortfolio(items) {
     albums.get(key).items.push(item);
   }
   return [...albums.values()].map(a => {
+    const orders = a.items.map(i => i.album_order).filter(n => n != null);
     const items = [...a.items].sort((x, y) =>
       (x.sort_order || 0) - (y.sort_order || 0) || String(x.created_at || '').localeCompare(String(y.created_at || '')));
     return {
@@ -28,6 +30,7 @@ function groupPortfolio(items) {
       photos: items.filter(i => i.media_type === 'photo'),
       videos: items.filter(i => i.media_type === 'video'),
       cover: items[0],
+      order: orders.length ? Math.min(...orders) : null,
     };
-  });
+  }).sort((x, y) => (x.order ?? Infinity) - (y.order ?? Infinity));
 }

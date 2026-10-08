@@ -429,6 +429,7 @@
             <input type="search" class="field" id="pf-admin-search" data-i18n-placeholder="pf_search" oninput="renderPortfolioAdmin()">
             <span class="muted" id="pf-count"></span>
         </div>
+        <span class="drag-hint" id="pf-list-drag-hint"></span>
         <div class="status-msg" id="pf-status" hidden></div>
         <div class="product-list" id="pf-list"></div>
     </section>
@@ -772,9 +773,12 @@
         document.getElementById('pf-count').textContent = `${albums.length} ${t('pf_count_suffix')}`;
         statusEl.textContent = t(all.length ? 'list_no_match' : 'pf_empty_admin');
         statusEl.hidden = albums.length > 0;
+        const searching = !!document.getElementById('pf-admin-search').value.trim();
+        document.getElementById('pf-list-drag-hint').textContent =
+            all.length < 2 ? '' : searching ? t('list_drag_search') : listDragHint();
 
         document.getElementById('pf-list').innerHTML = albums.map(a => `
-            <div class="product-row">
+            <div class="product-row" data-key="${a.key}">
                 <div class="thumb">
                     ${mediaThumb(a.cover.url, a.cover.media_type)}
                     ${a.items.length > 1 ? `<span class="img-count">${a.items.length}</span>` : ''}
@@ -890,6 +894,7 @@
 
             // 2. files removed in the form
             const album = pfEditKey ? findAlbum(pfEditKey) : null;
+            const album_order = album && album.order != null ? album.order : topAlbumOrder();
             const keptIds = new Set(pfFormItems.map(i => i.id).filter(Boolean));
             const removed = album ? album.items.filter(i => !keptIds.has(i.id)) : [];
             if (removed.length) {
@@ -901,8 +906,8 @@
             // 3. save name + position of every file (new ones get inserted)
             for (const [sort_order, item] of pfFormItems.entries()) {
                 const { data, error } = item.id
-                    ? await sb.from('portfolio_items').update({ car_name, sort_order }).eq('id', item.id).select('id')
-                    : await sb.from('portfolio_items').insert({ media_type: item.type, url: item.url, car_name, sort_order }).select('id');
+                    ? await sb.from('portfolio_items').update({ car_name, sort_order, album_order }).eq('id', item.id).select('id')
+                    : await sb.from('portfolio_items').insert({ media_type: item.type, url: item.url, car_name, sort_order, album_order }).select('id');
                 if (error) throw error;
                 item.id = data[0].id;
             }
@@ -917,6 +922,28 @@
             btn.disabled = false;
             btn.textContent = t('btn_save');
         }
+    }
+
+    // a new car is placed first on the portfolio page
+    function topAlbumOrder() {
+        const orders = groupPortfolio(portfolioItems).map(x => x.order).filter(n => n != null);
+        return orders.length ? Math.min(...orders) - 1 : 0;
+    }
+
+    // after dragging a car row: every file of a car gets that car's position
+    async function savePortfolioOrder() {
+        const keys = [...document.querySelectorAll('#pf-list .product-row')].map(r => r.dataset.key);
+        const albums = groupPortfolio(portfolioItems);
+        const changes = keys
+            .map((key, order) => ({ album: albums.find(x => x.key === key), order }))
+            .filter(c => c.album && c.album.order !== c.order);
+        if (!changes.length) return;
+        const results = await Promise.all(changes.map(c =>
+            sb.from('portfolio_items').update({ album_order: c.order }).in('id', c.album.items.map(i => i.id))));
+        const failed = results.find(r => r.error);
+        if (failed) showToast(t('save_error') + failed.error.message, 'error');
+        else showToast(t('toast_order_saved'));
+        refreshPortfolio();
     }
 
     async function deletePortfolioAlbum(key) {
@@ -1347,6 +1374,15 @@
             // search results are a partial list, so reordering them is switched off
             onMove: () => !document.getElementById('list-search').value.trim(),
             onEnd: evt => { if (evt.oldIndex !== evt.newIndex) saveProductOrder(); },
+        });
+        Sortable.create(document.getElementById('pf-list'), {
+            animation: 150,
+            delay: 200,
+            delayOnTouchOnly: true,
+            filter: 'button, input, label',
+            preventOnFilter: false,
+            onMove: () => !document.getElementById('pf-admin-search').value.trim(),
+            onEnd: evt => { if (evt.oldIndex !== evt.newIndex) savePortfolioOrder(); },
         });
         makeSortable('pf-grid-edit', () => pfFormItems, renderPortfolioForm);
 
