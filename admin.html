@@ -457,9 +457,15 @@
                 </div>
             </div>
 
-            <div id="model-field">
-                <label class="field-label" for="f-model" data-i18n="field_model">Model</label>
-                <input class="field" type="text" id="f-model" data-i18n-placeholder="placeholder_model">
+            <div id="model-field" class="field-row">
+                <div>
+                    <label class="field-label" for="f-series" data-i18n="field_series">ซีรีส์</label>
+                    <input class="field" type="text" id="f-series" data-i18n-placeholder="placeholder_series">
+                </div>
+                <div>
+                    <label class="field-label" for="f-model" data-i18n="field_model">Model</label>
+                    <input class="field" type="text" id="f-model" data-i18n-placeholder="placeholder_model">
+                </div>
             </div>
 
             <div id="vehicle-field">
@@ -571,6 +577,11 @@
         const div = document.createElement('div');
         div.textContent = str ?? '';
         return div.innerHTML;
+    }
+
+    // wheels: "Series · Model" (same as js/products.js)
+    function wheelLine(p) {
+        return [p.series, p.model].filter(Boolean).join(' · ');
     }
 
     // older rows only have image_url; newer rows have image_urls
@@ -943,7 +954,7 @@
 
         const inCategory = products.filter(p => p.category === currentCategory);
         // js/search.js: ignores case and spaces
-        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query));
+        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query));
 
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
 
@@ -969,7 +980,7 @@
                 <div class="info">
                     <h4 title="${escHtml(p.name)}">${escHtml(p.name)}</h4>
                     <div class="meta">
-                        ${p.model ? `<span>${escHtml(p.model)}</span>` : ''}
+                        ${wheelLine(p) ? `<span>${escHtml(wheelLine(p))}</span>` : ''}
                         ${p.size ? `<span class="size-badge">${escHtml(p.size)}</span>` : ''}
                         ${hasPrice
                             ? `<span class="price">฿${Number(p.price).toLocaleString()}</span>`
@@ -1030,6 +1041,7 @@
         document.getElementById('f-price').value = editing ? p.price ?? '' : '';
         document.getElementById('f-vehicle').value = editing ? p.vehicle_type || '' : '';
         document.getElementById('f-model').value = editing ? p.model || '' : '';
+        document.getElementById('f-series').value = editing ? p.series || '' : '';
         document.getElementById('f-instock').checked = editing ? !!p.in_stock : true;
         document.getElementById('upload-status').textContent = '';
         document.getElementById('form-error').textContent = '';
@@ -1130,6 +1142,7 @@
             // only sent for wheels (needs supabase-add-model-column.sql)
             if (currentCategory === 'wheels') {
                 payload.model = document.getElementById('f-model').value.trim() || null;
+                payload.series = document.getElementById('f-series').value.trim() || null;
             }
 
             const { error } = id

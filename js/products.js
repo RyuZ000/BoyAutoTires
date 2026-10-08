@@ -10,6 +10,11 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// wheels: "Series · Model" under the brand name (either may be empty)
+function wheelLine(p) {
+  return [p.series, p.model].filter(Boolean).join(' · ');
+}
+
 // older rows only have image_url; newer rows have image_urls
 function getProductImages(p) {
   if (p.image_urls && p.image_urls.length) return p.image_urls;
@@ -22,7 +27,7 @@ function getProductImages(p) {
 function productMatches(p, query) {
   if (!query) return true;
   // textMatches (js/search.js) also ignores spaces: "bfgoodrich" finds "BF Goodrich"
-  if (textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query)) return true;
+  if (textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query)) return true;
   if (!/^[\d\s\/\-r.]+$/.test(query)) return false;
   const digits = query.replace(/\D/g, '');
   return digits !== '' && (p.size || '').replace(/\D/g, '').includes(digits);
@@ -73,7 +78,7 @@ function renderProductCards(data, gridId) {
       <div class="product-body">
         ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
         <h3>${escapeHtml(p.name)}</h3>
-        ${p.model ? `<p class="product-model">${escapeHtml(p.model)}</p>` : ''}
+        ${wheelLine(p) ? `<p class="product-model">${escapeHtml(wheelLine(p))}</p>` : ''}
         ${p.description ? `<p class="product-desc">${escapeHtml(p.description)}</p>` : ''}
         <div class="product-footer">
           ${hasPrice
