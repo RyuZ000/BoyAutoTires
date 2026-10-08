@@ -167,6 +167,10 @@
     .image-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
     .image-thumb.sortable-chosen { transform: scale(1.06); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
     .image-thumb.sortable-ghost { opacity: .35; }
+    .product-row { cursor: grab; }
+    .product-row.sortable-chosen { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); border-color: var(--gold); }
+    .product-row.sortable-ghost { opacity: .35; }
+    #list-drag-hint { margin: -6px 0 12px; }
     .pf-type-tag {
         position: absolute; left: 5px; top: 5px;
         background: rgba(0, 0, 0, 0.75); color: #fff;
@@ -414,6 +418,7 @@
             <span class="muted" id="list-count"></span>
         </div>
 
+        <span class="drag-hint" id="list-drag-hint"></span>
         <div class="status-msg" id="list-status"></div>
         <div class="product-list" id="product-list"></div>
     </div>
@@ -952,17 +957,28 @@
         renderList();
     }
 
+    // products of the current tab in shop order (sort_order, set by dragging; newest first otherwise)
+    function categoryProducts() {
+        return products
+            .filter(p => p.category === currentCategory)
+            .sort((a, b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity)
+                || String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    }
+
     function renderList() {
         const listEl = document.getElementById('product-list');
         const statusEl = document.getElementById('list-status');
         const countEl = document.getElementById('list-count');
         const query = document.getElementById('list-search').value.trim().toLowerCase();
 
-        const inCategory = products.filter(p => p.category === currentCategory);
+        const inCategory = categoryProducts();
         // js/search.js: ignores case and spaces
         const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query) || textMatches(p.color, query));
 
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
+        // dragging only makes sense on the full list, not on search results
+        document.getElementById('list-drag-hint').textContent =
+            inCategory.length < 2 ? '' : query ? t('list_drag_search') : listDragHint();
 
         if (list.length === 0) {
             listEl.innerHTML = '';
@@ -976,7 +992,7 @@
             const images = getProductImages(p);
             const hasPrice = p.price !== null && p.price !== undefined && p.price !== '';
             return `
-            <div class="product-row ${p.in_stock ? '' : 'out'}">
+            <div class="product-row ${p.in_stock ? '' : 'out'}" data-id="${p.id}">
                 <div class="thumb">
                     ${images.length
                         ? `<img src="${escHtml(images[0])}" alt="" loading="lazy">
@@ -1005,6 +1021,37 @@
                 </div>
             </div>`;
         }).join('');
+    }
+
+    // a new product is placed first in its category
+    function topSortOrder() {
+        const orders = categoryProducts().map(p => p.sort_order).filter(n => n != null);
+        return orders.length ? Math.min(...orders) - 1 : 0;
+    }
+
+    function listDragHint() {
+        const touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        return t(touch ? 'list_drag_hint' : 'list_drag_hint_mouse');
+    }
+
+    // press-and-hold (touch) or drag (mouse) a product row; saves the new order for the site
+    async function saveProductOrder() {
+        const ids = [...document.querySelectorAll('#product-list .product-row')].map(r => r.dataset.id);
+        const changes = ids
+            .map((id, sort_order) => ({ p: products.find(x => x.id === id), sort_order }))
+            .filter(c => c.p && c.p.sort_order !== c.sort_order);
+        if (!changes.length) return;
+        const results = await Promise.all(changes.map(c =>
+            sb.from('products').update({ sort_order: c.sort_order }).eq('id', c.p.id)));
+        const failed = results.find(r => r.error);
+        if (failed) {
+            showToast(t('save_error') + failed.error.message, 'error');
+            refreshList();
+            return;
+        }
+        changes.forEach(c => { c.p.sort_order = c.sort_order; });
+        showToast(t('toast_order_saved'));
+        renderList();
     }
 
     async function toggleStock(id, checkbox) {
@@ -1157,7 +1204,7 @@
 
             const { error } = id
                 ? await sb.from('products').update(payload).eq('id', id)
-                : await sb.from('products').insert(payload);
+                : await sb.from('products').insert({ ...payload, sort_order: topSortOrder() });
 
             if (error) {
                 errEl.textContent = t('save_error') + error.message;
@@ -1291,6 +1338,16 @@
         });
 
         makeSortable('image-grid', () => formImages, renderImageGrid);
+        Sortable.create(document.getElementById('product-list'), {
+            animation: 150,
+            delay: 200,
+            delayOnTouchOnly: true,
+            filter: 'button, input, label',
+            preventOnFilter: false,
+            // search results are a partial list, so reordering them is switched off
+            onMove: () => !document.getElementById('list-search').value.trim(),
+            onEnd: evt => { if (evt.oldIndex !== evt.newIndex) saveProductOrder(); },
+        });
         makeSortable('pf-grid-edit', () => pfFormItems, renderPortfolioForm);
 
         const pfDz = document.getElementById('pf-dropzone');

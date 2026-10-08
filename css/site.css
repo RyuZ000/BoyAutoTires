@@ -272,8 +272,7 @@ body[data-page="brake"] .page-hero {
     opacity: .6;
     pointer-events: none;
 }
-.shop-search input,
-.shop-sort {
+.shop-search input {
     width: 100%;
     padding: 11px 16px;
     border-radius: 999px;
@@ -287,15 +286,11 @@ body[data-page="brake"] .page-hero {
 }
 .shop-search input { padding-left: 42px; }
 .shop-search input::placeholder { color: #5f7396; }
-.shop-search input:focus,
-.shop-sort:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.15); }
-.shop-sort { width: auto; cursor: pointer; }
-.shop-sort option { background: var(--bg-2); color: var(--text); }
+.shop-search input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.15); }
 .shop-count { color: var(--muted); font-size: 14px; white-space: nowrap; margin-left: auto; }
 @media (max-width: 560px) {
     .shop-toolbar { padding: 12px; gap: 10px; }
-    .shop-search { flex: 1 1 100%; }
-    .shop-sort { flex: 1; min-width: 0; }
+    .shop-search { flex: 1 1 0; min-width: 0; }
 }
 
 /* ---------------- Shop page: filter sidebar (shock.html) ---------------- */

@@ -96,13 +96,14 @@ function renderProductCards(data, gridId) {
 /* ---------------- Category page: chips + search + sort ---------------- */
 
 // Wires up a category page (tires / wheels / shock / brake). The page needs
-// #cat-chips, #shop-search, #shop-sort, #shop-count and #products-grid.
+// #cat-chips, #shop-search, #shop-count and #products-grid.
+// Products follow the order staff set by dragging in admin (products.sort_order);
+// defaultSort ('newest', 'size_asc', ...) only orders products without one.
 // options.filter(p)       extra filter on top of search (e.g. the shock sidebar)
 // options.onLoad(products) called once products are fetched
 // Returns { render } so the page can re-render when its own filters change.
 function initProductPage(category, defaultSort, options = {}) {
   const searchEl = document.getElementById('shop-search');
-  const sortEl = document.getElementById('shop-sort');
   let allProducts = [];
   let loaded = false;
 
@@ -115,6 +116,13 @@ function initProductPage(category, defaultSort, options = {}) {
   }
 
   function compare(a, b, field, dir) {
+    const ao = a.sort_order ?? null;
+    const bo = b.sort_order ?? null;
+    if (ao !== null || bo !== null) {
+      if (ao === null) return 1;
+      if (bo === null) return -1;
+      if (ao !== bo) return ao - bo;
+    }
     if (field === 'newest') {
       return String(b.created_at || '').localeCompare(String(a.created_at || ''));
     }
@@ -135,7 +143,7 @@ function initProductPage(category, defaultSort, options = {}) {
   function render() {
     if (!loaded) return;
     const query = searchEl.value.trim().toLowerCase();
-    const [field, dirName] = sortEl.value.split('_');
+    const [field, dirName] = defaultSort.split('_');
     const dir = dirName === 'desc' ? -1 : 1;
 
     const list = allProducts
@@ -173,11 +181,9 @@ function initProductPage(category, defaultSort, options = {}) {
     render();
   }
 
-  sortEl.value = defaultSort;
   // must run before render so the search sees the formatted size
   if (category === 'tires') attachTireSizeMask(searchEl);
   searchEl.addEventListener('input', render);
-  sortEl.addEventListener('change', render);
 
   // search box on the home page links here as /tires?q=...
   const initialQuery = new URLSearchParams(location.search).get('q');
