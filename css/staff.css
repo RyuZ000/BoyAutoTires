@@ -173,6 +173,11 @@
     font-size: 14px;
     font-weight: 600;
 }
+.product-color {
+    margin: -4px 0 0;
+    color: var(--muted, #9aaccc);
+    font-size: 13px;
+}
 .product-size-badge {
     align-self: flex-start;
     background: rgba(245, 197, 24, 0.1);

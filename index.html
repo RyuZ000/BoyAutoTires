@@ -83,6 +83,8 @@
         }
         .hero-search button:hover { background: #1f5fcf; }
         .hero-search-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .hero-search-hint { margin: -10px 0 18px 18px; font-size: 13px; color: #cfdcf3; }
+        .hero-search-hint.flash { color: var(--gold); }
         .hero-search-cats button {
             border: 1px solid rgba(255,255,255,.45);
             background: rgba(255,255,255,.12);
@@ -261,6 +263,7 @@
                 <input type="text" id="hero-q" data-i18n-placeholder="search_placeholder" placeholder="พิมพ์ไซส์ยาง เช่น 2656018 หรือชื่อยาง">
                 <button type="submit" data-i18n="hero_search_btn">ค้นหา</button>
             </form>
+            <p class="hero-search-hint" id="hero-hint" data-i18n="hero_wheels_hint" hidden></p>
             <div class="hero-actions">
                 <a href="tel:+66811600060" class="btn btn-gold" data-i18n="cta_call">📞 โทรเลย</a>
                 <a href="https://line.me/ti/p/yWkHxGNvL2" target="_blank" rel="noopener" class="btn btn-line" data-i18n="cta_line">💬 แอด LINE</a>
@@ -385,14 +388,33 @@
             btn.onclick = () => {
                 heroCat = btn.dataset.cat;
                 document.querySelectorAll('#hero-cats button').forEach(b => b.classList.toggle('active', b === btn));
-                // tires get the size hint, the other categories the generic one
-                heroQ.setAttribute('data-i18n-placeholder', heroCat === 'tires' ? 'search_placeholder' : 'search_placeholder_generic');
-                heroQ.placeholder = t(heroQ.getAttribute('data-i18n-placeholder'));
+                // tires get the size hint, wheels the English-only hint, the rest the generic one
+                const ph = heroCat === 'tires' ? 'search_placeholder' : heroCat === 'wheels' ? 'search_placeholder_wheels' : 'search_placeholder_generic';
+                heroQ.setAttribute('data-i18n-placeholder', ph);
+                heroQ.placeholder = t(ph);
+                document.getElementById('hero-hint').hidden = heroCat !== 'wheels';
+                if (heroCat === 'wheels') heroQ.value = toWheelSearch(heroQ.value);
                 heroQ.focus();
             };
         });
         // the 265/60/R18 auto-format only applies while "tires" is selected
         attachTireSizeMask(heroQ, () => heroCat === 'tires');
+
+        // wheels are listed in English (brand / series / model), so their search takes
+        // only English letters and digits; the hint under the box says so and flashes
+        // when something else (e.g. Thai) was typed and dropped
+        function toWheelSearch(value) {
+            return value.replace(/[^A-Za-z0-9 .\-\/]/g, '');
+        }
+        heroQ.addEventListener('input', () => {
+            if (heroCat !== 'wheels') return;
+            const clean = toWheelSearch(heroQ.value);
+            if (clean === heroQ.value) return;
+            heroQ.value = clean;
+            const hint = document.getElementById('hero-hint');
+            hint.classList.add('flash');
+            setTimeout(() => hint.classList.remove('flash'), 1200);
+        });
 
         function heroSearch(e) {
             e.preventDefault();

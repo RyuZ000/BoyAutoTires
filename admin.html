@@ -445,6 +445,7 @@
 
             <label class="field-label" for="f-name"><span id="f-name-label" data-i18n="field_name">ชื่อสินค้า</span> <span class="req">*</span></label>
             <input class="field" type="text" id="f-name" data-i18n-placeholder="placeholder_name">
+            <span class="field-hint" id="wheel-text-hint" data-i18n="wheel_text_hint" hidden></span>
 
             <div class="field-row">
                 <div>
@@ -457,15 +458,20 @@
                 </div>
             </div>
 
-            <div id="model-field" class="field-row">
-                <div>
-                    <label class="field-label" for="f-series" data-i18n="field_series">ซีรีส์</label>
-                    <input class="field" type="text" id="f-series" data-i18n-placeholder="placeholder_series">
+            <div id="model-field">
+                <div class="field-row">
+                    <div>
+                        <label class="field-label" for="f-series" data-i18n="field_series">ซีรีส์</label>
+                        <input class="field" type="text" id="f-series" data-i18n-placeholder="placeholder_series">
+                    </div>
+                    <div>
+                        <label class="field-label" for="f-model" data-i18n="field_model">Model</label>
+                        <input class="field" type="text" id="f-model" data-i18n-placeholder="placeholder_model">
+                    </div>
                 </div>
-                <div>
-                    <label class="field-label" for="f-model" data-i18n="field_model">Model</label>
-                    <input class="field" type="text" id="f-model" data-i18n-placeholder="placeholder_model">
-                </div>
+                <label class="field-label" for="f-color" data-i18n="field_color">สีล้อ</label>
+                <input class="field" type="text" id="f-color" data-i18n-placeholder="placeholder_color">
+                <span class="field-hint" data-i18n="wheel_text_hint"></span>
             </div>
 
             <div id="vehicle-field">
@@ -954,7 +960,7 @@
 
         const inCategory = products.filter(p => p.category === currentCategory);
         // js/search.js: ignores case and spaces
-        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query));
+        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query) || textMatches(p.color, query));
 
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
 
@@ -981,6 +987,7 @@
                     <h4 title="${escHtml(p.name)}">${escHtml(p.name)}</h4>
                     <div class="meta">
                         ${wheelLine(p) ? `<span>${escHtml(wheelLine(p))}</span>` : ''}
+                        ${p.color ? `<span>🎨 ${escHtml(p.color)}</span>` : ''}
                         ${p.size ? `<span class="size-badge">${escHtml(p.size)}</span>` : ''}
                         ${hasPrice
                             ? `<span class="price">฿${Number(p.price).toLocaleString()}</span>`
@@ -1042,6 +1049,7 @@
         document.getElementById('f-vehicle').value = editing ? p.vehicle_type || '' : '';
         document.getElementById('f-model').value = editing ? p.model || '' : '';
         document.getElementById('f-series').value = editing ? p.series || '' : '';
+        document.getElementById('f-color').value = editing ? p.color || '' : '';
         document.getElementById('f-instock').checked = editing ? !!p.in_stock : true;
         document.getElementById('upload-status').textContent = '';
         document.getElementById('form-error').textContent = '';
@@ -1063,6 +1071,7 @@
         // wheels: the product name is the brand, plus a separate Model
         const isWheels = currentCategory === 'wheels';
         document.getElementById('model-field').hidden = !isWheels;
+        document.getElementById('wheel-text-hint').hidden = !isWheels;
         const nameLabel = document.getElementById('f-name-label');
         nameLabel.setAttribute('data-i18n', isWheels ? 'field_brand' : 'field_name');
         nameLabel.textContent = t(nameLabel.getAttribute('data-i18n'));
@@ -1143,6 +1152,7 @@
             if (currentCategory === 'wheels') {
                 payload.model = document.getElementById('f-model').value.trim() || null;
                 payload.series = document.getElementById('f-series').value.trim() || null;
+                payload.color = document.getElementById('f-color').value.trim() || null;
             }
 
             const { error } = id
@@ -1248,6 +1258,24 @@
         statusEl.textContent = t('upload_success');
         return formImages.map(img => img.url);
     }
+
+    // wheels: brand / series / model / color take only A-Z (upper case) and digits;
+    // lower case is converted, anything else (Thai, symbols) is dropped
+    const WHEEL_TEXT_FIELDS = ['f-name', 'f-series', 'f-model', 'f-color'];
+    function toWheelText(value) {
+        return value.toUpperCase().replace(/[^A-Z0-9 .\-\/]/g, '');
+    }
+    WHEEL_TEXT_FIELDS.forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener('input', () => {
+            if (currentCategory !== 'wheels') return;
+            const clean = toWheelText(input.value);
+            if (clean === input.value) return;
+            const caret = input.selectionStart - (input.value.length - clean.length);
+            input.value = clean;
+            input.setSelectionRange(Math.max(caret, 0), Math.max(caret, 0));
+        });
+    });
 
     // drag & drop onto the picker
     document.addEventListener('DOMContentLoaded', () => {

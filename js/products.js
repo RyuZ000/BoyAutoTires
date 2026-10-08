@@ -27,7 +27,7 @@ function getProductImages(p) {
 function productMatches(p, query) {
   if (!query) return true;
   // textMatches (js/search.js) also ignores spaces: "bfgoodrich" finds "BF Goodrich"
-  if (textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query)) return true;
+  if (textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query) || textMatches(p.color, query)) return true;
   if (!/^[\d\s\/\-r.]+$/.test(query)) return false;
   const digits = query.replace(/\D/g, '');
   return digits !== '' && (p.size || '').replace(/\D/g, '').includes(digits);
@@ -79,6 +79,7 @@ function renderProductCards(data, gridId) {
         ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
         <h3>${escapeHtml(p.name)}</h3>
         ${wheelLine(p) ? `<p class="product-model">${escapeHtml(wheelLine(p))}</p>` : ''}
+        ${p.color ? `<p class="product-color">${escapeHtml(t('field_color'))}: ${escapeHtml(p.color)}</p>` : ''}
         ${p.description ? `<p class="product-desc">${escapeHtml(p.description)}</p>` : ''}
         <div class="product-footer">
           ${hasPrice
