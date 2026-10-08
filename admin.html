@@ -443,7 +443,7 @@
         <div class="drawer-body">
             <input type="hidden" id="edit-id">
 
-            <label class="field-label" for="f-name"><span data-i18n="field_name">ชื่อสินค้า</span> <span class="req">*</span></label>
+            <label class="field-label" for="f-name"><span id="f-name-label" data-i18n="field_name">ชื่อสินค้า</span> <span class="req">*</span></label>
             <input class="field" type="text" id="f-name" data-i18n-placeholder="placeholder_name">
 
             <div class="field-row">
@@ -455,6 +455,11 @@
                     <label class="field-label" for="f-price" data-i18n="field_price">ราคา (บาท)</label>
                     <input class="field" type="number" id="f-price" min="0" inputmode="numeric" data-i18n-placeholder="price_placeholder">
                 </div>
+            </div>
+
+            <div id="model-field">
+                <label class="field-label" for="f-model" data-i18n="field_model">Model</label>
+                <input class="field" type="text" id="f-model" data-i18n-placeholder="placeholder_model">
             </div>
 
             <div id="vehicle-field">
@@ -938,7 +943,7 @@
 
         const inCategory = products.filter(p => p.category === currentCategory);
         // js/search.js: ignores case and spaces
-        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query));
+        const list = inCategory.filter(p => textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query));
 
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
 
@@ -964,6 +969,7 @@
                 <div class="info">
                     <h4 title="${escHtml(p.name)}">${escHtml(p.name)}</h4>
                     <div class="meta">
+                        ${p.model ? `<span>${escHtml(p.model)}</span>` : ''}
                         ${p.size ? `<span class="size-badge">${escHtml(p.size)}</span>` : ''}
                         ${hasPrice
                             ? `<span class="price">฿${Number(p.price).toLocaleString()}</span>`
@@ -1023,6 +1029,7 @@
         document.getElementById('f-desc').value = editing ? p.description || '' : '';
         document.getElementById('f-price').value = editing ? p.price ?? '' : '';
         document.getElementById('f-vehicle').value = editing ? p.vehicle_type || '' : '';
+        document.getElementById('f-model').value = editing ? p.model || '' : '';
         document.getElementById('f-instock').checked = editing ? !!p.in_stock : true;
         document.getElementById('upload-status').textContent = '';
         document.getElementById('form-error').textContent = '';
@@ -1041,6 +1048,15 @@
         document.getElementById('f-size').placeholder = t('size_ph_' + currentCategory);
         // vehicle type is only used by the shock page's filter
         document.getElementById('vehicle-field').hidden = currentCategory !== 'shock';
+        // wheels: the product name is the brand, plus a separate Model
+        const isWheels = currentCategory === 'wheels';
+        document.getElementById('model-field').hidden = !isWheels;
+        const nameLabel = document.getElementById('f-name-label');
+        nameLabel.setAttribute('data-i18n', isWheels ? 'field_brand' : 'field_name');
+        nameLabel.textContent = t(nameLabel.getAttribute('data-i18n'));
+        const nameInput = document.getElementById('f-name');
+        nameInput.setAttribute('data-i18n-placeholder', isWheels ? 'placeholder_brand' : 'placeholder_name');
+        nameInput.placeholder = t(nameInput.getAttribute('data-i18n-placeholder'));
         document.getElementById('drawer-close').setAttribute('aria-label', t('btn_cancel'));
     }
 
@@ -1110,6 +1126,10 @@
             // even before supabase-add-vehicle-type-column.sql has been run
             if (currentCategory === 'shock') {
                 payload.vehicle_type = document.getElementById('f-vehicle').value || null;
+            }
+            // only sent for wheels (needs supabase-add-model-column.sql)
+            if (currentCategory === 'wheels') {
+                payload.model = document.getElementById('f-model').value.trim() || null;
             }
 
             const { error } = id

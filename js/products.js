@@ -22,7 +22,7 @@ function getProductImages(p) {
 function productMatches(p, query) {
   if (!query) return true;
   // textMatches (js/search.js) also ignores spaces: "bfgoodrich" finds "BF Goodrich"
-  if (textMatches(p.name, query) || textMatches(p.size, query)) return true;
+  if (textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query)) return true;
   if (!/^[\d\s\/\-r.]+$/.test(query)) return false;
   const digits = query.replace(/\D/g, '');
   return digits !== '' && (p.size || '').replace(/\D/g, '').includes(digits);
@@ -73,6 +73,7 @@ function renderProductCards(data, gridId) {
       <div class="product-body">
         ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
         <h3>${escapeHtml(p.name)}</h3>
+        ${p.model ? `<p class="product-model">${escapeHtml(p.model)}</p>` : ''}
         ${p.description ? `<p class="product-desc">${escapeHtml(p.description)}</p>` : ''}
         <div class="product-footer">
           ${hasPrice
@@ -185,6 +186,61 @@ function initProductPage(category, defaultSort, options = {}) {
   renderChips();
   fetchProducts();
   return { render };
+}
+
+/* ---------------- Category page with a filter sidebar (shock, wheels) ---------------- */
+
+// The page needs the sidebar markup: #filter-options, #price-min, #price-max,
+// #filter-clear, #filter-toggle, #shop-filters (see shock.html).
+// getOptions(products) -> [{ value, label, count }]; matches(product, value) -> bool
+function initFilteredProductPage(category, defaultSort, { getOptions, matches }) {
+  const optionsEl = document.getElementById('filter-options');
+  const priceMin = document.getElementById('price-min');
+  const priceMax = document.getElementById('price-max');
+  let selected = '';
+  let products = [];
+
+  function filter(p) {
+    if (selected && !matches(p, selected)) return false;
+    const min = priceMin.value === '' ? null : Number(priceMin.value);
+    const max = priceMax.value === '' ? null : Number(priceMax.value);
+    if (min === null && max === null) return true;
+    if (p.price == null) return false; // "ask for price" items can't match a price range
+    return (min === null || p.price >= min) && (max === null || p.price <= max);
+  }
+
+  function renderOptions() {
+    const options = [{ value: '', label: t('filter_all'), count: products.length }, ...getOptions(products)];
+    if (!options.some(o => o.value === selected)) selected = '';
+    optionsEl.innerHTML = options.map(o => `<label class="filter-option">
+        <input type="radio" name="filter-option" value="${escapeHtml(o.value)}" ${o.value === selected ? 'checked' : ''}>
+        <span>${escapeHtml(o.label)}</span><span class="filter-count">${o.count}</span>
+      </label>`).join('');
+  }
+
+  const page = initProductPage(category, defaultSort, {
+    filter,
+    onLoad: list => { products = list; renderOptions(); },
+    onLanguageChange: renderOptions,
+  });
+
+  optionsEl.addEventListener('change', e => { selected = e.target.value; page.render(); });
+  priceMin.addEventListener('input', () => page.render());
+  priceMax.addEventListener('input', () => page.render());
+  document.getElementById('filter-clear').onclick = () => {
+    selected = '';
+    priceMin.value = '';
+    priceMax.value = '';
+    renderOptions();
+    page.render();
+  };
+  // phones: the sidebar is hidden behind the "filter" button
+  const toggle = document.getElementById('filter-toggle');
+  toggle.onclick = () => {
+    const open = document.getElementById('shop-filters').classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  };
+  renderOptions();
 }
 
 /* ---------------- Lightbox (full-screen viewer) ---------------- */

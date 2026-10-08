@@ -167,6 +167,12 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+.product-model {
+    margin: -4px 0 0;
+    color: var(--gold, #f5c518);
+    font-size: 14px;
+    font-weight: 600;
+}
 .product-size-badge {
     align-self: flex-start;
     background: rgba(245, 197, 24, 0.1);
