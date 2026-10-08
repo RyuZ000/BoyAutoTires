@@ -170,7 +170,7 @@
     .product-row { cursor: grab; }
     .product-row.sortable-chosen { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); border-color: var(--gold); }
     .product-row.sortable-ghost { opacity: .35; }
-    #list-drag-hint { margin: -6px 0 12px; }
+    .list-drag-hint { margin: -6px 0 12px; }
     .pf-type-tag {
         position: absolute; left: 5px; top: 5px;
         background: rgba(0, 0, 0, 0.75); color: #fff;
@@ -418,7 +418,7 @@
             <span class="muted" id="list-count"></span>
         </div>
 
-        <span class="drag-hint" id="list-drag-hint"></span>
+        <span class="drag-hint list-drag-hint" id="list-drag-hint"></span>
         <div class="status-msg" id="list-status"></div>
         <div class="product-list" id="product-list"></div>
     </div>
@@ -429,7 +429,7 @@
             <input type="search" class="field" id="pf-admin-search" data-i18n-placeholder="pf_search" oninput="renderPortfolioAdmin()">
             <span class="muted" id="pf-count"></span>
         </div>
-        <span class="drag-hint" id="pf-list-drag-hint"></span>
+        <span class="drag-hint list-drag-hint" id="pf-list-drag-hint"></span>
         <div class="status-msg" id="pf-status" hidden></div>
         <div class="product-list" id="pf-list"></div>
     </section>
@@ -775,7 +775,7 @@
         statusEl.hidden = albums.length > 0;
         const searching = !!document.getElementById('pf-admin-search').value.trim();
         document.getElementById('pf-list-drag-hint').textContent =
-            !all.length ? '' : searching ? t('list_drag_search') : listDragHint();
+            searching ? t('list_drag_search') : listDragHint();
 
         document.getElementById('pf-list').innerHTML = albums.map(a => `
             <div class="product-row" data-key="${a.key}">
@@ -1005,7 +1005,7 @@
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
         // dragging only makes sense on the full list, not on search results
         document.getElementById('list-drag-hint').textContent =
-            !inCategory.length ? '' : query ? t('list_drag_search') : listDragHint();
+            query ? t('list_drag_search') : listDragHint();
 
         if (list.length === 0) {
             listEl.innerHTML = '';
