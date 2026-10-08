@@ -775,7 +775,7 @@
         statusEl.hidden = albums.length > 0;
         const searching = !!document.getElementById('pf-admin-search').value.trim();
         document.getElementById('pf-list-drag-hint').textContent =
-            all.length < 2 ? '' : searching ? t('list_drag_search') : listDragHint();
+            !all.length ? '' : searching ? t('list_drag_search') : listDragHint();
 
         document.getElementById('pf-list').innerHTML = albums.map(a => `
             <div class="product-row" data-key="${a.key}">
@@ -826,7 +826,7 @@
                 <button type="button" class="remove-img" aria-label="${t('image_remove')}" onclick="removePortfolioFormItem(${i})">×</button>
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>`).join('');
-        document.getElementById('pf-drag-hint').textContent = pfFormItems.length > 1 ? dragHint() : '';
+        document.getElementById('pf-drag-hint').textContent = pfFormItems.length ? dragHint() : '';
     }
 
     function addPortfolioFiles(files) {
@@ -1005,7 +1005,7 @@
         countEl.textContent = `${list.length} ${t('list_count_suffix')}`;
         // dragging only makes sense on the full list, not on search results
         document.getElementById('list-drag-hint').textContent =
-            inCategory.length < 2 ? '' : query ? t('list_drag_search') : listDragHint();
+            !inCategory.length ? '' : query ? t('list_drag_search') : listDragHint();
 
         if (list.length === 0) {
             listEl.innerHTML = '';
@@ -1272,7 +1272,7 @@
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>
         `).join('');
-        document.getElementById('image-drag-hint').textContent = formImages.length > 1 ? dragHint() : '';
+        document.getElementById('image-drag-hint').textContent = formImages.length ? dragHint() : '';
     }
 
     // how to reorder, worded for the device in hand
