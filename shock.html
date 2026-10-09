@@ -69,6 +69,7 @@
         const VEHICLE_TYPES = [
             { value: 'pickup', key: 'vehicle_pickup' },
             { value: 'sedan', key: 'vehicle_sedan' },
+            { value: 'ev', key: 'vehicle_ev' },
         ];
         document.addEventListener('DOMContentLoaded', () => initFilteredProductPage('shock', 'newest', {
             getOptions: products => VEHICLE_TYPES.map(v => ({
