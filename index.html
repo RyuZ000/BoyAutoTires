@@ -432,7 +432,7 @@
                 .from('products')
                 .select('*')
                 .order('created_at', { ascending: false })
-                .limit(8);
+                .limit(4);
             if (error) {
                 console.error('loadLatest error:', error);
                 document.getElementById('latest-section').style.display = 'none';
