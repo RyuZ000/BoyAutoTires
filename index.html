@@ -209,6 +209,10 @@
             display: block;
         }
         .gallery .g-main { grid-row: span 2; }
+        .gallery img { transition: opacity .4s ease; }
+        .gallery video, .gallery img { cursor: pointer; }
+        .gallery-hint { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+        .gallery img.fading { opacity: 0; }
 
         /* CTA band */
         .cta-band {
@@ -327,15 +331,15 @@
                 <h2 data-i18n="section_gallery">ผลงานของเรา</h2>
                 <a href="/portfolio" data-i18n="gallery_view_all">ดูผลงานทั้งหมด →</a>
             </div>
-            <div class="gallery">
-                <video class="g-main" autoplay muted loop playsinline controls>
-                    <source src="Video Somza/Somza1.mp4" type="video/mp4">
-                </video>
+            <!-- filled from portfolio_items by loadGallery(); these files are the fallback -->
+            <div class="gallery" id="gallery">
+                <video class="g-main" src="Video Somza/Somza1.mp4" autoplay muted loop playsinline></video>
                 <img src="Photo Somza/Somza6.jpg" alt="" loading="lazy">
                 <img src="Photo Somza/Somza7.jpg" alt="" loading="lazy">
                 <img src="Photo Somza/Somza8.jpg" alt="" loading="lazy">
                 <img src="Photo Somza/Somza9.jpg" alt="" loading="lazy">
             </div>
+            <p class="gallery-hint" data-i18n="gallery_hint">กดที่รูปหรือวิดีโอเพื่อดูผลงานทั้งหมด</p>
         </section>
 
         <!-- Contact CTA -->
@@ -361,6 +365,7 @@
     <script src="js/i18n.js"></script>
     <script src="js/search.js"></script>
     <script src="js/products.js"></script>
+    <script src="js/portfolio.js"></script>
     <script>
         // hero slideshow
         const heroSlides = document.querySelectorAll('.hero-slide');
@@ -488,6 +493,66 @@
             });
         }
 
+        // "Our work": the big slot plays every portfolio video one after another,
+        // the 4 small slots cycle through the first 4 photos of each car album
+        const GALLERY_PHOTOS_PER_ALBUM = 4;
+        const GALLERY_ROTATE_MS = 3000;
+        document.getElementById('gallery').addEventListener('click', e => {
+            if (e.target.matches('video, img')) location.href = '/portfolio';
+        });
+        async function loadGallery() {
+            const { data, error } = await sb
+                .from('portfolio_items')
+                .select('*')
+                .order('created_at', { ascending: false });
+            if (error) {
+                console.error('loadGallery error:', error);
+                return;
+            }
+            const albums = groupPortfolio(data || []);
+            const videos = albums.flatMap(a => a.videos).map(v => v.url);
+            const photos = albums.flatMap(a => a.photos.slice(0, GALLERY_PHOTOS_PER_ALBUM)).map(p => p.url);
+            const gallery = document.getElementById('gallery');
+
+            if (videos.length) {
+                const video = gallery.querySelector('video');
+                let v = 0;
+                video.loop = videos.length === 1;
+                video.src = videos[0];
+                video.play().catch(() => {});
+                video.addEventListener('ended', () => {
+                    v = (v + 1) % videos.length;
+                    video.src = videos[v];
+                    video.play().catch(() => {});
+                });
+            }
+
+            if (photos.length) {
+                const slots = [...gallery.querySelectorAll('img')];
+                slots.forEach((img, i) => {
+                    if (photos[i]) img.src = photos[i];
+                    else img.remove(); // fewer than 4 photos: no leftover stock photos
+                });
+                if (photos.length <= slots.length) return;
+
+                // swap one slot at a time with the next photo in the list
+                let next = slots.length;
+                let slot = 0;
+                setInterval(() => {
+                    const img = slots[slot];
+                    const target = photos[next];
+                    slot = (slot + 1) % slots.length;
+                    next = (next + 1) % photos.length;
+                    const pre = new Image();
+                    pre.onload = () => {
+                        img.classList.add('fading');
+                        setTimeout(() => { img.src = target; img.classList.remove('fading'); }, 400);
+                    };
+                    pre.src = target;
+                }, GALLERY_ROTATE_MS);
+            }
+        }
+
         function onLanguageChange() {
             if (latestProducts.length) renderProductCards(latestProducts, 'latest-grid', { link: true });
         }
@@ -495,6 +560,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadLatest();
             rotateCategoryImages();
+            loadGallery();
         });
     </script>
 </body>

@@ -113,6 +113,7 @@ const translations = {
         page_title_portfolio: "ผลงานของเรา",
         portfolio_sub: "รูปและวิดีโองานติดตั้งจริงจากหน้าร้าน",
         gallery_view_all: "ดูผลงานทั้งหมด →",
+        gallery_hint: "กดที่รูปหรือวิดีโอเพื่อดูผลงานทั้งหมด",
         page_title_brake: "เบรก (Brake)",
 
         products_loading: "กำลังโหลดสินค้า...",
@@ -330,6 +331,7 @@ const translations = {
         page_title_portfolio: "Our Work",
         portfolio_sub: "Photos and videos of real installs from our shop",
         gallery_view_all: "View all work →",
+        gallery_hint: "Click or tap a photo or video to see all our work",
         page_title_brake: "Brake",
 
         products_loading: "Loading products...",
