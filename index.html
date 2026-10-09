@@ -443,7 +443,7 @@
                 document.getElementById('latest-section').style.display = 'none';
                 return;
             }
-            renderProductCards(latestProducts, 'latest-grid');
+            renderProductCards(latestProducts, 'latest-grid', { link: true });
         }
 
         // category cards rotate through: the card's own photo, then the cover photo
@@ -489,7 +489,7 @@
         }
 
         function onLanguageChange() {
-            if (latestProducts.length) renderProductCards(latestProducts, 'latest-grid');
+            if (latestProducts.length) renderProductCards(latestProducts, 'latest-grid', { link: true });
         }
 
         document.addEventListener('DOMContentLoaded', () => {

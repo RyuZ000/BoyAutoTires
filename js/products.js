@@ -54,7 +54,9 @@ function attachTireSizeMask(input, isActive = () => true) {
 // product id -> { name, images }, filled on render, read by the lightbox
 const galleryData = {};
 
-function renderProductCards(data, gridId) {
+// options.link: the whole card links to the product on its category page
+// (/shock?p=<id>) instead of opening the photo viewer - used on the home page
+function renderProductCards(data, gridId, options = {}) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
 
@@ -67,14 +69,20 @@ function renderProductCards(data, gridId) {
     const images = getProductImages(p);
     const hasPrice = p.price !== null && p.price !== undefined && p.price !== '';
     galleryData[p.id] = { name: p.name, images };
+    // SITE_NAV comes from js/layout.js; its page names match products.category
+    const page = options.link && SITE_NAV.find(n => n.page === p.category);
+    const tag = page ? 'a' : 'article';
+    const imgInner = images.length
+      ? `<img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.name)}" loading="lazy">
+         ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}`
+      : '';
     return `
-    <article class="product-card ${p.in_stock ? '' : 'out-of-stock'}">
-      ${images.length
-        ? `<button type="button" class="product-img-btn" onclick="openLightbox('${p.id}')">
-             <img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.name)}" loading="lazy">
-             ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}
-           </button>`
-        : `<div class="product-noimg"><span>📷</span>${escapeHtml(t('no_image'))}</div>`}
+    <${tag} id="product-${p.id}" class="product-card ${p.in_stock ? '' : 'out-of-stock'}"${page ? ` href="${page.href}?p=${encodeURIComponent(p.id)}"` : ''}>
+      ${!images.length
+        ? `<div class="product-noimg"><span>📷</span>${escapeHtml(t('no_image'))}</div>`
+        : page
+          ? `<div class="product-img-btn">${imgInner}</div>`
+          : `<button type="button" class="product-img-btn" onclick="openLightbox('${p.id}')">${imgInner}</button>`}
       <div class="product-body">
         ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
         <h3>${escapeHtml(p.name)}</h3>
@@ -87,8 +95,9 @@ function renderProductCards(data, gridId) {
             : `<span class="product-price ask">${t('price_ask')}</span>`}
           <span class="product-stock ${p.in_stock ? '' : 'stock-out'}">${p.in_stock ? t('in_stock') : t('out_of_stock')}</span>
         </div>
+        ${page ? `<span class="product-view">${t('view_product')}</span>` : ''}
       </div>
-    </article>
+    </${tag}>
   `;
   }).join('');
 }
@@ -157,6 +166,19 @@ function initProductPage(category, defaultSort, options = {}) {
       return;
     }
     renderProductCards(list, 'products-grid');
+    focusLinkedProduct();
+  }
+
+  // home page cards link here as /shock?p=<id>: scroll to that card and flash it once
+  let focusId = new URLSearchParams(location.search).get('p');
+  function focusLinkedProduct() {
+    if (!focusId) return;
+    const card = document.getElementById(`product-${focusId}`);
+    focusId = null;
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.add('product-focus');
+    setTimeout(() => card.classList.remove('product-focus'), 3000);
   }
 
   async function fetchProducts() {
