@@ -463,7 +463,6 @@
 
             <label class="field-label" for="f-name"><span id="f-name-label" data-i18n="field_name">ชื่อสินค้า</span> <span class="req">*</span></label>
             <input class="field" type="text" id="f-name" data-i18n-placeholder="placeholder_name">
-            <span class="field-hint" id="wheel-text-hint" data-i18n="wheel_text_hint" hidden></span>
 
             <div class="field-row">
                 <div>
@@ -489,7 +488,6 @@
                 </div>
                 <label class="field-label" for="f-color" data-i18n="field_color">สีล้อ</label>
                 <input class="field" type="text" id="f-color" data-i18n-placeholder="placeholder_color">
-                <span class="field-hint" data-i18n="wheel_text_hint"></span>
             </div>
 
             <div id="vehicle-field">
@@ -1429,7 +1427,6 @@
         // wheels: the product name is the brand, plus a separate Model
         const isWheels = currentCategory === 'wheels';
         document.getElementById('model-field').hidden = !isWheels;
-        document.getElementById('wheel-text-hint').hidden = !isWheels;
         const nameLabel = document.getElementById('f-name-label');
         nameLabel.setAttribute('data-i18n', isWheels ? 'field_brand' : 'field_name');
         nameLabel.textContent = t(nameLabel.getAttribute('data-i18n'));
@@ -1618,24 +1615,6 @@
         statusEl.textContent = t('upload_success');
         return formImages.map(img => img.url);
     }
-
-    // wheels: brand / series / model / color take only A-Z (upper case) and digits;
-    // lower case is converted, anything else (Thai, symbols) is dropped
-    const WHEEL_TEXT_FIELDS = ['f-name', 'f-series', 'f-model', 'f-color'];
-    function toWheelText(value) {
-        return value.toUpperCase().replace(/[^A-Z0-9 .\-\/]/g, '');
-    }
-    WHEEL_TEXT_FIELDS.forEach(id => {
-        const input = document.getElementById(id);
-        input.addEventListener('input', () => {
-            if (currentCategory !== 'wheels') return;
-            const clean = toWheelText(input.value);
-            if (clean === input.value) return;
-            const caret = input.selectionStart - (input.value.length - clean.length);
-            input.value = clean;
-            input.setSelectionRange(Math.max(caret, 0), Math.max(caret, 0));
-        });
-    });
 
     // drag & drop onto the picker
     document.addEventListener('DOMContentLoaded', () => {
