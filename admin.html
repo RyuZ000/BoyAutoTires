@@ -116,7 +116,7 @@
     .dash-head h1 { margin: 0; font-size: clamp(24px, 4vw, 32px); }
     .dash-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; max-width: 560px; }
 
-    .cat-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 18px; }
+    .cat-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
     .cat-tab {
         display: flex; align-items: center; gap: 10px;
         padding: 14px 16px;
@@ -176,6 +176,7 @@
         background: rgba(0, 0, 0, 0.75); color: #fff;
         font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 8px;
     }
+    .post-expired { font-size: 12px; font-weight: 600; color: #ff7a7a; white-space: nowrap; }
     .drag-hint { display: block; font-size: 12px; color: var(--muted); margin-top: 8px; }
     .drag-hint:empty { display: none; }
 
@@ -401,7 +402,7 @@
             <h1 data-i18n="dash_title">จัดการสินค้า</h1>
             <p data-i18n="dash_sub"></p>
         </div>
-        <button type="button" class="btn btn-gold" id="add-product-btn" onclick="currentCategory === 'portfolio' ? openPortfolioForm() : openAddForm()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
+        <button type="button" class="btn btn-gold" id="add-product-btn" onclick="openAddForCurrentTab()" data-i18n="btn_add">＋ เพิ่มสินค้า</button>
     </div>
 
     <div class="store-panel">
@@ -432,6 +433,17 @@
         <span class="drag-hint list-drag-hint" id="pf-list-drag-hint"></span>
         <div class="status-msg" id="pf-status" hidden></div>
         <div class="product-list" id="pf-list"></div>
+    </section>
+
+    <!-- promotions (/promotions) and blog articles (/blog), table posts -->
+    <section id="posts-view" hidden>
+        <div class="list-toolbar">
+            <input type="search" class="field" id="post-search" data-i18n-placeholder="post_search" oninput="renderPostsAdmin()">
+            <span class="muted" id="post-count"></span>
+        </div>
+        <span class="drag-hint list-drag-hint" id="post-list-drag-hint"></span>
+        <div class="status-msg" id="post-status" hidden></div>
+        <div class="product-list" id="post-list"></div>
     </section>
 </main>
 
@@ -561,6 +573,52 @@
     </form>
 </div>
 
+<!-- ===================== PROMOTION / ARTICLE DRAWER ===================== -->
+<div class="drawer-backdrop" id="post-drawer" hidden>
+    <form class="drawer" onsubmit="savePost(event)" novalidate>
+        <div class="drawer-head">
+            <div>
+                <div class="drawer-cat" id="post-form-cat"></div>
+                <h2 id="post-form-title"></h2>
+            </div>
+            <button type="button" class="drawer-close" onclick="closePostForm()" aria-label="Close">×</button>
+        </div>
+
+        <div class="drawer-body">
+            <label class="field-label" for="post-title"><span data-i18n="post_field_title">หัวข้อ</span> <span class="req">*</span></label>
+            <input class="field" type="text" id="post-title" autocomplete="off">
+
+            <label class="field-label" for="post-body" data-i18n="post_field_body">เนื้อหา</label>
+            <textarea class="field" id="post-body" rows="8" data-i18n-placeholder="post_body_ph"></textarea>
+
+            <div id="post-ends-field">
+                <label class="field-label" for="post-ends" data-i18n="post_field_ends">วันหมดเขต (ไม่ใส่ก็ได้)</label>
+                <input class="field" type="date" id="post-ends">
+                <span class="field-hint" data-i18n="post_ends_hint"></span>
+            </div>
+
+            <span class="field-label" data-i18n="post_field_images">รูปภาพ</span>
+            <label class="dropzone" id="post-dropzone">
+                <input type="file" id="post-file" class="visually-hidden" accept="image/*" multiple onchange="addPostImages(this.files); this.value='';">
+                <span class="dz-icon">📷</span>
+                <span class="dz-text" data-i18n="dz_text">กดเพื่อเลือกรูป หรือลากรูปมาวางตรงนี้</span>
+                <small data-i18n="post_dz_hint">เลือกได้หลายรูป · รูปที่มีกรอบสีทองคือรูปปก</small>
+            </label>
+            <div class="image-grid" id="post-grid-edit"></div>
+            <span class="drag-hint" id="post-drag-hint"></span>
+            <div id="post-upload-status"></div>
+        </div>
+
+        <div class="drawer-foot">
+            <div class="error-msg" id="post-form-error"></div>
+            <div class="btns">
+                <button type="button" class="btn btn-outline" onclick="closePostForm()" data-i18n="btn_cancel">ยกเลิก</button>
+                <button type="submit" class="btn btn-gold" id="post-save-btn" data-i18n="btn_save">บันทึก</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -572,6 +630,7 @@
 <script src="js/search.js"></script>
 <script src="js/portfolio.js"></script>
 <script src="js/image-compress.js"></script>
+<script src="js/posts.js"></script>
 <script>
     const CATEGORIES = [
         { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
@@ -644,6 +703,7 @@
         if (isLoggedIn) {
             refreshList();
             refreshPortfolio();
+            refreshPosts();
             loadStoreSwitch();
         }
         else document.getElementById('login-email').focus();
@@ -712,6 +772,7 @@
         const tabs = [
             ...CATEGORIES.map(c => ({ ...c, count: products.filter(p => p.category === c.cat).length })),
             { cat: 'portfolio', key: 'tab_portfolio', icon: '🏆', count: groupPortfolio(portfolioItems).length },
+            ...Object.entries(POST_TYPES).map(([cat, p]) => ({ cat, key: p.tab, icon: p.icon, count: posts.filter(x => x.type === cat).length })),
         ];
         document.getElementById('cat-tabs').innerHTML = tabs.map(c => `
                 <button type="button" class="cat-tab ${c.cat === currentCategory ? 'active' : ''}" onclick="switchTab('${c.cat}')">
@@ -724,15 +785,232 @@
     function switchTab(cat) {
         currentCategory = cat;
         const isPortfolio = cat === 'portfolio';
-        document.getElementById('products-view').hidden = isPortfolio;
+        const isPost = !!POST_TYPES[cat];
+        document.getElementById('products-view').hidden = isPortfolio || isPost;
         document.getElementById('portfolio-view').hidden = !isPortfolio;
+        document.getElementById('posts-view').hidden = !isPost;
         const addBtn = document.getElementById('add-product-btn');
-        addBtn.setAttribute('data-i18n', isPortfolio ? 'pf_add_title' : 'btn_add');
+        addBtn.setAttribute('data-i18n', isPortfolio ? 'pf_add_title' : isPost ? POST_TYPES[cat].add : 'btn_add');
         addBtn.textContent = t(addBtn.getAttribute('data-i18n'));
         document.getElementById('list-search').value = '';
+        document.getElementById('post-search').value = '';
         renderTabs();
         if (isPortfolio) renderPortfolioAdmin();
+        else if (isPost) renderPostsAdmin();
         else renderList();
+    }
+
+    // the "＋ Add" button at the top adds to whichever tab is open
+    function openAddForCurrentTab() {
+        if (currentCategory === 'portfolio') openPortfolioForm();
+        else if (POST_TYPES[currentCategory]) openPostForm();
+        else openAddForm();
+    }
+
+    // ---- Promotions / blog (table posts, js/posts.js): a list + drawer like products ----
+    const POST_TYPES = {
+        promo: { tab: 'tab_promo', icon: '🏷️', add: 'post_add_promo', titlePh: 'post_title_ph_promo' },
+        blog:  { tab: 'tab_blog',  icon: '📝', add: 'post_add_blog',  titlePh: 'post_title_ph_blog' },
+    };
+    let posts = [];
+    let postsError = false;
+    let postEditId = null;
+    let postFormImages = []; // in display order: { url } saved, or { file, preview } new
+
+    async function refreshPosts() {
+        const { data, error } = await sb.from('posts').select('*');
+        if (error) console.error(error);
+        postsError = !!error;
+        posts = data || [];
+        renderTabs();
+        if (POST_TYPES[currentCategory]) renderPostsAdmin();
+    }
+
+    function typePosts() {
+        return sortPosts(posts.filter(p => p.type === currentCategory));
+    }
+
+    function renderPostsAdmin() {
+        const all = typePosts();
+        const query = document.getElementById('post-search').value.trim();
+        const list = all.filter(p => textMatches(p.title, query) || textMatches(p.body, query));
+        const statusEl = document.getElementById('post-status');
+        document.getElementById('post-count').textContent = `${list.length} ${t('list_count_suffix')}`;
+        statusEl.textContent = t(postsError ? 'post_load_error' : all.length ? 'list_no_match' : 'post_empty_admin');
+        statusEl.hidden = !postsError && list.length > 0;
+        const touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        document.getElementById('post-list-drag-hint').textContent = t(query ? 'post_drag_search' : touch ? 'post_drag_hint' : 'post_drag_hint_mouse');
+
+        document.getElementById('post-list').innerHTML = list.map(p => {
+            const images = p.image_urls || [];
+            return `
+            <div class="product-row ${postIsLive(p) ? '' : 'out'}" data-id="${p.id}">
+                <div class="thumb">
+                    ${images.length
+                        ? `<img src="${escHtml(images[0])}" alt="" loading="lazy">
+                           ${images.length > 1 ? `<span class="img-count">📷 ${images.length}</span>` : ''}`
+                        : escHtml(t('no_image'))}
+                </div>
+                <div class="info">
+                    <h4 title="${escHtml(p.title)}">${escHtml(p.title)}</h4>
+                    <div class="meta">
+                        <span>📅 ${formatPostDate(p.created_at)}</span>
+                        ${p.ends_on ? `<span>⏰ ${t('post_until')} ${formatPostDate(p.ends_on)}</span>` : ''}
+                    </div>
+                </div>
+                ${postIsLive(p) ? '<span></span>' : `<span class="post-expired">${t('post_expired')}</span>`}
+                <div class="row-actions">
+                    <button type="button" class="btn-sm" onclick="openPostForm('${p.id}')">${t('btn_edit')}</button>
+                    <button type="button" class="btn-sm danger" onclick="deletePost('${p.id}')">${t('btn_delete')}</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function openPostForm(id = null) {
+        const p = id ? posts.find(x => x.id === id) : null;
+        postEditId = p ? p.id : null;
+        postFormImages.forEach(img => img.preview && URL.revokeObjectURL(img.preview));
+        postFormImages = p ? (p.image_urls || []).map(url => ({ url })) : [];
+        document.getElementById('post-title').value = p ? p.title : '';
+        document.getElementById('post-body').value = p ? p.body || '' : '';
+        document.getElementById('post-ends').value = p ? p.ends_on || '' : '';
+        document.getElementById('post-form-error').textContent = '';
+        document.getElementById('post-upload-status').textContent = '';
+        updatePostFormText();
+        renderPostForm();
+        document.getElementById('post-drawer').hidden = false;
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('post-title').focus(), 50);
+    }
+
+    function closePostForm() {
+        document.getElementById('post-drawer').hidden = true;
+        document.body.style.overflow = '';
+    }
+
+    function updatePostFormText() {
+        const type = POST_TYPES[currentCategory];
+        if (!type) return;
+        document.getElementById('post-form-cat').textContent = `${type.icon} ${t(type.tab)}`;
+        document.getElementById('post-form-title').textContent = t(postEditId ? 'post_form_edit' : type.add);
+        document.getElementById('post-title').placeholder = t(type.titlePh);
+        // only promotions have an end date
+        document.getElementById('post-ends-field').hidden = currentCategory !== 'promo';
+    }
+
+    function renderPostForm() {
+        document.getElementById('post-grid-edit').innerHTML = postFormImages.map((img, i) => `
+            <div class="image-thumb ${i === 0 ? 'cover' : ''}">
+                <img src="${escHtml(img.url || img.preview)}" alt="">
+                <button type="button" class="remove-img" title="${t('image_remove')}" aria-label="${t('image_remove')}" onclick="removePostImage(${i})">×</button>
+                ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
+            </div>`).join('');
+        document.getElementById('post-drag-hint').textContent = postFormImages.length ? dragHint() : '';
+    }
+
+    function addPostImages(files) {
+        for (const file of files) {
+            if (!file.type.startsWith('image/')) continue;
+            postFormImages.push({ file, preview: URL.createObjectURL(file) });
+        }
+        renderPostForm();
+    }
+
+    function removePostImage(index) {
+        const [removed] = postFormImages.splice(index, 1);
+        if (removed && removed.preview) URL.revokeObjectURL(removed.preview);
+        renderPostForm();
+    }
+
+    // a new post is placed first
+    function topPostOrder() {
+        const orders = typePosts().map(p => p.sort_order).filter(n => n != null);
+        return orders.length ? Math.min(...orders) - 1 : 0;
+    }
+
+    async function savePost(e) {
+        e.preventDefault();
+        const errEl = document.getElementById('post-form-error');
+        const statusEl = document.getElementById('post-upload-status');
+        const btn = document.getElementById('post-save-btn');
+        const title = document.getElementById('post-title').value.trim();
+        errEl.textContent = '';
+        if (!title) {
+            errEl.textContent = t('post_title_required');
+            document.getElementById('post-title').focus();
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = t('btn_saving');
+        try {
+            // upload new photos (a photo keeps its url, so a retry won't upload it twice)
+            const pending = postFormImages.filter(img => img.file);
+            for (const [n, img] of pending.entries()) {
+                statusEl.textContent = `${t('upload_uploading')} (${n + 1}/${pending.length})`;
+                const file = await compressImageFile(img.file);
+                const ext = file.name.split('.').pop();
+                const path = `${currentCategory}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                // every upload gets a new name, so browsers may keep it for a year
+                const { error } = await sb.storage.from(IMAGE_BUCKET).upload(path, file, { cacheControl: '31536000' });
+                if (error) throw error;
+                URL.revokeObjectURL(img.preview);
+                img.url = sb.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
+                delete img.file;
+                delete img.preview;
+            }
+            statusEl.textContent = '';
+
+            const payload = {
+                type: currentCategory,
+                title,
+                body: document.getElementById('post-body').value.trim() || null,
+                image_urls: postFormImages.map(img => img.url),
+                ends_on: currentCategory === 'promo' ? document.getElementById('post-ends').value || null : null,
+            };
+            const { error } = postEditId
+                ? await sb.from('posts').update(payload).eq('id', postEditId)
+                : await sb.from('posts').insert({ ...payload, sort_order: topPostOrder() });
+            if (error) throw error;
+
+            closePostForm();
+            showToast(t('toast_saved'));
+            refreshPosts();
+        } catch (err) {
+            console.error(err);
+            errEl.textContent = t('save_error') + err.message;
+        } finally {
+            btn.disabled = false;
+            btn.textContent = t('btn_save');
+        }
+    }
+
+    async function deletePost(id) {
+        const p = posts.find(x => x.id === id);
+        if (!p || !confirm(`${t('post_confirm_delete')}\n\n${p.title}`)) return;
+        const { error } = await sb.from('posts').delete().eq('id', id);
+        if (error) {
+            showToast(t('delete_error') + error.message, 'error');
+            return;
+        }
+        showToast(t('toast_deleted'));
+        refreshPosts();
+    }
+
+    // press-and-hold (touch) or drag (mouse) a row; saves the order shown on the website
+    async function savePostOrder() {
+        const ids = [...document.querySelectorAll('#post-list .product-row')].map(r => r.dataset.id);
+        const changes = ids
+            .map((id, sort_order) => ({ p: posts.find(x => x.id === id), sort_order }))
+            .filter(c => c.p && c.p.sort_order !== c.sort_order);
+        if (!changes.length) return;
+        const results = await Promise.all(changes.map(c =>
+            sb.from('posts').update({ sort_order: c.sort_order }).eq('id', c.p.id)));
+        const failed = results.find(r => r.error);
+        if (failed) showToast(t('save_error') + failed.error.message, 'error');
+        else showToast(t('toast_order_saved'));
+        refreshPosts();
     }
 
     // ---- Portfolio (ผลงาน): one row per car, edited in a drawer like products ----
@@ -1142,6 +1420,7 @@
     function updateFormText() {
         const editing = !!document.getElementById('edit-id').value;
         const c = categoryInfo(currentCategory);
+        if (!c) return;
         document.getElementById('form-cat').textContent = `${c.icon} ${t(c.key)}`;
         document.getElementById('form-title').textContent = t(editing ? 'form_title_edit' : 'form_title_add');
         document.getElementById('f-size').placeholder = t('size_ph_' + currentCategory);
@@ -1392,6 +1671,26 @@
             onEnd: evt => { if (evt.oldIndex !== evt.newIndex) savePortfolioOrder(); },
         });
         makeSortable('pf-grid-edit', () => pfFormItems, renderPortfolioForm);
+        makeSortable('post-grid-edit', () => postFormImages, renderPostForm);
+        Sortable.create(document.getElementById('post-list'), {
+            animation: 150,
+            delay: 200,
+            delayOnTouchOnly: true,
+            filter: 'button, input, label',
+            preventOnFilter: false,
+            onMove: () => !document.getElementById('post-search').value.trim(),
+            onEnd: evt => { if (evt.oldIndex !== evt.newIndex) savePostOrder(); },
+        });
+        const postDz = document.getElementById('post-dropzone');
+        ['dragenter', 'dragover'].forEach(ev => postDz.addEventListener(ev, e => {
+            e.preventDefault();
+            postDz.classList.add('drag');
+        }));
+        ['dragleave', 'drop'].forEach(ev => postDz.addEventListener(ev, () => postDz.classList.remove('drag')));
+        postDz.addEventListener('drop', e => {
+            e.preventDefault();
+            addPostImages(e.dataTransfer.files);
+        });
 
         const pfDz = document.getElementById('pf-dropzone');
         ['dragenter', 'dragover'].forEach(ev => pfDz.addEventListener(ev, e => {
@@ -1411,9 +1710,12 @@
         updateFormText();
         renderImageGrid();
         renderPortfolioForm();
+        updatePostFormText();
+        renderPostForm();
         if (!document.getElementById('dashboard').hidden) {
             renderTabs();
             if (currentCategory === 'portfolio') renderPortfolioAdmin();
+            else if (POST_TYPES[currentCategory]) renderPostsAdmin();
             else renderList();
             renderStoreSwitch();
         }

@@ -1,7 +1,7 @@
 /* ============================================================
    Shared header / footer / floating contact buttons.
    Put <div id="site-header"></div> and <div id="site-footer"></div>
-   in the page, set <body data-page="tires"> (home|wheels|tires|shock|brake|other|portfolio|about|blog|contact)
+   in the page, set <body data-page="tires"> (home|wheels|tires|shock|brake|other|portfolio|promo|about|blog|contact)
    and load this script BEFORE auth.js and i18n.js.
    ============================================================ */
 
@@ -42,7 +42,7 @@ const SITE_NAV = [
   { page: 'brake', href: '/brake', key: 'nav_brake', product: true, icon: '🛑' },
   { page: 'other', href: '/other', key: 'nav_other', product: true, icon: '📦' },
   { page: 'portfolio', href: '/portfolio', key: 'nav_portfolio' },
-  { key: 'menu_promo' },
+  { page: 'promo', href: '/promotions', key: 'menu_promo' },
   { page: 'about', href: '/about', key: 'menu_about' },
   { page: 'blog', href: '/blog', key: 'menu_blog' },
   { page: 'contact', href: '/contact', key: 'menu_contact' },
