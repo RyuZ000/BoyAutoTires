@@ -141,7 +141,7 @@ function renderSiteHeader() {
   toggle.onclick = () => setOpen(menu.hidden);
   menu.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
   document.addEventListener('click', e => {
-    if (!menu.hidden && !menu.contains(e.target) && e.target !== toggle) setOpen(false);
+    if (!menu.hidden && !menu.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
 
