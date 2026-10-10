@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สินค้าอื่นๆ (Parts & Accessories) - BoyAutoTires</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="other">
+    <div id="site-header"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb"><a href="/" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="nav_other"></span></div>
+            <h1 class="page-title" data-i18n="page_title_other">Loading...</h1>
+            <p class="page-sub" data-i18n="cat_other_desc"></p>
+        </div>
+    </section>
+
+    <main class="container shop">
+        <nav class="cat-chips" id="cat-chips"></nav>
+        <div class="shop-toolbar">
+            <div class="shop-search">
+                <input type="search" id="shop-search" data-i18n-placeholder="search_placeholder_generic" placeholder="ค้นหาชื่อสินค้า หรือไซส์...">
+            </div>
+            <span class="shop-count" id="shop-count"></span>
+        </div>
+        <div class="products-grid" id="products-grid"></div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => initProductPage('other', 'newest'));
+    </script>
+</body>
+</html>

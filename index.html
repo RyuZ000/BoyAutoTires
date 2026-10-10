@@ -148,7 +148,7 @@
         .section-head a { color: var(--blue-soft); text-decoration: none; font-weight: 600; white-space: nowrap; }
 
         /* category cards */
-        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
         .cat-card {
             position: relative;
             display: block;
@@ -177,25 +177,6 @@
         .cat-card h3 { margin: 0 0 4px; font-size: 22px; color: #fff; }
         .cat-card p { margin: 0 0 10px; font-size: 13px; color: #cfdcf3; }
         .cat-card span { color: var(--gold); font-weight: 600; font-size: 14px; }
-
-        /* why us */
-        .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-        .why-card {
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        .why-icon {
-            width: 52px; height: 52px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 14px;
-            background: rgba(245, 197, 24, 0.12);
-            font-size: 26px;
-            margin-bottom: 14px;
-        }
-        .why-card h3 { margin: 0 0 6px; font-size: 18px; }
-        .why-card p { margin: 0; color: var(--muted); font-size: 14px; }
 
         /* latest products reuse .products-grid from staff.css */
         #latest-grid { margin: 0; padding: 0; max-width: none; }
@@ -230,7 +211,9 @@
         .cta-band p { margin: 0; color: #dbe8ff; }
 
         @media (max-width: 900px) {
-            .cat-grid, .why-grid { grid-template-columns: repeat(2, 1fr); }
+            .cat-grid { grid-template-columns: repeat(2, 1fr); }
+            /* 5 categories in 2 columns: the last card takes the full width, landscape */
+            .cat-card:last-child:nth-child(odd) { grid-column: span 2; aspect-ratio: 2 / 1; }
             .gallery { grid-template-columns: 1fr 1fr; grid-auto-rows: 160px; }
             .gallery .g-main { grid-column: span 2; grid-row: span 2; }
         }
@@ -238,7 +221,6 @@
             .cat-grid { gap: 12px; }
             .cat-card h3 { font-size: 18px; }
             .cat-card p { display: none; }
-            .why-grid { grid-template-columns: 1fr; }
             .cta-band { padding: 24px; }
             .hero-search button { padding: 0 18px; }
         }
@@ -302,6 +284,10 @@
                 <a href="/brake" class="cat-card">
                     <img src="Photo Somza/Somza2.jpg" alt="" data-cat="brake" loading="lazy">
                     <div class="cat-info"><h3 data-i18n="nav_brake">เบรก</h3><p data-i18n="cat_brake_desc"></p><span data-i18n="cat_view"></span></div>
+                </a>
+                <a href="/other" class="cat-card">
+                    <img src="Photo Somza/Somza7.jpg" alt="" data-cat="other" data-placeholder loading="lazy">
+                    <div class="cat-info"><h3 data-i18n="nav_other">สินค้าอื่นๆ</h3><p data-i18n="cat_other_desc"></p><span data-i18n="cat_view"></span></div>
                 </a>
             </div>
         </section>

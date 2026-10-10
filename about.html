@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกี่ยวกับเรา (About Us) - BoyAutoTires</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="about">
+    <div id="site-header"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb"><a href="/" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="menu_about"></span></div>
+            <h1 class="page-title" data-i18n="menu_about">เกี่ยวกับเรา</h1>
+            <p class="page-sub" data-i18n="tagline"></p>
+        </div>
+    </section>
+
+    <main class="container about-page">
+        <section class="about-intro">
+            <div>
+                <h2 data-i18n="about_title">BoyAutoTires</h2>
+                <p data-i18n="about_p1"></p>
+                <p data-i18n="about_p2"></p>
+                <div class="about-cats" id="about-cats"></div>
+            </div>
+            <img src="Photo Somza/Somza1.jpg" alt="" loading="lazy">
+        </section>
+
+        <section>
+            <h2 class="about-h2" data-i18n="section_why"></h2>
+            <div class="why-grid">
+                <div class="why-card"><div class="why-icon">🔧</div><h3 data-i18n="why_1_title"></h3><p data-i18n="why_1_desc"></p></div>
+                <div class="why-card"><div class="why-icon">🛞</div><h3 data-i18n="why_2_title"></h3><p data-i18n="why_2_desc"></p></div>
+                <div class="why-card"><div class="why-icon">💬</div><h3 data-i18n="why_3_title"></h3><p data-i18n="why_3_desc"></p></div>
+                <div class="why-card"><div class="why-icon">📱</div><h3 data-i18n="why_4_title"></h3><p data-i18n="why_4_desc"></p></div>
+            </div>
+        </section>
+
+        <section class="about-visit">
+            <h2 class="about-h2" data-i18n="about_visit"></h2>
+            <div class="about-visit-card" id="about-visit"></div>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/store-status.js"></script>
+    <script>
+        // shop facts come from SITE_CONTACT / SITE_NAV in js/layout.js and STORE_HOURS in js/store-status.js
+        const c = SITE_CONTACT;
+        const q = encodeURIComponent(c.mapQuery);
+
+        function renderAbout() {
+            document.getElementById('about-cats').innerHTML = SITE_NAV
+                .filter(n => n.product)
+                .map(n => `<a href="${n.href}" class="cat-chip">${t(n.key)}</a>`)
+                .join('');
+            document.getElementById('about-visit').innerHTML = `
+                <p><strong>📍 ${t('contact_location')}</strong><br>${c.address[getLang()] || c.address.th}</p>
+                <p><strong>🕒 ${t('contact_hours')}</strong><br>${storeHoursText()}</p>
+                <div class="about-visit-btns">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${q}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener" class="contact-btn outline">${t('about_reviews')}</a>
+                    <a href="/contact" class="contact-btn outline">${t('menu_contact')} →</a>
+                </div>`;
+        }
+
+        window.onLanguageChange = renderAbout;
+        document.addEventListener('DOMContentLoaded', renderAbout);
+    </script>
+</body>
+</html>

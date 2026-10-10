@@ -1,7 +1,7 @@
 /* ============================================================
    Shared header / footer / floating contact buttons.
    Put <div id="site-header"></div> and <div id="site-footer"></div>
-   in the page, set <body data-page="tires"> (home|wheels|tires|shock|brake)
+   in the page, set <body data-page="tires"> (home|wheels|tires|shock|brake|other|portfolio|about|blog|contact)
    and load this script BEFORE auth.js and i18n.js.
    ============================================================ */
 
@@ -33,33 +33,51 @@ const SITE_SOCIAL = [
 ];
 
 // product: true = a shop category (shown as category chips and in the footer's product list)
+// Items without href are shown as "coming soon" (no page yet).
 const SITE_NAV = [
   { page: 'home', href: '/', key: 'nav_home' },
   { page: 'wheels', href: '/alloywheel', key: 'nav_wheels', product: true },
   { page: 'tires', href: '/tires', key: 'nav_tires', product: true },
   { page: 'shock', href: '/shock', key: 'nav_shock', product: true },
   { page: 'brake', href: '/brake', key: 'nav_brake', product: true },
+  { page: 'other', href: '/other', key: 'nav_other', product: true },
   { page: 'portfolio', href: '/portfolio', key: 'nav_portfolio' },
+  { key: 'menu_promo' },
+  { page: 'about', href: '/about', key: 'menu_about' },
+  { page: 'blog', href: '/blog', key: 'menu_blog' },
   { page: 'contact', href: '/contact', key: 'menu_contact' },
-];
-
-// ☰ menu (top left). Items without href are shown as "coming soon".
-const SITE_MENU = [
-  { key: 'menu_about' },
-  { key: 'menu_blog' },
 ];
 
 function renderSiteHeader() {
   const el = document.getElementById('site-header');
   if (!el) return;
   const current = document.body.dataset.page;
-  const navLinks = SITE_NAV.map(n =>
-    `<a href="${n.href}" data-i18n="${n.key}" class="${n.page === current ? 'active' : ''}">${n.key}</a>`
-  ).join('');
-  const menuItems = SITE_MENU.map(m => m.href
-    ? `<a href="${m.href}" data-i18n="${m.key}">${m.key}</a>`
-    : `<span class="menu-soon"><span data-i18n="${m.key}">${m.key}</span><small data-i18n="menu_soon">เร็วๆ นี้</small></span>`
-  ).join('');
+  const link = n => n.href
+    ? `<a href="${n.href}" data-i18n="${n.key}" class="${n.page === current ? 'active' : ''}">${n.key}</a>`
+    : `<span class="menu-soon"><span data-i18n="${n.key}">${n.key}</span><small data-i18n="menu_soon">เร็วๆ นี้</small></span>`;
+  const productItems = SITE_NAV.filter(n => n.product);
+  const onProductPage = productItems.some(n => n.page === current);
+  const firstProduct = SITE_NAV.indexOf(productItems[0]);
+  // top bar: the product pages sit in one "Products ▾" dropdown (opens on hover or click)
+  const navLinks = SITE_NAV.map((n, i) => {
+    if (!n.product) return link(n);
+    if (i !== firstProduct) return '';
+    return `
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn ${onProductPage ? 'active' : ''}" aria-expanded="false" aria-haspopup="true">
+          <span data-i18n="nav_products">nav_products</span><span class="nav-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">${productItems.map(link).join('')}</div>
+      </div>`;
+  }).join('');
+  // ☰ menu on phones: a "Products" heading with the product pages listed under it
+  const menuNavLinks = SITE_NAV.map((n, i) => {
+    if (!n.product) return link(n);
+    if (i !== firstProduct) return '';
+    return `
+      <span class="site-menu-heading" data-i18n="nav_products">nav_products</span>
+      <div class="site-menu-sub">${productItems.map(link).join('')}</div>`;
+  }).join('');
 
   el.outerHTML = `
     <div class="topbar">
@@ -91,8 +109,7 @@ function renderSiteHeader() {
         <nav class="main-nav">${navLinks}</nav>
         <a href="tel:${SITE_CONTACT.phoneTel}" class="header-cta" data-i18n="cta_call">📞 โทรเลย</a>
         <div class="site-menu" id="site-menu" hidden>
-          <nav class="site-menu-nav">${navLinks}</nav>
-          ${menuItems}
+          <nav class="site-menu-nav">${menuNavLinks}</nav>
         </div>
       </div>
     </header>
@@ -103,6 +120,8 @@ function renderSiteHeader() {
   const setOpen = open => {
     menu.hidden = !open;
     toggle.setAttribute('aria-expanded', open);
+    // the floating chat buttons would cover the menu's lower items
+    document.body.classList.toggle('menu-open', open);
   };
   toggle.onclick = () => setOpen(menu.hidden);
   menu.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
@@ -110,6 +129,19 @@ function renderSiteHeader() {
     if (!menu.hidden && !menu.contains(e.target) && e.target !== toggle) setOpen(false);
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+
+  // "Products ▾": hovering opens it on a computer (CSS); a click / tap toggles it too
+  const dropdown = document.querySelector('.main-nav .nav-dropdown');
+  if (dropdown) {
+    const btn = dropdown.querySelector('.nav-dropdown-btn');
+    const setDropdown = open => {
+      dropdown.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open);
+    };
+    btn.onclick = () => setDropdown(!dropdown.classList.contains('open'));
+    document.addEventListener('click', e => { if (!dropdown.contains(e.target)) setDropdown(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setDropdown(false); });
+  }
 }
 
 function renderSiteFooter() {

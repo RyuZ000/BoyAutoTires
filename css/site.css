@@ -1,6 +1,6 @@
 /* ============================================================
    Shared site layout - header, footer, floating contact
-   Used on every public page (index / tires / wheels / shock / brake)
+   Used on every public page (index / tires / wheels / shock / brake / other)
    ============================================================ */
 :root {
     --bg: #050810;
@@ -99,6 +99,55 @@ a { color: inherit; }
 }
 .main-nav a:hover { background: rgba(77, 163, 255, 0.12); color: var(--blue-soft); }
 .main-nav a.active { color: var(--gold); }
+.main-nav .menu-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 12px;
+}
+
+/* "Products ▾" dropdown in the top bar (js/layout.js) */
+.nav-dropdown { position: relative; }
+.nav-dropdown-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    white-space: nowrap;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: background .2s, color .2s;
+}
+.nav-dropdown-btn:hover, .nav-dropdown.open .nav-dropdown-btn { background: rgba(77, 163, 255, 0.12); color: var(--blue-soft); }
+.nav-dropdown-btn.active { color: var(--gold); }
+.nav-caret { font-size: 12px; transition: transform .2s; }
+.nav-dropdown.open .nav-caret, .nav-dropdown:hover .nav-caret { transform: rotate(180deg); }
+.nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    display: none;
+    flex-direction: column;
+    padding: 8px;
+    background: #050810;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    z-index: 50;
+}
+/* invisible bridge so the menu stays open while the mouse moves down to it */
+.nav-dropdown-menu::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; height: 10px; }
+.nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown.open .nav-dropdown-menu { display: flex; }
 
 .header-cta {
     display: inline-flex;
@@ -117,8 +166,9 @@ a { color: inherit; }
 
 .site-header .container { position: relative; }
 .header-left { display: flex; align-items: center; gap: 12px; }
+/* ☰ only on phones / tablets, where the top bar links don't fit */
 .menu-toggle {
-    display: inline-flex;
+    display: none;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -160,6 +210,13 @@ a { color: inherit; }
 }
 .site-menu a:hover { background: rgba(77, 163, 255, 0.12); color: var(--blue-soft); }
 .site-menu a.active { color: var(--gold); }
+.site-menu-heading {
+    padding: 12px 14px 4px;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 13px;
+}
+.site-menu-sub { display: flex; flex-direction: column; padding-left: 14px; }
 .menu-soon { color: var(--muted) !important; cursor: default; }
 .menu-soon small {
     font-size: 11px;
@@ -169,12 +226,13 @@ a { color: inherit; }
     background: rgba(245, 197, 24, 0.15);
     color: var(--gold);
 }
-/* the product links only appear in the ☰ menu when the main nav is hidden (phones) */
-.site-menu-nav { display: none; flex-direction: column; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+/* ☰ menu on phones: the same links as the top bar */
+.site-menu-nav { display: none; flex-direction: column; }
 
-@media (max-width: 1080px) {
+@media (max-width: 1240px) {
     .header-cta { display: none; }
     .main-nav { display: none; }
+    .menu-toggle { display: inline-flex; }
     .site-menu-nav { display: flex; }
     .site-menu { left: 0; right: 0; width: auto; top: 100%; border-radius: 0 0 14px 14px; }
 }
@@ -211,6 +269,11 @@ body[data-page="shock"] .page-hero {
     background:
         linear-gradient(90deg, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0.7) 100%),
         url('../Photo Somza/Somza3.jpg') center/cover no-repeat;
+}
+body[data-page="other"] .page-hero {
+    background:
+        linear-gradient(90deg, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0.7) 100%),
+        url('../Photo Somza/Somza8.jpg') center/cover no-repeat;
 }
 body[data-page="brake"] .page-hero {
     background:
@@ -518,6 +581,7 @@ button.cat-chip { font: inherit; font-weight: 600; font-size: 15px; cursor: poin
 }
 
 /* ---------------- Floating contact buttons ---------------- */
+body.menu-open .float-contact { display: none; }
 .float-contact {
     position: fixed;
     right: 16px;
@@ -541,3 +605,66 @@ button.cat-chip { font: inherit; font-weight: 600; font-size: 15px; cursor: poin
     background: linear-gradient(45deg, #0099ff, #a033ff 60%, #ff5280 90%, #ff7061);
 }
 .float-contact .fc-messenger svg { width: 60%; height: 60%; }
+
+/* ---------------- "Why us" cards (home page, /about) ---------------- */
+.why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.why-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+}
+.why-icon {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px;
+    background: rgba(245, 197, 24, 0.12);
+    font-size: 26px;
+    margin-bottom: 14px;
+}
+.why-card h3 { margin: 0 0 6px; font-size: 18px; }
+.why-card p { margin: 0; color: var(--muted); font-size: 14px; }
+@media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .why-grid { grid-template-columns: 1fr; } }
+
+/* ---------------- About page ---------------- */
+.about-page { padding-top: 48px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 56px; }
+.about-h2 { margin: 0 0 18px; font-size: clamp(22px, 3vw, 28px); }
+.about-intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; }
+.about-intro h2 { margin: 0 0 14px; font-size: clamp(24px, 3.5vw, 32px); }
+.about-intro p { margin: 0 0 14px; color: #cfdcf3; line-height: 1.75; }
+.about-intro img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 18px; display: block; }
+.about-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.about-visit-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+}
+.about-visit-card p { margin: 0 0 14px; line-height: 1.7; }
+.about-visit-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.about-visit-btns .contact-btn { white-space: normal; text-align: center; justify-content: center; }
+.contact-btn.outline { border: 1px solid var(--line); color: var(--text); }
+.contact-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+@media (max-width: 800px) {
+    .about-intro { grid-template-columns: 1fr; }
+    .about-intro img { order: -1; }
+}
+@media (max-width: 480px) {
+    .about-visit-btns .contact-btn { flex: 1 1 100%; }
+}
+
+/* ---------------- Blog page (no posts yet) ---------------- */
+.blog-empty {
+    max-width: 640px;
+    margin: 56px auto 24px;
+    padding: 36px 24px;
+    text-align: center;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+}
+.blog-empty-icon { font-size: 44px; }
+.blog-empty h2 { margin: 10px 0 8px; font-size: 22px; }
+.blog-empty p { margin: 0 0 20px; color: var(--muted); line-height: 1.7; }
+.blog-empty .contact-social { justify-content: center; }

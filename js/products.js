@@ -104,7 +104,7 @@ function renderProductCards(data, gridId, options = {}) {
 
 /* ---------------- Category page: chips + search + sort ---------------- */
 
-// Wires up a category page (tires / wheels / shock / brake). The page needs
+// Wires up a category page (tires / wheels / shock / brake / other). The page needs
 // #cat-chips, #shop-search, #shop-count and #products-grid.
 // Products follow the order staff set by dragging in admin (products.sort_order);
 // defaultSort ('newest', 'size_asc', ...) only orders products without one.

@@ -6,7 +6,7 @@ create extension if not exists "pgcrypto";
 
 create table if not exists products (
   id uuid primary key default gen_random_uuid(),
-  category text not null check (category in ('tires', 'wheels', 'shock', 'brake')),
+  category text not null check (category in ('tires', 'wheels', 'shock', 'brake', 'other')),
   name text not null,
   description text,
   price numeric,
