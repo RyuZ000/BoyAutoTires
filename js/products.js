@@ -21,13 +21,28 @@ function getProductImages(p) {
   return p.image_url ? [p.image_url] : [];
 }
 
-// query is already trimmed + lowercased. A query of only digits, spaces, "/", "-"
-// or "r" (e.g. "2656018", "265 60 18", "265/60r18") is also matched against the
-// size's digits, so "2656018" finds "265/60R18" and "265/60/R18".
+// Everything a customer might search a product by: its own fields plus the
+// category and vehicle type names in both languages ("รถไฟฟ้า", "EV", "เบรก", "brake")
+function productSearchText(p) {
+  const labels = key => key ? ['th', 'en'].map(l => (translations[l] && translations[l][key]) || '') : [];
+  const nav = SITE_NAV.find(n => n.page === p.category);
+  return [
+    p.name, p.size, p.model, p.series, p.color, p.description, p.price,
+    ...labels(nav && nav.key),
+    ...labels(p.vehicle_type && `vehicle_${p.vehicle_type}`),
+  ].filter(v => v != null && v !== '').join(' \n ');
+}
+
+// query is already trimmed + lowercased. Every word has to appear somewhere in the
+// product ("toyo 18" finds a TOYO tire in size 18). A query of only digits, spaces,
+// "/", "-" or "r" (e.g. "2656018", "265 60 18", "265/60r18") is also matched against
+// the size's digits, so "2656018" finds "265/60R18" and "265/60/R18".
 function productMatches(p, query) {
   if (!query) return true;
+  const text = productSearchText(p);
   // textMatches (js/search.js) also ignores spaces: "bfgoodrich" finds "BF Goodrich"
-  if (textMatches(p.name, query) || textMatches(p.size, query) || textMatches(p.model, query) || textMatches(p.series, query) || textMatches(p.color, query)) return true;
+  if (textMatches(text, query)) return true;
+  if (query.split(/\s+/).every(word => textMatches(text, word))) return true;
   if (!/^[\d\s\/\-r.]+$/.test(query)) return false;
   const digits = query.replace(/\D/g, '');
   return digits !== '' && (p.size || '').replace(/\D/g, '').includes(digits);
@@ -89,6 +104,7 @@ function renderProductCards(data, gridId, options = {}) {
         ${wheelLine(p) ? `<p class="product-model">${escapeHtml(wheelLine(p))}</p>` : ''}
         ${p.color ? `<p class="product-color">${escapeHtml(t('field_color'))}: ${escapeHtml(p.color)}</p>` : ''}
         ${p.description ? `<p class="product-desc">${escapeHtml(p.description)}</p>` : ''}
+        ${page ? '' : `<button type="button" class="product-more" hidden onclick="toggleProductMore(this)">${t('read_more')}</button>`}
         <div class="product-footer">
           ${hasPrice
             ? `<span class="product-price">฿${Number(p.price).toLocaleString()}</span>`
@@ -100,7 +116,35 @@ function renderProductCards(data, gridId, options = {}) {
     </${tag}>
   `;
   }).join('');
+  markCutOffCards(grid);
 }
+
+// Shows "Read more" only on cards whose name or description doesn't fit
+// (cut off with "...", or the description hidden on phones)
+function markCutOffCards(grid) {
+  if (!grid) return;
+  grid.querySelectorAll('.product-card').forEach(card => {
+    const btn = card.querySelector('.product-more');
+    if (!btn || card.classList.contains('expanded')) return;
+    const h3 = card.querySelector('h3');
+    const desc = card.querySelector('.product-desc');
+    const cut = el => el && (el.offsetParent === null || el.scrollHeight > el.clientHeight + 1);
+    btn.hidden = !(cut(h3) || cut(desc));
+  });
+}
+
+function toggleProductMore(btn) {
+  const card = btn.closest('.product-card');
+  const open = card.classList.toggle('expanded');
+  btn.textContent = t(open ? 'read_less' : 'read_more');
+}
+
+// a wider / narrower screen changes what fits
+let cutOffTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(cutOffTimer);
+  cutOffTimer = setTimeout(() => document.querySelectorAll('.products-grid').forEach(markCutOffCards), 200);
+});
 
 /* ---------------- Category page: chips + search + sort ---------------- */
 

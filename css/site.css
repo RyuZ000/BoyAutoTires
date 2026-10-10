@@ -353,6 +353,11 @@ body[data-page="brake"] .page-hero {
     scrollbar-width: none;
 }
 .cat-chips::-webkit-scrollbar { display: none; }
+/* phones: wrap onto a second row instead of hiding chips past the screen edge */
+@media (max-width: 600px) {
+    .cat-chips { flex-wrap: wrap; overflow-x: visible; gap: 8px; }
+    .cat-chip { padding: 8px 16px; font-size: 14px; }
+}
 .cat-chip {
     flex-shrink: 0;
     text-decoration: none;
