@@ -187,7 +187,7 @@ const translations = {
         placeholder_color: "เช่น HYPER SILVER, MATTE BLACK",
         wheel_text_hint: "แบรนด์ / ซีรีส์ / Model / สีล้อ พิมพ์ได้เฉพาะภาษาอังกฤษตัวพิมพ์ใหญ่ (A-Z) และตัวเลข · พิมพ์ตัวเล็กจะเปลี่ยนเป็นตัวใหญ่ให้เอง",
         search_placeholder_wheels: "แบรนด์หรือรุ่น เช่น JAGER",
-        placeholder_series: "เช่น JAGER",
+        placeholder_series: "เช่น LITETECH",
         vehicle_pickup: "รถกระบะ / SUV / รถตู้",
         vehicle_sedan: "รถเก๋ง",
         vehicle_ev: "รถไฟฟ้า (EV)",
