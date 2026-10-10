@@ -13,9 +13,12 @@ const SITE_CONTACT = {
   line: 'https://line.me/ti/p/yWkHxGNvL2',
   messenger: 'https://m.me/BOYAUTOTIRES',
   // contact page (/contact). mapQuery is what Google Maps searches for to place the pin;
-  // address is shown only when filled in. Opening hours live in js/store-status.js.
+  // address ({ th, en }) is shown only when filled in. Opening hours live in js/store-status.js.
   mapQuery: 'BoyAutoTires',
-  address: '',
+  address: {
+    th: '9, 32 ถ.กาญจนาภิเษก ต.บางม่วง อ.บางใหญ่ จ.นนทบุรี 11140',
+    en: '9, 32 Kanchanaphisek Rd, Bang Muang, Bang Yai, Nonthaburi 11140',
+  },
 };
 
 const MESSENGER_ICON = `<svg viewBox="0 0 36 36" aria-hidden="true"><path fill="#fff" d="M18 4C10.27 4 4 9.8 4 16.96c0 4.07 2.03 7.7 5.2 10.08V32l4.75-2.6c1.27.35 2.6.54 4.05.54 7.73 0 14-5.8 14-12.98C32 9.8 25.73 4 18 4zm1.39 17.47l-3.57-3.8-6.96 3.8 7.66-8.13 3.65 3.8 6.88-3.8-7.66 8.13z"/></svg>`;

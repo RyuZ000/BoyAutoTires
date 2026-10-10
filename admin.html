@@ -571,6 +571,7 @@
 <script src="js/store-status.js"></script>
 <script src="js/search.js"></script>
 <script src="js/portfolio.js"></script>
+<script src="js/image-compress.js"></script>
 <script>
     const CATEGORIES = [
         { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
@@ -882,9 +883,11 @@
             const pending = pfFormItems.filter(i => i.file);
             for (const [n, item] of pending.entries()) {
                 statusEl.textContent = `${t('upload_uploading')} (${n + 1}/${pending.length})`;
-                const ext = item.file.name.split('.').pop();
+                const file = item.type === 'photo' ? await compressImageFile(item.file) : item.file;
+                const ext = file.name.split('.').pop();
                 const path = `${item.type}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-                const { error } = await sb.storage.from(PORTFOLIO_BUCKET).upload(path, item.file);
+                // every upload gets a new name, so browsers may keep it for a year
+                const { error } = await sb.storage.from(PORTFOLIO_BUCKET).upload(path, file, { cacheControl: '31536000' });
                 if (error) throw error;
                 URL.revokeObjectURL(item.preview);
                 item.url = sb.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path).data.publicUrl;
@@ -1309,12 +1312,14 @@
         for (const img of pending) {
             statusEl.textContent = `${t('upload_uploading')} (${done + 1}/${pending.length})`;
 
-            const ext = img.file.name.split('.').pop();
+            const file = await compressImageFile(img.file);
+            const ext = file.name.split('.').pop();
             const path = `${currentCategory}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
+            // every upload gets a new name, so browsers may keep it for a year
             const { error: uploadError } = await sb.storage
                 .from(IMAGE_BUCKET)
-                .upload(path, img.file);
+                .upload(path, file, { cacheControl: '31536000' });
 
             if (uploadError) {
                 statusEl.textContent = t('upload_error') + uploadError.message;

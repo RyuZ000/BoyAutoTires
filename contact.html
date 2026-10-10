@@ -54,7 +54,7 @@
                 },
                 {
                     icon: '📍', title: t('contact_location'),
-                    body: `${c.address ? `<p>${c.address}</p>` : ''}
+                    body: `${c.address ? `<p>${c.address[getLang()] || c.address.th}</p>` : ''}
                            <a href="${directionsUrl}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>`,
                 },
                 {
