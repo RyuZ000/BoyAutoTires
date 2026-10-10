@@ -36,11 +36,11 @@ const SITE_SOCIAL = [
 // Items without href are shown as "coming soon" (no page yet).
 const SITE_NAV = [
   { page: 'home', href: '/', key: 'nav_home' },
-  { page: 'wheels', href: '/alloywheel', key: 'nav_wheels', product: true },
-  { page: 'tires', href: '/tires', key: 'nav_tires', product: true },
-  { page: 'shock', href: '/shock', key: 'nav_shock', product: true },
-  { page: 'brake', href: '/brake', key: 'nav_brake', product: true },
-  { page: 'other', href: '/other', key: 'nav_other', product: true },
+  { page: 'wheels', href: '/alloywheel', key: 'nav_wheels', product: true, icon: '⚙️' },
+  { page: 'tires', href: '/tires', key: 'nav_tires', product: true, icon: '🛞' },
+  { page: 'shock', href: '/shock', key: 'nav_shock', product: true, icon: '🔩' },
+  { page: 'brake', href: '/brake', key: 'nav_brake', product: true, icon: '🛑' },
+  { page: 'other', href: '/other', key: 'nav_other', product: true, icon: '📦' },
   { page: 'portfolio', href: '/portfolio', key: 'nav_portfolio' },
   { key: 'menu_promo' },
   { page: 'about', href: '/about', key: 'menu_about' },
@@ -70,13 +70,17 @@ function renderSiteHeader() {
         <div class="nav-dropdown-menu">${productItems.map(link).join('')}</div>
       </div>`;
   }).join('');
-  // ☰ menu on phones: a "Products" heading with the product pages listed under it
+  // ☰ menu on phones / iPad: product pages as icon tiles under a "Products" heading
+  const tile = n => `<a href="${n.href}" class="menu-tile ${n.page === current ? 'active' : ''}">
+      <span class="menu-tile-icon" aria-hidden="true">${n.icon}</span><span data-i18n="${n.key}">${n.key}</span></a>`;
   const menuNavLinks = SITE_NAV.map((n, i) => {
     if (!n.product) return link(n);
     if (i !== firstProduct) return '';
     return `
-      <span class="site-menu-heading" data-i18n="nav_products">nav_products</span>
-      <div class="site-menu-sub">${productItems.map(link).join('')}</div>`;
+      <div class="site-menu-products">
+        <span class="site-menu-heading" data-i18n="nav_products">nav_products</span>
+        <div class="site-menu-grid">${productItems.map(tile).join('')}</div>
+      </div>`;
   }).join('');
 
   el.outerHTML = `
@@ -103,13 +107,21 @@ function renderSiteHeader() {
       <div class="container">
         <div class="header-left">
           <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Menu"
-                  aria-expanded="false" aria-controls="site-menu">☰</button>
+                  aria-expanded="false" aria-controls="site-menu">
+            <span class="menu-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+          </button>
           <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
         </div>
         <nav class="main-nav">${navLinks}</nav>
         <a href="tel:${SITE_CONTACT.phoneTel}" class="header-cta" data-i18n="cta_call">📞 โทรเลย</a>
         <div class="site-menu" id="site-menu" hidden>
-          <nav class="site-menu-nav">${menuNavLinks}</nav>
+          <div class="site-menu-inner">
+            <nav class="site-menu-nav">${menuNavLinks}</nav>
+            <div class="site-menu-cta">
+              <a href="tel:${SITE_CONTACT.phoneTel}" class="contact-btn gold" data-i18n="cta_call">📞 โทรเลย</a>
+              <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="contact-btn line" data-i18n="cta_line">💬 แอด LINE</a>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -117,10 +129,13 @@ function renderSiteHeader() {
 
   const toggle = document.getElementById('menu-toggle');
   const menu = document.getElementById('site-menu');
+  const header = el.ownerDocument.querySelector('.site-header');
   const setOpen = open => {
+    // fill the screen below the header (the top bar above it may still be showing)
+    if (open) menu.style.maxHeight = `${window.innerHeight - header.getBoundingClientRect().bottom}px`;
     menu.hidden = !open;
     toggle.setAttribute('aria-expanded', open);
-    // the floating chat buttons would cover the menu's lower items
+    // hides the floating chat buttons (they'd cover the menu) and stops the page scrolling behind it
     document.body.classList.toggle('menu-open', open);
   };
   toggle.onclick = () => setOpen(menu.hidden);
