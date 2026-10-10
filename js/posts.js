@@ -23,13 +23,74 @@ function formatPostDate(value) {
     { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Bangkok' });
 }
 
+// Blog card: cover, date, title and a short teaser; the whole card links to the article
+function blogCardHtml(p) {
+  const cover = (p.image_urls || [])[0];
+  return `
+      <a class="blog-card" href="/blog?a=${encodeURIComponent(p.id)}">
+        <div class="blog-card-img">${cover ? `<img src="${escapeHtml(cover)}" alt="" loading="lazy">` : '<span>📝</span>'}</div>
+        <div class="blog-card-body">
+          <time>${formatPostDate(p.created_at)}</time>
+          <h2>${escapeHtml(p.title)}</h2>
+          ${p.body ? `<p>${escapeHtml(p.body)}</p>` : ''}
+          <span class="blog-card-more">${t('blog_read_more')}</span>
+        </div>
+      </a>`;
+}
+
+// Blog article page (/blog?a=<id>): back link, cover, full text, every photo, contact buttons
+function blogArticleHtml(p) {
+  const images = p.image_urls || [];
+  galleryData[p.id] = { name: p.title, images };
+  return `
+      <a class="blog-back" href="/blog">${t('blog_back')}</a>
+      <article class="blog-article">
+        ${images.length ? `
+        <button type="button" class="post-cover" onclick="openLightbox('${p.id}')">
+          <img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.title)}">
+        </button>` : ''}
+        <div class="post-content">
+          <div class="post-meta"><time>${formatPostDate(p.created_at)}</time></div>
+          <h1>${escapeHtml(p.title)}</h1>
+          ${p.body ? `<p class="post-text">${escapeHtml(p.body)}</p>` : ''}
+          ${images.length ? `
+          <div class="blog-photos">
+            ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(src)}" alt="" loading="lazy"></button>`).join('')}
+          </div>
+          <span class="post-photos-hint">📷 ${t('blog_photos_hint')}</span>` : ''}
+        </div>
+      </article>
+      <div class="blog-cta">
+        <div>
+          <h2>${t('cta_band_title')}</h2>
+          <p>${t('cta_band_sub')}</p>
+        </div>
+        <div class="blog-cta-btns">
+          <a class="blog-cta-call" href="tel:${SITE_CONTACT.phoneTel}">${t('cta_call')}</a>
+          <a class="blog-cta-line" href="${SITE_CONTACT.line}" target="_blank" rel="noopener">${t('cta_line')}</a>
+        </div>
+      </div>`;
+}
+
 // Public page: fills #posts-list with the posts of one type, or shows #posts-empty.
+// Promotions are listed in full; the blog shows a card grid and one article per ?a=<id>.
 // Photos open in the lightbox from js/products.js.
 function initPostsPage(type) {
   let posts = null;
+  const articleId = type === 'blog' ? new URLSearchParams(location.search).get('a') : null;
 
   function render() {
     const listEl = document.getElementById('posts-list');
+    if (type === 'blog' && posts !== null) {
+      const live = sortPosts(posts.filter(postIsLive));
+      const article = articleId && live.find(p => String(p.id) === articleId);
+      document.querySelector('.page-hero').hidden = !!article;
+      document.getElementById('posts-empty').hidden = !!article || live.length > 0;
+      listEl.className = article ? 'blog-article-wrap' : 'blog-grid';
+      listEl.innerHTML = article ? blogArticleHtml(article) : live.map(blogCardHtml).join('');
+      document.title = (article ? article.title : t('menu_blog')) + ' - BoyAutoTires';
+      return;
+    }
     const live = sortPosts((posts || []).filter(postIsLive));
     document.getElementById('posts-empty').hidden = posts === null || live.length > 0;
     listEl.innerHTML = live.map(p => {
