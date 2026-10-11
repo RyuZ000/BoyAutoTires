@@ -2,6 +2,7 @@
 .git
 .assetsignore
 wrangler.jsonc
+worker.js
 vercel.json
 api
 *.sql

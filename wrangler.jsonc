@@ -1,11 +1,17 @@
 // Cloudflare Workers config: serves this folder as a static site.
 // /tires serves tires.html (same clean URLs as on Vercel); files listed in .assetsignore are not published.
+// worker.js also runs the daily Supabase keep-alive (cron below, 02:00 UTC).
 {
   "name": "boyautotires",
+  "main": "worker.js",
   "compatibility_date": "2026-06-01",
   "assets": {
     "directory": "./",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
+  },
+  "triggers": {
+    "crons": ["0 2 * * *"]
   }
 }
