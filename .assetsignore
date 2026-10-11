@@ -1,0 +1,11 @@
+# not published by Cloudflare (see wrangler.jsonc)
+.git
+.assetsignore
+wrangler.jsonc
+vercel.json
+api
+*.sql
+main.cs
+script.js
+.wrangler
+node_modules

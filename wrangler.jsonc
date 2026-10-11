@@ -1,0 +1,11 @@
+// Cloudflare Workers config: serves this folder as a static site.
+// /tires serves tires.html (same clean URLs as on Vercel); files listed in .assetsignore are not published.
+{
+  "name": "boyautotires",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}
