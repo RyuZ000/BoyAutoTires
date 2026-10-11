@@ -15,6 +15,8 @@ const SITE_CONTACT = {
   // contact page (/contact). mapQuery is what Google Maps searches for to place the pin;
   // address ({ th, en }) is shown only when filled in. Opening hours live in js/store-status.js.
   mapQuery: 'BoyAutoTires',
+  // opens the shop on Google Maps, where its reviews are
+  reviews: 'https://www.google.com/maps/search/?api=1&query=BoyAutoTires',
   address: {
     th: '9, 32 ถ.กาญจนาภิเษก ต.บางม่วง อ.บางใหญ่ จ.นนทบุรี 11140',
     en: '9, 32 Kanchanaphisek Rd, Bang Muang, Bang Yai, Nonthaburi 11140',

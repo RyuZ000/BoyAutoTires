@@ -199,6 +199,8 @@
         .section-head h2 { margin: 0; font-size: clamp(24px, 3.5vw, 32px); font-weight: 800; }
         .section-head p { margin: 4px 0 0; color: var(--muted); }
         .section-head a { color: var(--blue-soft); text-decoration: none; font-weight: 600; white-space: nowrap; }
+        /* heading + a long link: the link drops under the heading on phones */
+        .section-head.wrap { flex-wrap: wrap; row-gap: 6px; }
 
         /* category cards */
         .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
@@ -292,7 +294,7 @@
         <div class="container hero-content">
             <span class="hero-kicker" data-i18n="hero_kicker">ล้อแม็ก · ยาง · โช้คอัพ · เบรก</span>
             <h1 data-i18n="hero_title">ศูนย์รวมช่วงล่างครบวงจร</h1>
-            <p data-i18n="hero_sub"></p>
+            <p data-i18n="hero_sub">ล้อแม็ก ยางรถยนต์ โช้คสตรัท สปริงโหลด พร้อมทีมช่างผู้เชี่ยวชาญพร้อมให้คำปรึกษา</p>
             <div class="hero-search-cats" id="hero-cats">
                 <button type="button" data-cat="wheels" data-i18n="nav_wheels">ล้อแม็ก</button>
                 <button type="button" data-cat="tires" data-i18n="nav_tires" class="active">ยาง</button>
@@ -318,29 +320,29 @@
             <div class="section-head">
                 <div>
                     <h2 data-i18n="section_categories">หมวดหมู่สินค้า</h2>
-                    <p data-i18n="section_categories_sub"></p>
+                    <p data-i18n="section_categories_sub">เลือกดูสินค้าตามหมวดที่ต้องการ</p>
                 </div>
             </div>
             <div class="cat-grid">
                 <a href="/alloywheel" class="cat-card">
                     <img alt="" hidden data-cat="wheels" loading="lazy">
-                    <div class="cat-info"><h3 data-i18n="nav_wheels">ล้อแม็ก</h3><p data-i18n="cat_wheels_desc"></p><span data-i18n="cat_view"></span></div>
+                    <div class="cat-info"><h3 data-i18n="nav_wheels">ล้อแม็ก</h3><p data-i18n="cat_wheels_desc">ล้อแม็กหลากหลายดีไซน์และขนาด</p><span data-i18n="cat_view">ดูสินค้า →</span></div>
                 </a>
                 <a href="/tires" class="cat-card">
                     <img alt="" hidden data-cat="tires" loading="lazy">
-                    <div class="cat-info"><h3 data-i18n="nav_tires">ยาง</h3><p data-i18n="cat_tires_desc"></p><span data-i18n="cat_view"></span></div>
+                    <div class="cat-info"><h3 data-i18n="nav_tires">ยาง</h3><p data-i18n="cat_tires_desc">ยางรถยนต์ทุกไซส์ ค้นหาตามขนาดได้</p><span data-i18n="cat_view">ดูสินค้า →</span></div>
                 </a>
                 <a href="/shock" class="cat-card">
                     <img alt="" hidden data-cat="shock" loading="lazy">
-                    <div class="cat-info"><h3 data-i18n="nav_shock">โช้คอัพ</h3><p data-i18n="cat_shock_desc"></p><span data-i18n="cat_view"></span></div>
+                    <div class="cat-info"><h3 data-i18n="nav_shock">โช้คอัพ</h3><p data-i18n="cat_shock_desc">โช้คอัพ โช้คสตรัท สปริงโหลด</p><span data-i18n="cat_view">ดูสินค้า →</span></div>
                 </a>
                 <a href="/brake" class="cat-card">
                     <img alt="" hidden data-cat="brake" loading="lazy">
-                    <div class="cat-info"><h3 data-i18n="nav_brake">เบรก</h3><p data-i18n="cat_brake_desc"></p><span data-i18n="cat_view"></span></div>
+                    <div class="cat-info"><h3 data-i18n="nav_brake">เบรก</h3><p data-i18n="cat_brake_desc">ชุดเบรก ผ้าเบรก จานเบรก</p><span data-i18n="cat_view">ดูสินค้า →</span></div>
                 </a>
                 <a href="/other" class="cat-card">
                     <img alt="" hidden data-cat="other" loading="lazy">
-                    <div class="cat-info"><h3 data-i18n="nav_other">สินค้าอื่นๆ</h3><p data-i18n="cat_other_desc"></p><span data-i18n="cat_view"></span></div>
+                    <div class="cat-info"><h3 data-i18n="nav_other">สินค้าอื่นๆ</h3><p data-i18n="cat_other_desc">อะไหล่และอุปกรณ์แต่งรถอื่นๆ</p><span data-i18n="cat_view">ดูสินค้า →</span></div>
                 </a>
             </div>
         </section>
@@ -355,12 +357,15 @@
 
         <!-- Why us -->
         <section class="section">
-            <div class="section-head"><h2 data-i18n="section_why">ทำไมต้อง BoyAutoTires</h2></div>
+            <div class="section-head wrap">
+                <h2 data-i18n="section_why">ทำไมต้อง BoyAutoTires</h2>
+                <a href="https://www.google.com/maps/search/?api=1&query=BoyAutoTires" target="_blank" rel="noopener" data-i18n="reviews_link">⭐ ดูรีวิวจากลูกค้าบน Google →</a>
+            </div>
             <div class="why-grid">
-                <div class="why-card"><div class="why-icon">🔧</div><h3 data-i18n="why_1_title"></h3><p data-i18n="why_1_desc"></p></div>
-                <div class="why-card"><div class="why-icon">🛞</div><h3 data-i18n="why_2_title"></h3><p data-i18n="why_2_desc"></p></div>
-                <div class="why-card"><div class="why-icon">💬</div><h3 data-i18n="why_3_title"></h3><p data-i18n="why_3_desc"></p></div>
-                <div class="why-card"><div class="why-icon">📱</div><h3 data-i18n="why_4_title"></h3><p data-i18n="why_4_desc"></p></div>
+                <div class="why-card"><div class="why-icon">🔧</div><h3 data-i18n="why_1_title">ช่างผู้ชำนาญ</h3><p data-i18n="why_1_desc">ติดตั้งและปรับตั้งช่วงล่างโดยทีมช่างประสบการณ์</p></div>
+                <div class="why-card"><div class="why-icon">🛞</div><h3 data-i18n="why_2_title">สินค้าครบ</h3><p data-i18n="why_2_desc">ล้อ ยาง โช้ค เบรก ครบจบในร้านเดียว</p></div>
+                <div class="why-card"><div class="why-icon">💬</div><h3 data-i18n="why_3_title">ให้คำปรึกษา</h3><p data-i18n="why_3_desc">แนะนำสินค้าที่เหมาะกับรถและการใช้งานของคุณ</p></div>
+                <div class="why-card"><div class="why-icon">📱</div><h3 data-i18n="why_4_title">ติดต่อง่าย</h3><p data-i18n="why_4_desc">สอบถามได้ทั้งโทรศัพท์ LINE และโซเชียล</p></div>
             </div>
         </section>
 
@@ -385,7 +390,7 @@
         <section class="cta-band">
             <div>
                 <h2 data-i18n="cta_band_title">สนใจสินค้าหรือต้องการสอบถาม?</h2>
-                <p data-i18n="cta_band_sub"></p>
+                <p data-i18n="cta_band_sub">ทักมาได้เลย ทีมงานยินดีให้คำแนะนำ</p>
             </div>
             <div class="hero-actions">
                 <a href="tel:+66811600060" class="btn btn-gold" data-i18n="cta_call">📞 โทรเลย</a>

@@ -589,6 +589,8 @@ button.cat-chip { font: inherit; font-weight: 600; font-size: 15px; cursor: poin
 }
 .contact-btn.gold { background: var(--gold); color: #111; }
 .contact-btn.line { background: #06c755; color: #fff; }
+.contact-btn.outline { border: 1px solid var(--line); color: var(--text); }
+.contact-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
 .contact-btn.messenger { background: linear-gradient(45deg, #0099ff, #a033ff 60%, #ff5280 90%, #ff7061); color: #fff; }
 .contact-social { display: flex; flex-wrap: wrap; gap: 10px; }
 .contact-social img { width: 40px; height: 40px; border-radius: 10px; display: block; }

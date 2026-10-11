@@ -69,9 +69,9 @@
 
     <section class="page-hero">
         <div class="container">
-            <div class="breadcrumb"><a href="/" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="menu_contact"></span></div>
+            <div class="breadcrumb"><a href="/" data-i18n="nav_home">หน้าแรก</a> / <span data-i18n="menu_contact">ติดต่อเรา</span></div>
             <h1 class="page-title" data-i18n="menu_contact">ติดต่อเรา</h1>
-            <p class="page-sub" data-i18n="contact_sub"></p>
+            <p class="page-sub" data-i18n="contact_sub">โทร แชท หรือแวะมาที่ร้านได้เลย ยินดีให้คำปรึกษา</p>
         </div>
     </section>
 
@@ -109,7 +109,8 @@
                 {
                     icon: '📍', title: t('contact_location'),
                     body: `${c.address ? `<p>${c.address[getLang()] || c.address.th}</p>` : ''}
-                           <a href="${directionsUrl}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>`,
+                           <a href="${directionsUrl}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>
+                           <a href="${c.reviews}" target="_blank" rel="noopener" class="contact-btn outline">${t('contact_reviews')}</a>`,
                 },
                 {
                     icon: '💬', title: t('contact_chat'),
