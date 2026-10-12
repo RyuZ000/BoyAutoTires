@@ -1,0 +1,100 @@
+/* ============================================================
+   Bold editorial look (inspired by hrcofficial.com)
+   Loaded after site.css on every public page. Square edges, near-black
+   background, wide display type for English words, mono labels.
+   Thai text always stays on Prompt.
+   ============================================================ */
+body { background: #07080b; }
+
+.disp { font-family: 'Unbounded', 'Prompt', sans-serif; font-weight: 900; letter-spacing: -0.02em; line-height: .95; }
+.serif { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: 0; }
+.ghost { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.28); }
+.sec-label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+}
+
+/* square edges on cards, buttons, inputs and panels (round dots/avatars stay round) */
+.about-intro img, .about-visit-card, .blog-article, .blog-card, .blog-cta, .blog-cta-btns a,
+.blog-empty, .blog-photos button, .cat-chip, .contact-btn, .contact-card, .contact-map iframe,
+.filter-toggle, .header-cta, .nav-dropdown-menu, .pf-card, .post-card,
+.price-range input, .shop-filters, .shop-search input, .shop-toolbar, .why-card, .why-icon,
+.product-card, .product-size-badge, .lb-media {
+    border-radius: 0;
+}
+
+/* dark neutral panels with hairline borders instead of navy + blue lines */
+.product-card, .contact-card, .blog-card, .blog-article, .post-card, .pf-card,
+.about-visit-card, .why-card, .shop-filters, .shop-toolbar, .blog-empty {
+    background: #0d0f14;
+    border-color: rgba(255,255,255,.08);
+}
+.site-header { background: rgba(7,8,11,.92); border-bottom-color: rgba(255,255,255,.08); }
+.topbar { background: #040507; border-bottom-color: rgba(255,255,255,.06); }
+
+/* ---------- page heading: huge English word behind the Thai title ---------- */
+.page-hero { padding: 72px 0 56px; border-bottom-color: rgba(255,255,255,.08); }
+.page-hero .container::before {
+    display: block;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(44px, 10vw, 128px);
+    line-height: .9;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,.4);
+    margin-bottom: 14px;
+}
+body[data-page="wheels"] .page-hero .container::before { content: 'WHEELS'; }
+body[data-page="tires"] .page-hero .container::before { content: 'TIRES'; }
+body[data-page="shock"] .page-hero .container::before { content: 'SHOCKS'; }
+body[data-page="brake"] .page-hero .container::before { content: 'BRAKES'; }
+body[data-page="other"] .page-hero .container::before { content: 'PARTS'; }
+body[data-page="portfolio"] .page-hero .container::before { content: 'OUR WORK'; }
+body[data-page="promo"] .page-hero .container::before { content: 'PROMO'; }
+body[data-page="about"] .page-hero .container::before { content: 'ABOUT'; }
+body[data-page="blog"] .page-hero .container::before { content: 'BLOG'; }
+body[data-page="contact"] .page-hero .container::before { content: 'CONTACT'; }
+.breadcrumb {
+    font-family: 'Space Mono', 'Prompt', monospace;
+    font-size: 12px;
+    letter-spacing: .08em;
+    color: var(--gold);
+}
+.breadcrumb a { color: var(--gold); }
+.page-hero .page-title { font-size: clamp(30px, 5vw, 52px); }
+
+/* ---------- scrolling word strip (home) ---------- */
+.marquee {
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: #07080b;
+}
+.marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+.marquee span {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .2em;
+    color: #8a90a0;
+    padding: 16px 26px;
+    white-space: nowrap;
+}
+.marquee span::after { content: '◆'; color: var(--gold); margin-left: 52px; font-size: 9px; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+/* small mono accents */
+.cat-chip { font-weight: 600; }
+.cat-chip.active { color: #111; }
+.contact-card h3, .blog-card h3 { letter-spacing: .01em; }
+.shop-search input, .price-range input { background: #07080b; border-color: rgba(255,255,255,.12); }
+.cat-chip:not(.active) { background: #0d0f14; border-color: rgba(255,255,255,.12); }
+
+/* blog: shop banner under the page title (hidden with the hero when an article is open) */
+.blog-banner { display: block; width: 100%; height: auto; margin-top: 28px; border: 1px solid rgba(255,255,255,.08); }
