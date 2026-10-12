@@ -118,7 +118,7 @@ function initPostsPage(type) {
 
   window.onLanguageChange = render;
   document.addEventListener('DOMContentLoaded', async () => {
-    const { data, error } = await sb.from('posts').select('*').eq('type', type);
+    const { data, error } = await sbLoad(() => sb.from('posts').select('*').eq('type', type));
     if (error) console.error('posts error:', error);
     posts = data || []; // on an error the page just shows its "nothing yet" box
     render();

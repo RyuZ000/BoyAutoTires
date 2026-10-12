@@ -166,6 +166,7 @@ const translations = {
 
         products_loading: "กำลังโหลดสินค้า...",
         products_error: "โหลดสินค้าไม่สำเร็จ กรุณาลองใหม่ภายหลัง",
+        load_retry: "↻ ลองใหม่",
         products_empty: "ยังไม่มีสินค้าในหมวดนี้",
         in_stock: "มีสินค้า",
         out_of_stock: "สินค้าหมด",
@@ -433,6 +434,7 @@ const translations = {
 
         products_loading: "Loading products...",
         products_error: "Failed to load products. Please try again later.",
+        load_retry: "↻ Try again",
         products_empty: "No products in this category yet.",
         in_stock: "In stock",
         out_of_stock: "Out of stock",

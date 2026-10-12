@@ -824,3 +824,16 @@ body.menu-open .float-contact { display: none; }
     .blog-photos { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .blog-cta { padding: 20px 16px; }
 }
+
+/* product/portfolio load failed: retry button + reason in small print */
+.load-retry {
+    margin-top: 10px;
+    padding: 8px 18px;
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.load-reason { display: block; margin-top: 10px; font-size: 11px; color: var(--muted); }

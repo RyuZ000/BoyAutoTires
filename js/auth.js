@@ -5,6 +5,7 @@
 
 // Show/hide the staff-corner buttons depending on login state
 async function initAuthUI() {
+  if (!sb) return; // library failed to load: product grids already show the error
   const { data: { session } } = await sb.auth.getSession();
 
   const loginBtn = document.getElementById('staff-login-link');

@@ -229,14 +229,14 @@ function initProductPage(category, defaultSort, options = {}) {
     const grid = document.getElementById('products-grid');
     grid.innerHTML = `<p class="products-status">${t('products_loading')}</p>`;
 
-    const { data, error } = await sb
+    const { data, error } = await sbLoad(() => sb
       .from('products')
       .select('*')
       .eq('category', category)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }));
 
     if (error) {
-      grid.innerHTML = `<p class="products-status">${t('products_error')}</p>`;
+      grid.innerHTML = loadErrorHtml(error, 'location.reload()');
       console.error('initProductPage error:', error);
       return;
     }
@@ -448,14 +448,14 @@ async function loadProducts(category, gridId) {
 
   grid.innerHTML = `<p class="products-status">${t('products_loading')}</p>`;
 
-  const { data, error } = await sb
+  const { data, error } = await sbLoad(() => sb
     .from('products')
     .select('*')
     .eq('category', category)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false }));
 
   if (error) {
-    grid.innerHTML = `<p class="products-status">${t('products_error')}</p>`;
+    grid.innerHTML = loadErrorHtml(error, `loadProducts('${category}', '${gridId}')`);
     console.error('loadProducts error:', error);
     return;
   }

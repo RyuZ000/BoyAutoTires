@@ -474,7 +474,7 @@
 
     <div id="site-footer"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/vendor/supabase-2.117.3.js"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/layout.js"></script>
     <script src="js/auth.js"></script>
@@ -531,14 +531,14 @@
         async function loadLatest() {
             const grid = document.getElementById('latest-grid');
             grid.innerHTML = `<p class="products-status">${t('products_loading')}</p>`;
-            const { data, error } = await sb
+            const { data, error } = await sbLoad(() => sb
                 .from('products')
                 .select('*')
                 .order('created_at', { ascending: false })
-                .limit(4);
+                .limit(4));
             if (error) {
                 console.error('loadLatest error:', error);
-                document.getElementById('latest-section').style.display = 'none';
+                grid.innerHTML = loadErrorHtml(error, 'loadLatest()');
                 return;
             }
             latestProducts = data || [];
