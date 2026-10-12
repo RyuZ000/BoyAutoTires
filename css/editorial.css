@@ -96,5 +96,5 @@ body[data-page="contact"] .page-hero .container::before { content: 'CONTACT'; }
 .shop-search input, .price-range input { background: #07080b; border-color: rgba(255,255,255,.12); }
 .cat-chip:not(.active) { background: #0d0f14; border-color: rgba(255,255,255,.12); }
 
-/* blog: shop banner under the page title (hidden with the hero when an article is open) */
-.blog-banner { display: block; width: 100%; height: auto; margin-top: 28px; border: 1px solid rgba(255,255,255,.08); }
+/* about: shop banner under the page title */
+.shop-banner { display: block; width: 100%; height: auto; margin-top: 28px; border: 1px solid rgba(255,255,255,.08); }
