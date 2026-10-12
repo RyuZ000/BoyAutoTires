@@ -1,0 +1,54 @@
+/* ============================================================
+   Admin page in the same bold editorial look as the public site
+   (css/editorial.css). Loaded after admin.html's own <style>.
+   Only colours, corners and headings change; every control works as before.
+   ============================================================ */
+:root {
+    --bg: #07080b;
+    --bg-2: #0a0b0f;
+    --panel: #0d0f14;
+    --line: rgba(255, 255, 255, 0.1);
+}
+body { background: #07080b; }
+
+/* square edges; round things that must stay round (on/off switch, close and
+   remove-photo buttons) are left alone */
+.btn, .btn-sm, .field, .list-toolbar .field, .admin-badge, .hdr-link, .lang-switch,
+.login-card, .password-toggle, .cat-tab, .cat-tab .count, .store-panel, .store-mode,
+.pf-type-tag, .product-row, .thumb, .thumb .img-count, .size-badge, .stock-box,
+.dropzone, .image-thumb, .toast {
+    border-radius: 0;
+}
+
+/* inputs, thumbnails and drop areas: near-black instead of navy */
+.field, .thumb, .stock-box, .dropzone, .image-thumb { background: #07080b; }
+
+/* page heading: big outlined word + mono label, like the public pages */
+.dash-head h1 { font-size: clamp(28px, 4.5vw, 44px); line-height: 1.1; }
+.dash-head h1::before {
+    content: 'ADMIN';
+    display: block;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 8vw, 96px);
+    line-height: .9;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, .4);
+    margin-bottom: 12px;
+}
+.admin-badge, .drawer-cat {
+    font-family: 'Space Mono', 'Prompt', monospace;
+    letter-spacing: .08em;
+}
+.login-card h1::before {
+    content: 'STAFF';
+    display: block;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 44px;
+    line-height: .9;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, .4);
+    margin-bottom: 10px;
+}

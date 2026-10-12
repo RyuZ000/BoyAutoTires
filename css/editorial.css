@@ -98,3 +98,6 @@ body[data-page="contact"] .page-hero .container::before { content: 'CONTACT'; }
 
 /* about: the shop banner is a wide picture with text, so show all of it (no 4:3 crop) */
 .about-intro img.about-banner { aspect-ratio: auto; object-fit: contain; border: 1px solid rgba(255,255,255,.08); }
+/* banner goes full width on top, text underneath (bigger on PC, never wider than the page) */
+.about-intro.has-banner { grid-template-columns: 1fr; gap: 28px; }
+.about-intro.has-banner img.about-banner { order: -1; }
