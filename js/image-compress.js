@@ -1,12 +1,12 @@
 /* ============================================================
    Shrinks photos in the browser before they are uploaded (admin.html).
-   Phone photos are often 3-5MB; the site shows them at most ~1600px wide,
-   so they are resized and re-encoded (JPEG, or WebP when the photo has
-   transparent parts). Anything that isn't a still photo is left alone.
+   Phone photos are often 3-5MB; ~1280px is plenty for the site and keeps
+   the Supabase egress quota low, so they are resized and re-encoded (JPEG,
+   or WebP when the photo has transparent parts). Anything that isn't a still photo is left alone.
    ============================================================ */
 
-const IMAGE_MAX_SIDE = 1600;
-const IMAGE_QUALITY = 0.82;
+const IMAGE_MAX_SIDE = 1280;
+const IMAGE_QUALITY = 0.78;
 
 function loadImageFromBlob(blob) {
   return new Promise((resolve, reject) => {

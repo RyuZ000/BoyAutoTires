@@ -561,7 +561,7 @@
                 <input type="file" id="pf-file" class="visually-hidden" accept="image/*,video/*" multiple onchange="addPortfolioFiles(this.files); this.value='';">
                 <span class="dz-icon">📷 🎬</span>
                 <span class="dz-text" data-i18n="pf_dz_text">กดเพื่อเลือกรูปหรือวิดีโอ หรือลากมาวางตรงนี้</span>
-                <small data-i18n="pf_dz_hint">เลือกได้หลายไฟล์ · ไฟล์ละไม่เกิน 50 MB</small>
+                <small data-i18n="pf_dz_hint">เลือกได้หลายไฟล์ · รูปย่อขนาดให้อัตโนมัติ · วิดีโอไม่เกิน 20 MB</small>
             </label>
             <div class="image-grid" id="pf-grid-edit"></div>
             <span class="drag-hint" id="pf-drag-hint"></span>
@@ -1021,6 +1021,8 @@
     // ---- Portfolio (ผลงาน): one row per car, edited in a drawer like products ----
     const PORTFOLIO_BUCKET = 'portfolio';
     const PORTFOLIO_MAX_BYTES = 50 * 1024 * 1024; // bucket limit (supabase-add-portfolio.sql)
+    // every visitor who opens a video downloads it, and the free plan allows 5 GB of egress a month
+    const PORTFOLIO_VIDEO_MAX_BYTES = 20 * 1024 * 1024;
     let portfolioItems = [];
     let pfEditKey = null;   // album being edited, null when adding
     let pfFormItems = [];   // in display order: { id, url, type } saved, or { file, preview, type } new
@@ -1121,6 +1123,10 @@
             if (!type) continue;
             if (file.size > PORTFOLIO_MAX_BYTES) {
                 showToast(`${t('pf_too_big')} (${file.name})`, 'error');
+                continue;
+            }
+            if (type === 'video' && file.size > PORTFOLIO_VIDEO_MAX_BYTES) {
+                showToast(`${t('pf_video_too_big')} (${file.name})`, 'error');
                 continue;
             }
             pfFormItems.push({ file, type, preview: URL.createObjectURL(file) });
