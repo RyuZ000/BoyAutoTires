@@ -36,13 +36,14 @@ const SITE_SOCIAL = [
 
 // product: true = a shop category (shown as category chips and in the footer's product list)
 // Items without href are shown as "coming soon" (no page yet).
-// service landing pages (one per job, written for "<service> บางใหญ่" searches); listed in the footer
+// service landing pages (one per job, written for "<service> บางใหญ่" searches);
+// shown as a "Services ▾" dropdown next to "Products ▾", in the ☰ menu and in the footer
 const SITE_SERVICES = [
-  { href: '/service-tires', key: 'svc_nav_tires' },
-  { href: '/service-alignment', key: 'svc_nav_alignment' },
-  { href: '/service-wheels', key: 'svc_nav_wheels' },
-  { href: '/service-suspension', key: 'svc_nav_suspension' },
-  { href: '/service-brakes', key: 'svc_nav_brakes' },
+  { page: 'service-tires', href: '/service-tires', key: 'svc_nav_tires', icon: '🛞' },
+  { page: 'service-alignment', href: '/service-alignment', key: 'svc_nav_alignment', icon: '🎯' },
+  { page: 'service-wheels', href: '/service-wheels', key: 'svc_nav_wheels', icon: '⚙️' },
+  { page: 'service-suspension', href: '/service-suspension', key: 'svc_nav_suspension', icon: '🔩' },
+  { page: 'service-brakes', href: '/service-brakes', key: 'svc_nav_brakes', icon: '🛑' },
 ];
 
 const SITE_NAV = [
@@ -67,21 +68,22 @@ function renderSiteHeader() {
     ? `<a href="${n.href}" data-i18n="${n.key}" class="${n.page === current ? 'active' : ''}">${n.key}</a>`
     : `<span class="menu-soon"><span data-i18n="${n.key}">${n.key}</span><small data-i18n="menu_soon">เร็วๆ นี้</small></span>`;
   const productItems = SITE_NAV.filter(n => n.product);
-  const onProductPage = productItems.some(n => n.page === current);
   const firstProduct = SITE_NAV.indexOf(productItems[0]);
-  // top bar: the product pages sit in one "Products ▾" dropdown (opens on hover or click)
+  // top bar: product pages sit in one "Products ▾" dropdown and service pages in "Services ▾"
+  // right after it (each opens on hover or click)
+  const dropdownHtml = (labelKey, items) => `
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn ${items.some(n => n.page === current) ? 'active' : ''}" aria-expanded="false" aria-haspopup="true">
+          <span data-i18n="${labelKey}">${labelKey}</span><span class="nav-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="nav-dropdown-menu">${items.map(link).join('')}</div>
+      </div>`;
   const navLinks = SITE_NAV.map((n, i) => {
     if (!n.product) return link(n);
     if (i !== firstProduct) return '';
-    return `
-      <div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-btn ${onProductPage ? 'active' : ''}" aria-expanded="false" aria-haspopup="true">
-          <span data-i18n="nav_products">nav_products</span><span class="nav-caret" aria-hidden="true">▾</span>
-        </button>
-        <div class="nav-dropdown-menu">${productItems.map(link).join('')}</div>
-      </div>`;
+    return dropdownHtml('nav_products', productItems) + dropdownHtml('footer_services', SITE_SERVICES);
   }).join('');
-  // ☰ menu on phones / iPad: product pages as icon tiles under a "Products" heading
+  // ☰ menu on phones / iPad: product and service pages as icon tiles under "Products" / "Services" headings
   const tile = n => `<a href="${n.href}" class="menu-tile ${n.page === current ? 'active' : ''}">
       <span class="menu-tile-icon" aria-hidden="true">${n.icon}</span><span data-i18n="${n.key}">${n.key}</span></a>`;
   const menuNavLinks = SITE_NAV.map((n, i) => {
@@ -91,6 +93,10 @@ function renderSiteHeader() {
       <div class="site-menu-products">
         <span class="site-menu-heading" data-i18n="nav_products">nav_products</span>
         <div class="site-menu-grid">${productItems.map(tile).join('')}</div>
+      </div>
+      <div class="site-menu-products">
+        <span class="site-menu-heading" data-i18n="footer_services">footer_services</span>
+        <div class="site-menu-grid">${SITE_SERVICES.map(tile).join('')}</div>
       </div>`;
   }).join('');
 
@@ -156,9 +162,8 @@ function renderSiteHeader() {
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
 
-  // "Products ▾": hovering opens it on a computer (CSS); a click / tap toggles it too
-  const dropdown = document.querySelector('.main-nav .nav-dropdown');
-  if (dropdown) {
+  // "Products ▾" / "Services ▾": hovering opens one on a computer (CSS); a click / tap toggles it too
+  document.querySelectorAll('.main-nav .nav-dropdown').forEach(dropdown => {
     const btn = dropdown.querySelector('.nav-dropdown-btn');
     const setDropdown = open => {
       dropdown.classList.toggle('open', open);
@@ -167,7 +172,7 @@ function renderSiteHeader() {
     btn.onclick = () => setDropdown(!dropdown.classList.contains('open'));
     document.addEventListener('click', e => { if (!dropdown.contains(e.target)) setDropdown(false); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') setDropdown(false); });
-  }
+  });
 }
 
 function renderSiteFooter() {
