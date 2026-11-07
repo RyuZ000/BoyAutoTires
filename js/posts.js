@@ -3,6 +3,10 @@
    (supabase-add-posts.sql). Shared by those pages and the admin page.
    ============================================================ */
 
+// English title / text when the site is in English and staff filled them in; Thai otherwise
+const postTitle = p => (getLang() === 'en' && p.title_en) || p.title;
+const postBody = p => (getLang() === 'en' && p.body_en) || p.body;
+
 // a promotion with an end date stops showing the day after it (Bangkok time)
 function postIsLive(p) {
   if (!p.ends_on) return true;
@@ -31,8 +35,8 @@ function blogCardHtml(p) {
         <div class="blog-card-img">${cover ? `<img src="${escapeHtml(cover)}" alt="" loading="lazy">` : '<span>📝</span>'}</div>
         <div class="blog-card-body">
           <time>${formatPostDate(p.created_at)}</time>
-          <h2>${escapeHtml(p.title)}</h2>
-          ${p.body ? `<p>${escapeHtml(p.body)}</p>` : ''}
+          <h2>${escapeHtml(postTitle(p))}</h2>
+          ${postBody(p) ? `<p>${escapeHtml(postBody(p))}</p>` : ''}
           <span class="blog-card-more">${t('blog_read_more')}</span>
         </div>
       </a>`;
@@ -41,18 +45,18 @@ function blogCardHtml(p) {
 // Blog article page (/blog?a=<id>): back link, cover, full text, every photo, contact buttons
 function blogArticleHtml(p) {
   const images = p.image_urls || [];
-  galleryData[p.id] = { name: p.title, images };
+  galleryData[p.id] = { name: postTitle(p), images };
   return `
       <a class="blog-back" href="/blog">${t('blog_back')}</a>
       <article class="blog-article">
         ${images.length ? `
         <button type="button" class="post-cover" onclick="openLightbox('${p.id}')">
-          <img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.title)}">
+          <img src="${escapeHtml(images[0])}" alt="${escapeHtml(postTitle(p))}">
         </button>` : ''}
         <div class="post-content">
           <div class="post-meta"><time>${formatPostDate(p.created_at)}</time></div>
-          <h1>${escapeHtml(p.title)}</h1>
-          ${p.body ? `<p class="post-text">${escapeHtml(p.body)}</p>` : ''}
+          <h1>${escapeHtml(postTitle(p))}</h1>
+          ${postBody(p) ? `<p class="post-text">${escapeHtml(postBody(p))}</p>` : ''}
           ${images.length ? `
           <div class="blog-photos">
             ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(src)}" alt="" loading="lazy"></button>`).join('')}
@@ -88,19 +92,19 @@ function initPostsPage(type) {
       document.getElementById('posts-empty').hidden = !!article || live.length > 0;
       listEl.className = article ? 'blog-article-wrap' : 'blog-grid';
       listEl.innerHTML = article ? blogArticleHtml(article) : live.map(blogCardHtml).join('');
-      document.title = (article ? article.title : t('menu_blog')) + ' - BoyAutoTires';
+      document.title = (article ? postTitle(article) : t('menu_blog')) + ' - BoyAutoTires';
       return;
     }
     const live = sortPosts((posts || []).filter(postIsLive));
     document.getElementById('posts-empty').hidden = posts === null || live.length > 0;
     listEl.innerHTML = live.map(p => {
       const images = p.image_urls || [];
-      galleryData[p.id] = { name: p.title, images };
+      galleryData[p.id] = { name: postTitle(p), images };
       return `
       <article class="post-card">
         ${images.length ? `
         <button type="button" class="post-cover" onclick="openLightbox('${p.id}')">
-          <img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.title)}" loading="lazy">
+          <img src="${escapeHtml(images[0])}" alt="${escapeHtml(postTitle(p))}" loading="lazy">
           ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}
         </button>` : ''}
         <div class="post-content">
@@ -108,8 +112,8 @@ function initPostsPage(type) {
             <time>${formatPostDate(p.created_at)}</time>
             ${p.ends_on ? `<span class="post-until">⏰ ${t('post_until')} ${formatPostDate(p.ends_on)}</span>` : ''}
           </div>
-          <h2>${escapeHtml(p.title)}</h2>
-          ${p.body ? `<p class="post-text">${escapeHtml(p.body)}</p>` : ''}
+          <h2>${escapeHtml(postTitle(p))}</h2>
+          ${postBody(p) ? `<p class="post-text">${escapeHtml(postBody(p))}</p>` : ''}
           ${images.length > 1 ? `<span class="post-photos-hint">📷 ${t('post_photos_hint').replace('{n}', images.length)}</span>` : ''}
         </div>
       </article>`;

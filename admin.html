@@ -40,6 +40,9 @@
     .field-label { display: block; font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
     .field-label .req { color: var(--gold); }
     .field-hint { display: block; font-size: 12px; color: var(--muted); margin-top: 5px; }
+    .post-en { margin-top: 18px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,.15); }
+    .post-en-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+    .post-en-head .field-label { margin: 0; }
     .field {
         width: 100%;
         padding: 12px 14px;
@@ -596,6 +599,20 @@
             <label class="field-label" for="post-body" data-i18n="post_field_body">เนื้อหา</label>
             <textarea class="field" id="post-body" rows="8" data-i18n-placeholder="post_body_ph"></textarea>
 
+            <!-- English version (optional): shown on the site when a visitor picks EN; empty = Thai is shown -->
+            <div class="post-en">
+                <div class="post-en-head">
+                    <span class="field-label" data-i18n="post_en_heading">ภาษาอังกฤษ (ไม่ใส่ก็ได้)</span>
+                    <button type="button" class="btn-sm" id="post-translate-btn" onclick="translatePost()" data-i18n="post_translate_btn">🌐 แปลจากภาษาไทยอัตโนมัติ</button>
+                </div>
+                <span class="field-hint" data-i18n="post_translate_hint">กดปุ่มเพื่อแปลหัวข้อและเนื้อหาด้านบนเป็นภาษาอังกฤษ แก้คำได้ก่อนกดบันทึก · ถ้าเว้นว่าง หน้าเว็บภาษาอังกฤษจะแสดงภาษาไทยแทน</span>
+                <label class="field-label" for="post-title-en" data-i18n="post_field_title_en">หัวข้อ (อังกฤษ)</label>
+                <input class="field" type="text" id="post-title-en" autocomplete="off">
+                <label class="field-label" for="post-body-en" data-i18n="post_field_body_en">เนื้อหา (อังกฤษ)</label>
+                <textarea class="field" id="post-body-en" rows="8"></textarea>
+                <span class="field-hint" id="post-translate-status"></span>
+            </div>
+
             <div id="post-ends-field">
                 <label class="field-label" for="post-ends" data-i18n="post_field_ends">วันหมดเขต (ไม่ใส่ก็ได้)</label>
                 <input class="field" type="date" id="post-ends">
@@ -838,7 +855,7 @@
     function renderPostsAdmin() {
         const all = typePosts();
         const query = document.getElementById('post-search').value.trim();
-        const list = all.filter(p => textMatches(p.title, query) || textMatches(p.body, query));
+        const list = all.filter(p => [p.title, p.body, p.title_en, p.body_en].some(v => textMatches(v, query)));
         const statusEl = document.getElementById('post-status');
         document.getElementById('post-count').textContent = `${list.length} ${t('list_count_suffix')}`;
         statusEl.textContent = t(postsError ? 'post_load_error' : all.length ? 'list_no_match' : 'post_empty_admin');
@@ -879,6 +896,9 @@
         postFormImages = p ? (p.image_urls || []).map(url => ({ url })) : [];
         document.getElementById('post-title').value = p ? p.title : '';
         document.getElementById('post-body').value = p ? p.body || '' : '';
+        document.getElementById('post-title-en').value = p ? p.title_en || '' : '';
+        document.getElementById('post-body-en').value = p ? p.body_en || '' : '';
+        document.getElementById('post-translate-status').textContent = '';
         document.getElementById('post-ends').value = p ? p.ends_on || '' : '';
         document.getElementById('post-form-error').textContent = '';
         document.getElementById('post-upload-status').textContent = '';
@@ -934,6 +954,35 @@
         return orders.length ? Math.min(...orders) - 1 : 0;
     }
 
+    // "🌐 Translate": sends the Thai title + text to /api/translate (worker.js, Workers AI)
+    // and fills the English fields; staff can fix the wording before saving
+    async function translatePost() {
+        const btn = document.getElementById('post-translate-btn');
+        const statusEl = document.getElementById('post-translate-status');
+        const th = [document.getElementById('post-title').value.trim(), document.getElementById('post-body').value.trim()];
+        if (!th[0] && !th[1]) { statusEl.textContent = t('post_translate_empty'); return; }
+        btn.disabled = true;
+        statusEl.textContent = t('post_translating');
+        try {
+            const { data } = await sb.auth.getSession();
+            const res = await fetch('/api/translate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token || ''}` },
+                body: JSON.stringify({ texts: th }),
+            });
+            const out = await res.json();
+            if (!res.ok) throw new Error(out.error || res.status);
+            if (th[0]) document.getElementById('post-title-en').value = out.texts[0];
+            if (th[1]) document.getElementById('post-body-en').value = out.texts[1];
+            statusEl.textContent = t('post_translate_done');
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = t('post_translate_error') + err.message;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
     async function savePost(e) {
         e.preventDefault();
         const errEl = document.getElementById('post-form-error');
@@ -971,6 +1020,8 @@
                 type: currentCategory,
                 title,
                 body: document.getElementById('post-body').value.trim() || null,
+                title_en: document.getElementById('post-title-en').value.trim() || null,
+                body_en: document.getElementById('post-body-en').value.trim() || null,
                 image_urls: postFormImages.map(img => img.url),
                 ends_on: currentCategory === 'promo' ? document.getElementById('post-ends').value || null : null,
             };
