@@ -44,18 +44,39 @@ async function translate(request, env) {
   const out = [];
   for (const text of texts) {
     if (!text.trim()) { out.push(''); continue; }
-    const r = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
-      max_tokens: 4096,
-      messages: [
-        { role: 'system', content:
-          'You translate Thai text from a car tire, wheel and suspension shop website into natural, ' +
-          'simple English. Keep every line break, blank line, list mark (•, 1), 2)...), number, price, ' +
-          'brand and model name exactly as in the original. Reply with the English translation only, ' +
-          'no notes and no quotes.' },
-        { role: 'user', content: text },
-      ],
-    });
-    out.push(String(r.response || '').trim());
+    out.push(await translateOne(text, env));
   }
   return json({ texts: out });
+}
+
+// One Thai text -> English. The text goes inside <thai> tags and the model is told it is
+// only translating: titles are often questions ("ควรเปลี่ยนตอนไหน?") and must not be answered.
+// If the reply is far longer than the original (the model answered or added notes),
+// fall back to the plain translation model m2m100, which can only translate.
+async function translateOne(text, env) {
+  try {
+    const r = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+      max_tokens: Math.min(4096, 200 + text.length * 2),
+      temperature: 0.2,
+      messages: [
+        { role: 'system', content:
+          'You are a translator for a car tire, wheel and suspension shop website. ' +
+          'Translate the Thai text inside <thai></thai> into natural, simple English. ' +
+          'The text may be a title or a question: translate it, NEVER answer it or add information. ' +
+          'Keep every line break, blank line, list mark (•, 1), 2)...), number, price, brand and model ' +
+          'name exactly as in the original. Reply with the English translation only: no tags, notes or quotes.' },
+        { role: 'user', content: `<thai>${text}</thai>` },
+      ],
+    });
+    const en = String(r.response || '').replace(/<\/?(thai|english)>/g, '').trim();
+    if (en && en.length <= text.length * 3 + 40) return en;
+  } catch (err) {
+    console.log('translate (llama) failed:', err.message);
+  }
+  const lines = await Promise.all(text.split(/\r?\n/).map(async line => {
+    if (!line.trim()) return line;
+    const r = await env.AI.run('@cf/meta/m2m100-1.2b', { text: line, source_lang: 'th', target_lang: 'en' });
+    return r.translated_text || line;
+  }));
+  return lines.join(String.fromCharCode(10));
 }
