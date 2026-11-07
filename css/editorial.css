@@ -101,3 +101,11 @@ body[data-page="contact"] .page-hero .container::before { content: 'CONTACT'; }
 /* banner goes full width on top, text underneath (bigger on PC, never wider than the page) */
 .about-intro.has-banner { grid-template-columns: 1fr; gap: 28px; }
 .about-intro.has-banner img.about-banner { order: -1; }
+
+/* service landing pages (service-*.html): check-mark list and open/close FAQ */
+.svc-list { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+.svc-list li { padding-left: 1.7em; position: relative; line-height: 1.7; }
+.svc-list li::before { content: "✅"; position: absolute; left: 0; }
+.svc-faq details { border-bottom: 1px solid rgba(255,255,255,.12); padding: 14px 0; }
+.svc-faq summary { cursor: pointer; font-weight: 600; }
+.svc-faq p { margin: 10px 0 0; line-height: 1.7; color: var(--muted); }

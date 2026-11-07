@@ -36,6 +36,15 @@ const SITE_SOCIAL = [
 
 // product: true = a shop category (shown as category chips and in the footer's product list)
 // Items without href are shown as "coming soon" (no page yet).
+// service landing pages (one per job, written for "<service> บางใหญ่" searches); listed in the footer
+const SITE_SERVICES = [
+  { href: '/service-tires', key: 'svc_nav_tires' },
+  { href: '/service-alignment', key: 'svc_nav_alignment' },
+  { href: '/service-wheels', key: 'svc_nav_wheels' },
+  { href: '/service-suspension', key: 'svc_nav_suspension' },
+  { href: '/service-brakes', key: 'svc_nav_brakes' },
+];
+
 const SITE_NAV = [
   { page: 'home', href: '/', key: 'nav_home' },
   { page: 'wheels', href: '/alloywheel', key: 'nav_wheels', product: true, icon: '⚙️' },
@@ -166,6 +175,8 @@ function renderSiteFooter() {
   if (!el) return;
   const navItems = SITE_NAV.filter(n => n.product)
     .map(n => `<li><a href="${n.href}" data-i18n="${n.key}">${n.key}</a></li>`).join('');
+  const serviceItems = SITE_SERVICES
+    .map(n => `<li><a href="${n.href}" data-i18n="${n.key}">${n.key}</a></li>`).join('');
   const social = SITE_SOCIAL.map(s =>
     `<a href="${s.href}" target="_blank" rel="noopener" title="${s.title}"><img src="${s.img}" alt="${s.title}"></a>`
   ).join('');
@@ -181,6 +192,10 @@ function renderSiteFooter() {
         <div>
           <h4 data-i18n="footer_products">สินค้า</h4>
           <ul>${navItems}</ul>
+        </div>
+        <div>
+          <h4 data-i18n="footer_services">บริการ</h4>
+          <ul>${serviceItems}</ul>
         </div>
         <div>
           <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
