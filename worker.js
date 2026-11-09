@@ -1,6 +1,6 @@
 // Cloudflare Worker: serves the static site (wrangler.jsonc "assets"), translates admin
 // text Thai -> English (POST /api/translate, Workers AI, logged-in staff only), serves
-// Supabase photos through Cloudflare's cache (/img/...), gives each blog article
+// Supabase photos and videos through Cloudflare's cache (/img/...), gives each blog article
 // (/blog?a=<id>) and product (/tires?p=<id>, ...) its own canonical URL, title and
 // description, lists them all in /sitemap.xml, and once a day pings Supabase so the
 // free project sees activity and never gets auto-paused.
@@ -162,28 +162,48 @@ async function sitemap(request, env, url) {
   });
 }
 
-// ---------- photos through Cloudflare's cache ----------
+// ---------- photos and videos through Cloudflare's cache ----------
 // /img/<bucket>/<file> = Supabase public storage file. Upload names are never reused
-// (admin gives every upload a new name), so a copy can be kept for a year. Only
-// image files; videos stay on their direct Supabase links.
+// (admin gives every upload a new name), so a copy can be kept for a year.
+// Videos are asked for in pieces (Range: bytes=...) so people can seek; the whole file
+// is cached once and each piece is cut from that copy (portfolio videos are <= 20 MB).
+const MEDIA_RE = /^[\w.\-\/%]+\.(jpe?g|png|webp|gif|avif|mp4|webm|mov|m4v)$/i;
+
 async function cachedImage(request, url, ctx) {
   if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('GET only', { status: 405 });
   const path = url.pathname.slice('/img/'.length);
-  if (!/^[\w.\-\/%]+\.(jpe?g|png|webp|gif|avif)$/i.test(path) || path.includes('..')) {
-    return new Response('Not found', { status: 404 });
-  }
+  if (!MEDIA_RE.test(path) || path.includes('..')) return new Response('Not found', { status: 404 });
+
   const cache = caches.default;
   const key = new Request(`${ORIGIN}/img/${path}`);
-  const hit = await cache.match(key);
-  if (hit) return hit;
+  let full = await cache.match(key);
+  if (!full) {
+    const upstream = await fetch(`${SUPABASE_URL}/storage/v1/object/public/${path}`);
+    if (!upstream.ok) return new Response('Not found', { status: upstream.status === 404 ? 404 : 502 });
+    full = new Response(upstream.body, upstream);
+    full.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    full.headers.set('Accept-Ranges', 'bytes');
+    full.headers.delete('Set-Cookie');
+    ctx.waitUntil(cache.put(key, full.clone()));
+  }
 
-  const upstream = await fetch(`${SUPABASE_URL}/storage/v1/object/public/${path}`);
-  if (!upstream.ok) return new Response('Not found', { status: upstream.status === 404 ? 404 : 502 });
-  const res = new Response(upstream.body, upstream);
-  res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  res.headers.delete('Set-Cookie');
-  ctx.waitUntil(cache.put(key, res.clone()));
-  return res;
+  const range = request.headers.get('Range');
+  if (!range) return request.method === 'HEAD' ? new Response(null, full) : full;
+
+  // serve just the asked-for piece of the cached copy
+  const body = await full.arrayBuffer();
+  const size = body.byteLength;
+  const m = /^bytes=(\d*)-(\d*)$/.exec(range.trim());
+  let start, end;
+  if (m && m[1] !== '') { start = Number(m[1]); end = m[2] !== '' ? Math.min(Number(m[2]), size - 1) : size - 1; }
+  else if (m && m[2] !== '') { start = Math.max(0, size - Number(m[2])); end = size - 1; }
+  if (start === undefined || start > end || start >= size) {
+    return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${size}` } });
+  }
+  const headers = new Headers(full.headers);
+  headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
+  headers.set('Content-Length', String(end - start + 1));
+  return new Response(request.method === 'HEAD' ? null : body.slice(start, end + 1), { status: 206, headers });
 }
 
 // ---------- product pages for search engines ----------

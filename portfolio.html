@@ -104,8 +104,8 @@
                 const photos = a.items.filter(i => i.media_type === 'photo').length;
                 const videos = a.items.length - photos;
                 const cover = a.cover.media_type === 'video'
-                    ? `<video src="${escapeHtml(a.cover.url)}#t=0.1" muted playsinline preload="metadata"></video><span class="pf-play">▶</span>`
-                    : `<img src="${escapeHtml(cdnImg(a.cover.url))}" alt="${escapeHtml(name)}" loading="lazy">`;
+                    ? `<video src="${escapeHtml(cdnMedia(a.cover.url))}#t=0.1" muted playsinline preload="metadata"></video><span class="pf-play">▶</span>`
+                    : `<img src="${escapeHtml(cdnMedia(a.cover.url))}" alt="${escapeHtml(name)}" loading="lazy">`;
                 return `<figure class="pf-card">
                     <button type="button" class="pf-photo" onclick="openLightbox('pf${n}')" aria-label="${escapeHtml(name)}">
                         ${cover}

@@ -565,7 +565,7 @@
             document.querySelectorAll('.cat-card img[data-cat]').forEach((img, cardIndex) => {
                 const photos = [];
                 (data || []).forEach(p => {
-                    const cover = cdnImg(getProductImages(p)[0]);
+                    const cover = cdnMedia(getProductImages(p)[0]);
                     if (p.category === img.dataset.cat && cover && !photos.includes(cover)) photos.push(cover);
                 });
                 if (!photos.length) return;
@@ -606,8 +606,8 @@
                 return;
             }
             const albums = groupPortfolio(data || []);
-            const videos = albums.flatMap(a => a.videos).map(v => v.url);
-            const photos = albums.flatMap(a => a.photos.slice(0, GALLERY_PHOTOS_PER_ALBUM)).map(p => cdnImg(p.url));
+            const videos = albums.flatMap(a => a.videos).map(v => cdnMedia(v.url));
+            const photos = albums.flatMap(a => a.photos.slice(0, GALLERY_PHOTOS_PER_ALBUM)).map(p => cdnMedia(p.url));
             const gallery = document.getElementById('gallery');
 
             if (videos.length) {
