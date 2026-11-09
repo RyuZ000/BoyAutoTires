@@ -88,7 +88,7 @@ function renderProductCards(data, gridId, options = {}) {
     const page = options.link && SITE_NAV.find(n => n.page === p.category);
     const tag = page ? 'a' : 'article';
     const imgInner = images.length
-      ? `<img src="${escapeHtml(images[0])}" alt="${escapeHtml(p.name)}" loading="lazy">
+      ? `<img src="${escapeHtml(cdnImg(images[0]))}" alt="${escapeHtml(p.name)}" loading="lazy">
          ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}`
       : '';
     return `
@@ -209,21 +209,14 @@ function initProductPage(category, defaultSort, options = {}) {
       document.getElementById('products-grid').innerHTML = `<p class="products-status">${t('search_no_results')}</p>`;
       return;
     }
-    renderProductCards(list, 'products-grid');
-    focusLinkedProduct();
+    renderProductCards(list, 'products-grid', { link: true });
   }
 
-  // home page cards link here as /shock?p=<id>: scroll to that card and flash it once
-  let focusId = new URLSearchParams(location.search).get('p');
-  function focusLinkedProduct() {
-    if (!focusId) return;
-    const card = document.getElementById(`product-${focusId}`);
-    focusId = null;
-    if (!card) return;
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    card.classList.add('product-focus');
-    setTimeout(() => card.classList.remove('product-focus'), 3000);
-  }
+  // /tires?p=<id> (cards here and on the home page link like this): show that one
+  // product on its own page instead of the list. worker.js gives the page the product's
+  // title, description and canonical URL for search engines.
+  const productId = new URLSearchParams(location.search).get('p');
+  let detailProduct = null;
 
   async function fetchProducts() {
     const grid = document.getElementById('products-grid');
@@ -244,7 +237,9 @@ function initProductPage(category, defaultSort, options = {}) {
     allProducts = data || [];
     loaded = true;
     if (options.onLoad) options.onLoad(allProducts);
-    render();
+    detailProduct = productId ? allProducts.find(p => String(p.id) === productId) : null;
+    if (detailProduct) renderProductDetail(detailProduct, allProducts);
+    else render();
   }
 
   // must run before render so the search sees the formatted size
@@ -258,12 +253,81 @@ function initProductPage(category, defaultSort, options = {}) {
   window.onLanguageChange = () => {
     renderChips();
     if (options.onLanguageChange) options.onLanguageChange();
-    render();
+    if (detailProduct) renderProductDetail(detailProduct, allProducts);
+    else render();
   };
 
   renderChips();
   fetchProducts();
   return { render };
+}
+
+/* ---------------- Product page (/tires?p=<id>) ---------------- */
+// Same layout as a blog article: back link, big photo, details, every photo,
+// call / LINE buttons, then a few other products from the same category.
+function renderProductDetail(p, all) {
+  const nav = SITE_NAV.find(n => n.page === p.category);
+  const images = getProductImages(p);
+  const hasPrice = p.price !== null && p.price !== undefined && p.price !== '';
+  galleryData[p.id] = { name: p.name, images };
+  const title = [p.name, wheelLine(p), p.size].filter(Boolean).join(' ');
+  document.title = `${title} - BoyAutoTires`;
+
+  // the list page parts (hero, chips, filters, grid) make way for the product
+  document.querySelector('.page-hero').hidden = true;
+  const main = document.querySelector('main.shop');
+  main.classList.add('showing-product'); // css/site.css hides everything but #product-detail
+  let wrap = document.getElementById('product-detail');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'product-detail';
+    wrap.className = 'blog-article-wrap product-detail';
+    main.appendChild(wrap);
+  }
+
+  const others = all.filter(o => o.id !== p.id)
+    .sort((a, b) => (a.sort_order ?? Infinity) - (b.sort_order ?? Infinity)).slice(0, 4);
+  wrap.innerHTML = `
+      <a class="blog-back" href="${nav ? nav.href : '/'}">← ${t('product_back')} ${nav ? t(nav.key) : ''}</a>
+      <article class="blog-article">
+        ${images.length ? `
+        <button type="button" class="post-cover" onclick="openLightbox('${p.id}')">
+          <img src="${escapeHtml(cdnImg(images[0]))}" alt="${escapeHtml(title)}">
+        </button>` : `<div class="product-noimg"><span>📷</span>${escapeHtml(t('no_image'))}</div>`}
+        <div class="post-content">
+          ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
+          <h1>${escapeHtml(p.name)}</h1>
+          ${wheelLine(p) ? `<p class="product-model">${escapeHtml(wheelLine(p))}</p>` : ''}
+          ${p.color ? `<p class="product-color">${escapeHtml(t('field_color'))}: ${escapeHtml(p.color)}</p>` : ''}
+          <div class="product-footer product-detail-price">
+            ${hasPrice
+              ? `<span class="product-price">฿${Number(p.price).toLocaleString()}</span>`
+              : `<span class="product-price ask">${t('price_ask')}</span>`}
+            <span class="product-stock ${p.in_stock ? '' : 'stock-out'}">${p.in_stock ? t('in_stock') : t('out_of_stock')}</span>
+          </div>
+          ${p.description ? `<p class="post-text">${escapeHtml(p.description)}</p>` : ''}
+          ${images.length ? `
+          <div class="blog-photos">
+            ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnImg(src))}" alt="" loading="lazy"></button>`).join('')}
+          </div>
+          <span class="post-photos-hint">📷 ${t('blog_photos_hint')}</span>` : ''}
+        </div>
+      </article>
+      <div class="blog-cta">
+        <div>
+          <h2>${t('cta_band_title')}</h2>
+          <p>${t('cta_band_sub')}</p>
+        </div>
+        <div class="blog-cta-btns">
+          <a class="blog-cta-call" href="tel:${SITE_CONTACT.phoneTel}">${t('cta_call')}</a>
+          <a class="blog-cta-line" href="${SITE_CONTACT.line}" target="_blank" rel="noopener">${t('cta_line')}</a>
+        </div>
+      </div>
+      ${others.length ? `
+      <h2 class="product-more-title">${t('product_more')}</h2>
+      <div class="products-grid product-more-grid" id="product-more-grid"></div>` : ''}`;
+  if (others.length) renderProductCards(others, 'product-more-grid', { link: true });
+  window.scrollTo(0, 0);
 }
 
 /* ---------------- Category page with a filter sidebar (shock, wheels) ---------------- */
@@ -374,7 +438,7 @@ function openLightbox(productId, start = 0) {
   const product = galleryData[productId];
   if (!product || !product.images.length) return;
   lbItems = product.images.map((url, i) => ({
-    url,
+    url: cdnImg(url),
     type: (product.types && product.types[i]) || 'photo',
     name: product.names ? product.names[i] || '' : product.name || '',
   }));

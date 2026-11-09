@@ -10,8 +10,9 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none",
-    // these go to worker.js first: blog articles get their own canonical/title, the sitemap lists them
-    "run_worker_first": ["/blog", "/sitemap.xml"]
+    // these go to worker.js first: photos through Cloudflare's cache, blog articles and
+    // products get their own canonical/title, the sitemap lists them all
+    "run_worker_first": ["/img/*", "/blog", "/tires", "/alloywheel", "/shock", "/brake", "/other", "/sitemap.xml"]
   },
   // Workers AI, used by /api/translate in worker.js
   "ai": { "binding": "AI" },

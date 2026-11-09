@@ -837,3 +837,12 @@ body.menu-open .float-contact { display: none; }
     cursor: pointer;
 }
 .load-reason { display: block; margin-top: 10px; font-size: 11px; color: var(--muted); }
+
+/* product page (/tires?p=<id>, js/products.js renderProductDetail): blog-article layout */
+.shop.showing-product > :not(#product-detail) { display: none !important; }
+.product-detail .product-size-badge { margin-bottom: 6px; }
+.product-detail .product-model, .product-detail .product-color { margin: 0 0 6px; }
+.product-detail-price { margin: 14px 0 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.product-detail .product-noimg { aspect-ratio: 16 / 9; }
+.product-more-title { margin: 36px 0 14px; font-size: 22px; }
+.product-more-grid { margin-bottom: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }

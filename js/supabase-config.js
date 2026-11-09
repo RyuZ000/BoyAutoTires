@@ -15,6 +15,18 @@ const SUPABASE_ANON_KEY = "sb_publishable_bqtnkrjt0Do78-7k06NY5Q_NPiaJ8Em";
 // Shared Supabase client used by every page (auth.js, products.js, admin.html)
 // If the library failed to load, sb stays null and sbLoad() reports it instead of
 // the page waiting on "Loading..." forever.
+// Photos in Supabase Storage are shown through /img/... (worker.js), which keeps a copy
+// in Cloudflare's cache, so Supabase sends each photo out about once instead of on
+// every page view (saves the free "Cached Egress" quota). Videos stay direct.
+// Display only: never save the returned URL back to the database.
+function cdnImg(url) {
+  const prefix = `${SUPABASE_URL}/storage/v1/object/public/`;
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return url; // local preview has no /img
+  return typeof url === 'string' && url.startsWith(prefix) && /\.(jpe?g|png|webp|gif|avif)$/i.test(url)
+    ? '/img/' + url.slice(prefix.length)
+    : url;
+}
+
 const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // Runs a Supabase query with a time limit. Resolves to { data, error } like a normal
