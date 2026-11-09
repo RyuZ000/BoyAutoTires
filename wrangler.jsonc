@@ -9,7 +9,9 @@
     "directory": "./",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
+    "not_found_handling": "none",
+    // these go to worker.js first: blog articles get their own canonical/title, the sitemap lists them
+    "run_worker_first": ["/blog", "/sitemap.xml"]
   },
   // Workers AI, used by /api/translate in worker.js
   "ai": { "binding": "AI" },
