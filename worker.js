@@ -252,6 +252,7 @@ async function productPage(request, env, url) {
     .on('meta[property="og:description"]', { element: e => e.setAttribute('content', desc) })
     .on('meta[property="og:image"]', { element: e => { if (images[0]) e.setAttribute('content', images[0]); } })
     .on('title', { element: e => e.setInnerContent(title) })
-    .on('head', { element: e => e.append(`<script type="application/ld+json">${ld}</script>`, { html: true }) })
+    // Google rejects Product data without offers/review/rating, so price-on-request items get none.
+    .on('head', { element: e => { if (p.price != null) e.append(`<script type="application/ld+json">${ld}</script>`, { html: true }); } })
     .transform(page);
 }
