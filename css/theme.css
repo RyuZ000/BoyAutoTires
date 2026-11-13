@@ -199,16 +199,15 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .cat-card:focus-visible p, .cat-card:hover p,
 .cat-card:focus-visible span, .cat-card:hover span { color: var(--on-gold); }
 
-/* why us: photo with an "open daily" tag beside the numbered list */
-.why-split { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); background: var(--panel); }
-.why-photo { position: relative; min-height: 440px; }
-.why-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* why us: the shop-front photo (same as /about) shown whole, "open daily" tag on it, the numbered list below */
+.why-split { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--panel); }
+.why-photo { position: relative; }
+.why-photo img { display: block; width: 100%; height: auto; aspect-ratio: 1800 / 828; }
 .why-tag { position: absolute; left: 0; bottom: 0; background: var(--gold); color: var(--on-gold); padding: 20px 24px; max-width: 320px; }
 .why-tag b { display: block; font-family: var(--f-disp); font-weight: 700; font-size: 30px; line-height: 1; text-transform: uppercase; margin-bottom: 4px; }
 .why-tag span { font-size: 15px; font-weight: 600; }
-.why-split .why-grid { grid-template-columns: minmax(0, 1fr); gap: 0; border: 0; padding: 28px clamp(20px, 3vw, 40px); align-content: center; }
-.why-split .why-card { background: transparent; border: 0; border-top: 1px solid var(--line); padding: 16px 0 16px 64px; position: relative; }
-.why-split .why-card:first-child { border-top: 0; }
+.why-split .why-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 28px; border: 0; padding: 28px clamp(20px, 3vw, 40px); }
+.why-split .why-card { background: transparent; border: 0; padding: 16px 0 16px 52px; position: relative; }
 .why-split .why-card .why-icon { position: absolute; left: 0; top: 16px; width: auto; height: auto; margin: 0; background: none; font-family: var(--f-disp); font-weight: 700; font-size: 24px; line-height: 1; color: var(--gold); }
 .why-split .why-card h3 { margin: 0 0 2px; font-size: 18px; }
 
@@ -228,10 +227,11 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 @media (max-width: 900px) {
     .hero-content { grid-template-columns: minmax(0, 1fr); padding-top: 48px; padding-bottom: 56px; }
     .hero { min-height: 0; }
-    .why-split { grid-template-columns: minmax(0, 1fr); }
-    .why-photo { min-height: 280px; }
+    .why-split .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .why-tag { position: static; max-width: none; }
 }
 @media (max-width: 600px) {
+    .why-split .why-grid { grid-template-columns: minmax(0, 1fr); }
     .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .cat-card { min-height: 180px; }
     .cat-card:last-child:nth-child(odd) { grid-column: span 2; aspect-ratio: auto; }
