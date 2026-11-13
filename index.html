@@ -64,7 +64,7 @@
     <title>BoyAutoTires | ร้านล้อแม็ก ยาง โช้คอัพ เบรก บางใหญ่ นนทบุรี</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=Unbounded:wght@700;900&family=Instrument+Serif:ital@1&family=Space+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Kanit:wght@600;800&family=Prompt:wght@400;500;600;700;800&family=Unbounded:wght@700;900&family=Instrument+Serif:ital@1&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/staff.css">
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/editorial.css">
@@ -316,31 +316,9 @@
         .hero-search-cats button.active { color: #111; }
 
         /* sections: big display headings, hairline dividers */
-        .section { padding: 96px 0 0; }
-        .section-head { margin-bottom: 36px; }
-        .section-head h2 { font-size: clamp(28px, 4.6vw, 52px); font-weight: 800; line-height: 1.1; }
-        .section-head h2 .disp { font-size: 1em; }
-        .section-head a { color: var(--gold); font-family: 'Space Mono', monospace; font-size: 13px; border-bottom: 1px solid var(--gold); padding-bottom: 2px; }
-        .cat-card, .why-card, .gallery video, .gallery img, #latest-grid .product-card { border-radius: 0; }
-        #latest-grid .product-card { background: #0d0f14; border-color: rgba(255,255,255,.08); }
-        .cat-card { border-color: rgba(255,255,255,.08); }
-        .cat-card span { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: .1em; }
-        .cat-num { position: absolute; top: 14px; left: 16px; z-index: 2; font-family: 'Space Mono', monospace; font-size: 11px; color: #fff; background: rgba(7,8,11,.75); padding: 3px 8px; }
-        .why-grid { gap: 0; border: 1px solid rgba(255,255,255,.08); }
-        .why-card { background: transparent; border: 0; border-right: 1px solid rgba(255,255,255,.08); padding: 28px 24px; }
-        .why-card:last-child { border-right: 0; }
-        .why-card .why-icon { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--gold); }
-        .cta-band { border-radius: 0; background: #0d0f14; border: 1px solid rgba(255,255,255,.08); padding: 48px 40px; }
-        .cta-band h2 { font-size: clamp(24px, 3.4vw, 40px); }
-        @media (max-width: 900px) {
-            .why-card:nth-child(2) { border-right: 0; }
-            .why-card:nth-child(-n+2) { border-bottom: 1px solid rgba(255,255,255,.08); }
-        }
-        @media (max-width: 480px) {
-            .section { padding-top: 72px; }
-            .cta-band { padding: 28px 20px; }
-        }
+        /* section, category, why-us and CTA looks live in css/theme.css */
     </style>
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body data-page="home">
     <div id="site-header"></div>
@@ -352,6 +330,7 @@
         <img src="Photo Somza/Somza6.jpg" alt="" class="hero-slide" loading="lazy">
         <img src="Photo Somza/Somza8.jpg" alt="" class="hero-slide" loading="lazy">
         <div class="container hero-content">
+          <div class="hero-main">
             <div class="hero-brand" aria-hidden="true">
                 <span class="disp">BOY AUTO</span>
                 <span class="serif">Wheels, Tires &amp; Suspension</span>
@@ -360,6 +339,14 @@
             <span class="hero-kicker" data-i18n="hero_kicker">ล้อแม็ก · ยาง · โช้คอัพ · เบรก</span>
             <h1 data-i18n="hero_title">ศูนย์รวมช่วงล่างครบวงจร</h1>
             <p data-i18n="hero_sub">ล้อแม็ก ยางรถยนต์ โช้คสตรัท สปริงโหลด พร้อมทีมช่างผู้เชี่ยวชาญพร้อมให้คำปรึกษา</p>
+            <div class="hero-actions">
+                <a href="tel:+66811600060" class="btn btn-gold" data-i18n="cta_call">📞 โทรเลย</a>
+                <a href="https://line.me/ti/p/yWkHxGNvL2" target="_blank" rel="noopener" class="btn btn-line" data-i18n="cta_line">💬 แอด LINE</a>
+                <a href="https://m.me/BOYAUTOTIRES" target="_blank" rel="noopener" class="btn btn-messenger" data-i18n="cta_messenger">💬 แชท Messenger</a>
+            </div>
+          </div>
+          <div class="hero-finder">
+            <p class="finder-title" aria-hidden="true">Find my tire</p>
             <div class="hero-search-cats" id="hero-cats">
                 <button type="button" data-cat="wheels" data-i18n="nav_wheels">ล้อแม็ก</button>
                 <button type="button" data-cat="tires" data-i18n="nav_tires" class="active">ยาง</button>
@@ -370,11 +357,7 @@
                 <input type="text" id="hero-q" data-i18n-placeholder="search_placeholder" placeholder="พิมพ์ไซส์ยาง เช่น 2656018 หรือชื่อยาง">
                 <button type="submit" data-i18n="hero_search_btn">ค้นหา</button>
             </form>
-            <div class="hero-actions">
-                <a href="tel:+66811600060" class="btn btn-gold" data-i18n="cta_call">📞 โทรเลย</a>
-                <a href="https://line.me/ti/p/yWkHxGNvL2" target="_blank" rel="noopener" class="btn btn-line" data-i18n="cta_line">💬 แอด LINE</a>
-                <a href="https://m.me/BOYAUTOTIRES" target="_blank" rel="noopener" class="btn btn-messenger" data-i18n="cta_messenger">💬 แชท Messenger</a>
-            </div>
+          </div>
         </div>
         <div class="hero-dots" id="hero-dots"></div>
     </section>
@@ -433,11 +416,17 @@
                 <div><span class="sec-label" aria-hidden="true">— 03 / Why Us</span><h2 data-i18n="section_why">ทำไมต้อง BoyAutoTires</h2></div>
                 <a href="https://www.google.com/maps/search/?api=1&query=BoyAutoTires" target="_blank" rel="noopener" data-i18n="reviews_link">⭐ ดูรีวิวจากลูกค้าบน Google →</a>
             </div>
+            <div class="why-split">
+            <div class="why-photo">
+                <img src="Photo Somza/Somza6.jpg" alt="" loading="lazy">
+                <div class="why-tag"><b aria-hidden="true">Open daily</b><span><span data-i18n="contact_hours">เวลาเปิดทำการ</span> 08:30 – 19:00</span></div>
+            </div>
             <div class="why-grid">
                 <div class="why-card"><div class="why-icon">01</div><h3 data-i18n="why_1_title">ช่างผู้ชำนาญ</h3><p data-i18n="why_1_desc">ติดตั้งและปรับตั้งช่วงล่างโดยทีมช่างประสบการณ์</p></div>
                 <div class="why-card"><div class="why-icon">02</div><h3 data-i18n="why_2_title">สินค้าครบ</h3><p data-i18n="why_2_desc">ล้อ ยาง โช้ค เบรก ครบจบในร้านเดียว</p></div>
                 <div class="why-card"><div class="why-icon">03</div><h3 data-i18n="why_3_title">ให้คำปรึกษา</h3><p data-i18n="why_3_desc">แนะนำสินค้าที่เหมาะกับรถและการใช้งานของคุณ</p></div>
                 <div class="why-card"><div class="why-icon">04</div><h3 data-i18n="why_4_title">ติดต่อง่าย</h3><p data-i18n="why_4_desc">สอบถามได้ทั้งโทรศัพท์ LINE และโซเชียล</p></div>
+            </div>
             </div>
         </section>
 
