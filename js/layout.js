@@ -106,6 +106,7 @@ function renderSiteHeader() {
         <div class="topbar-contact">
           <a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a>
           <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="hide-sm" data-i18n="cta_line">💬 แอด LINE</a>
+          <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" class="hide-sm" data-i18n="cta_messenger">💬 แชท Messenger</a>
         </div>
         <div class="topbar-right">
           <div class="lang-switch">
@@ -137,6 +138,7 @@ function renderSiteHeader() {
             <div class="site-menu-cta">
               <a href="tel:${SITE_CONTACT.phoneTel}" class="contact-btn gold" data-i18n="cta_call">📞 โทรเลย</a>
               <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="contact-btn line" data-i18n="cta_line">💬 แอด LINE</a>
+              <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" class="contact-btn messenger" data-i18n="cta_messenger">💬 แชท Messenger</a>
             </div>
           </div>
         </div>
@@ -208,6 +210,7 @@ function renderSiteFooter() {
             <li><a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a></li>
             <li><a href="tel:${SITE_CONTACT.phone2Tel}">📞 ${SITE_CONTACT.phone2}</a></li>
             <li><a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" data-i18n="cta_line">💬 แอด LINE</a></li>
+            <li><a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" data-i18n="cta_messenger">💬 แชท Messenger</a></li>
           </ul>
         </div>
       </div>

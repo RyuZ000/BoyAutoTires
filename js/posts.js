@@ -72,6 +72,7 @@ function blogArticleHtml(p) {
         <div class="blog-cta-btns">
           <a class="blog-cta-call" href="tel:${SITE_CONTACT.phoneTel}">${t('cta_call')}</a>
           <a class="blog-cta-line" href="${SITE_CONTACT.line}" target="_blank" rel="noopener">${t('cta_line')}</a>
+          <a class="blog-cta-messenger" href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener">${t('cta_messenger')}</a>
         </div>
       </div>`;
 }
