@@ -1,0 +1,9 @@
+# Cloudflare static-asset headers (same rule the site had on Vercel).
+# Site photos and videos (Photo Somza, Photo Category, Photo Social, Video Somza) are kept
+# by browsers for 7 days. If one of these files is replaced under the SAME name, visitors
+# may see the old one for up to 7 days, so give a changed file a new name.
+# Uploaded photos (/img/...) are handled by worker.js and kept for a year.
+/Photo*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/Video*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
