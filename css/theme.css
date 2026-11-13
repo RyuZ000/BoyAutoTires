@@ -267,3 +267,4 @@ body.admin-page .cat-tab.active { background: var(--gold); color: var(--on-gold)
 body.admin-page .cat-tab.active .count { background: #000; color: #fff; }
 body.admin-page .dash-head h1, body.admin-page .login-card h1 { font-family: var(--f-head); font-weight: 800; }
 body.admin-page .info h4 { font-family: var(--f-disp); font-weight: 600; letter-spacing: .01em; }
+body.admin-page .admin-header { background: rgba(0,0,0,.94); border-bottom: 1px solid var(--line); }
