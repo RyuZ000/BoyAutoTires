@@ -225,7 +225,7 @@ async function productPage(request, env, url) {
   if (!p || p.category !== category) return page;
 
   const link = `${ORIGIN}${url.pathname}?p=${p.id}`;
-  const name = [p.name, p.series, p.model, p.size].filter(Boolean).join(' ');
+  const name = [p.name, p.series, p.model, p.size, p.color].filter(Boolean).join(' ');
   const title = `${name} - ${CATEGORY_TH[category]} บางใหญ่ | BoyAutoTires`;
   const priceText = p.price != null ? `ราคา ${Number(p.price).toLocaleString('en-US')} บาท` : 'สอบถามราคา';
   const desc = oneLine(`${name} ${priceText} ${p.description || ''} ที่ร้าน BoyAutoTires ถ.กาญจนาภิเษก บางใหญ่ นนทบุรี`, 155);
