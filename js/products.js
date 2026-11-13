@@ -88,7 +88,7 @@ function renderProductCards(data, gridId, options = {}) {
     const page = options.link && SITE_NAV.find(n => n.page === p.category);
     const tag = page ? 'a' : 'article';
     const imgInner = images.length
-      ? `<img src="${escapeHtml(cdnMedia(images[0]))}" alt="${escapeHtml(p.name)}" loading="lazy">
+      ? `<img src="${escapeHtml(cdnThumb(images[0]))}" alt="${escapeHtml(p.name)}" loading="lazy">
          ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}`
       : '';
     return `
@@ -308,7 +308,7 @@ function renderProductDetail(p, all) {
           ${p.description ? `<p class="post-text">${escapeHtml(p.description)}</p>` : ''}
           ${images.length ? `
           <div class="blog-photos">
-            ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnMedia(src))}" alt="" loading="lazy"></button>`).join('')}
+            ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnThumb(src))}" alt="" loading="lazy"></button>`).join('')}
           </div>
           <span class="post-photos-hint">📷 ${t('blog_photos_hint')}</span>` : ''}
         </div>

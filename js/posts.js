@@ -32,7 +32,7 @@ function blogCardHtml(p) {
   const cover = (p.image_urls || [])[0];
   return `
       <a class="blog-card" href="/blog?a=${encodeURIComponent(p.id)}">
-        <div class="blog-card-img">${cover ? `<img src="${escapeHtml(cdnMedia(cover))}" alt="" loading="lazy">` : '<span>📝</span>'}</div>
+        <div class="blog-card-img">${cover ? `<img src="${escapeHtml(cdnThumb(cover))}" alt="" loading="lazy">` : '<span>📝</span>'}</div>
         <div class="blog-card-body">
           <time>${formatPostDate(p.created_at)}</time>
           <h2>${escapeHtml(postTitle(p))}</h2>
@@ -59,7 +59,7 @@ function blogArticleHtml(p) {
           ${postBody(p) ? `<p class="post-text">${escapeHtml(postBody(p))}</p>` : ''}
           ${images.length ? `
           <div class="blog-photos">
-            ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnMedia(src))}" alt="" loading="lazy"></button>`).join('')}
+            ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnThumb(src))}" alt="" loading="lazy"></button>`).join('')}
           </div>
           <span class="post-photos-hint">📷 ${t('blog_photos_hint')}</span>` : ''}
         </div>

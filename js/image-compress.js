@@ -24,7 +24,7 @@ function canvasToBlob(canvas, type, quality) {
 
 // Returns { blob, type } that is smaller than the original, or null when
 // shrinking wouldn't help (already small, a GIF/SVG, or not an image at all).
-async function compressImageBlob(blob) {
+async function compressImageBlob(blob, maxSide = IMAGE_MAX_SIDE, quality = IMAGE_QUALITY) {
   if (!/^image\/(jpeg|png|webp|bmp)$/.test(blob.type)) return null;
   let img;
   try {
@@ -32,7 +32,7 @@ async function compressImageBlob(blob) {
   } catch {
     return null;
   }
-  const scale = Math.min(1, IMAGE_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+  const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(img.naturalWidth * scale);
   canvas.height = Math.round(img.naturalHeight * scale);
@@ -49,8 +49,8 @@ async function compressImageBlob(blob) {
     }
   }
   const out = transparent
-    ? await canvasToBlob(canvas, 'image/webp', IMAGE_QUALITY)
-    : await canvasToBlob(canvas, 'image/jpeg', IMAGE_QUALITY);
+    ? await canvasToBlob(canvas, 'image/webp', quality)
+    : await canvasToBlob(canvas, 'image/jpeg', quality);
   // browsers that can't write WebP hand back a PNG instead; keep the original then
   if (!out || (transparent && out.type !== 'image/webp')) return null;
   // not worth replacing unless it saves at least 20%
@@ -66,4 +66,27 @@ async function compressImageFile(file) {
   const ext = result.type === 'image/webp' ? 'webp' : 'jpg';
   const name = file.name.replace(/\.[^.]+$/, '') + '.' + ext;
   return new File([result.blob], name, { type: result.type });
+}
+
+// ---------- small copies for lists ----------
+// Every uploaded photo also gets a small copy (<= 600 px) saved next to it as
+// "<name>.thumb.<ext>". Product cards and lists show the small copy (cdnThumb in
+// supabase-config.js); the full photo is only loaded when someone opens it.
+// Old photos without a small copy still work: worker.js then serves the full photo.
+const THUMB_MAX_SIDE = 600;
+const thumbPath = path => path.replace(/(\.[a-z0-9]+)$/i, '.thumb$1');
+
+// Call after the full photo uploaded fine. Never throws: a missing small copy
+// only means the full photo is shown instead.
+async function uploadThumb(bucket, path, file) {
+  try {
+    const small = await compressImageBlob(file, THUMB_MAX_SIDE, 0.8);
+    // keep the same file type so the name rule (.thumb.jpg next to .jpg) holds
+    if (!small || small.type !== file.type) return;
+    const { error } = await sb.storage.from(bucket).upload(thumbPath(path), small.blob,
+      { cacheControl: '31536000', contentType: small.type });
+    if (error) console.warn('small copy not saved:', error.message);
+  } catch (err) {
+    console.warn('small copy not saved:', err);
+  }
 }

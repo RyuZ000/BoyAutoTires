@@ -869,7 +869,7 @@
             <div class="product-row ${postIsLive(p) ? '' : 'out'}" data-id="${p.id}">
                 <div class="thumb">
                     ${images.length
-                        ? `<img src="${escHtml(images[0])}" alt="" loading="lazy">
+                        ? `<img src="${escHtml(cdnThumb(images[0]))}" alt="" loading="lazy">
                            ${images.length > 1 ? `<span class="img-count">📷 ${images.length}</span>` : ''}`
                         : escHtml(t('no_image'))}
                 </div>
@@ -927,7 +927,7 @@
     function renderPostForm() {
         document.getElementById('post-grid-edit').innerHTML = postFormImages.map((img, i) => `
             <div class="image-thumb ${i === 0 ? 'cover' : ''}">
-                <img src="${escHtml(img.url || img.preview)}" alt="">
+                <img src="${escHtml(img.url ? cdnThumb(img.url) : img.preview)}" alt="">
                 <button type="button" class="remove-img" title="${t('image_remove')}" aria-label="${t('image_remove')}" onclick="removePostImage(${i})">×</button>
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>`).join('');
@@ -1009,6 +1009,7 @@
                 // every upload gets a new name, so browsers may keep it for a year
                 const { error } = await sb.storage.from(IMAGE_BUCKET).upload(path, file, { cacheControl: '31536000' });
                 if (error) throw error;
+                await uploadThumb(IMAGE_BUCKET, path, file);
                 URL.revokeObjectURL(img.preview);
                 img.url = sb.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
                 delete img.file;
@@ -1101,8 +1102,8 @@
 
     function mediaThumb(url, type) {
         return type === 'video'
-            ? `<video src="${escHtml(url)}#t=0.1" muted playsinline preload="metadata"></video>`
-            : `<img src="${escHtml(url)}" alt="" loading="lazy">`;
+            ? `<video src="${escHtml(cdnMedia(url))}#t=0.1" muted playsinline preload="metadata"></video>`
+            : `<img src="${escHtml(cdnThumb(url))}" alt="" loading="lazy">`;
     }
 
     function renderPortfolioAdmin() {
@@ -1197,7 +1198,8 @@
         const paths = urls
             .filter(url => url.includes(marker))
             .map(url => decodeURIComponent(url.slice(url.indexOf(marker) + marker.length)));
-        if (paths.length) await sb.storage.from(PORTFOLIO_BUCKET).remove(paths);
+        // each photo's small copy goes too (asking to remove a missing one is harmless)
+        if (paths.length) await sb.storage.from(PORTFOLIO_BUCKET).remove([...paths, ...paths.map(thumbPath)]);
     }
 
     async function savePortfolio(e) {
@@ -1230,6 +1232,7 @@
                 // every upload gets a new name, so browsers may keep it for a year
                 const { error } = await sb.storage.from(PORTFOLIO_BUCKET).upload(path, file, { cacheControl: '31536000' });
                 if (error) throw error;
+                if (item.type === 'photo') await uploadThumb(PORTFOLIO_BUCKET, path, file);
                 URL.revokeObjectURL(item.preview);
                 item.url = sb.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path).data.publicUrl;
                 delete item.file;
@@ -1367,7 +1370,7 @@
             <div class="product-row ${p.in_stock ? '' : 'out'}" data-id="${p.id}">
                 <div class="thumb">
                     ${images.length
-                        ? `<img src="${escHtml(images[0])}" alt="" loading="lazy">
+                        ? `<img src="${escHtml(cdnThumb(images[0]))}" alt="" loading="lazy">
                            ${images.length > 1 ? `<span class="img-count">📷 ${images.length}</span>` : ''}`
                         : escHtml(t('no_image'))}
                 </div>
@@ -1613,7 +1616,7 @@
     function renderImageGrid() {
         document.getElementById('image-grid').innerHTML = formImages.map((img, i) => `
             <div class="image-thumb ${i === 0 ? 'cover' : ''}">
-                <img src="${escHtml(img.url || img.preview)}" alt="">
+                <img src="${escHtml(img.url ? cdnThumb(img.url) : img.preview)}" alt="">
                 <button type="button" class="remove-img" title="${t('image_remove')}" aria-label="${t('image_remove')}" onclick="removeImage(${i})">×</button>
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>
@@ -1667,6 +1670,7 @@
                 statusEl.textContent = t('upload_error') + uploadError.message;
                 throw uploadError;
             }
+            await uploadThumb(IMAGE_BUCKET, path, file);
 
             const { data } = sb.storage.from(IMAGE_BUCKET).getPublicUrl(path);
             // remember the URL so a retry after a later failure doesn't re-upload this one

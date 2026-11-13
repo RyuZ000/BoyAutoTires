@@ -27,6 +27,16 @@ function cdnMedia(url) {
     : url;
 }
 
+// Small copy of an uploaded photo for cards and lists (see uploadThumb in
+// image-compress.js). Videos and site files are returned as cdnMedia gives them.
+function cdnThumb(url) {
+  const prefix = `${SUPABASE_URL}/storage/v1/object/public/`;
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return url; // no worker to fall back locally
+  return typeof url === 'string' && url.startsWith(prefix) && /\.(jpe?g|png|webp)$/i.test(url)
+    ? cdnMedia(url.replace(/(\.[a-z0-9]+)$/i, '.thumb$1'))
+    : cdnMedia(url);
+}
+
 const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // Runs a Supabase query with a time limit. Resolves to { data, error } like a normal

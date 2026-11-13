@@ -179,6 +179,17 @@ async function cachedImage(request, url, ctx) {
   let full = await cache.match(key);
   if (!full) {
     const upstream = await fetch(`${SUPABASE_URL}/storage/v1/object/public/${path}`);
+    // photos uploaded before small copies existed have no "<name>.thumb.<ext>": send the
+    // full photo instead, kept only a day so a small copy added later shows up
+    const fullPath = path.replace(/\.thumb(\.\w+)$/, '$1');
+    if ((upstream.status === 400 || upstream.status === 404) && fullPath !== path) { // Supabase answers 400 for a missing file
+      const fullUrl = new URL(`${ORIGIN}/img/${fullPath}`);
+      const res = await cachedImage(new Request(fullUrl, { method: request.method }), fullUrl, ctx);
+      if (!res.ok) return res;
+      const out = new Response(res.body, res);
+      out.headers.set('Cache-Control', 'public, max-age=86400');
+      return out;
+    }
     if (!upstream.ok) return new Response('Not found', { status: upstream.status === 404 ? 404 : 502 });
     full = new Response(upstream.body, upstream);
     full.headers.set('Cache-Control', 'public, max-age=31536000, immutable');

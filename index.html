@@ -607,7 +607,7 @@
             }
             const albums = groupPortfolio(data || []);
             const videos = albums.flatMap(a => a.videos).map(v => cdnMedia(v.url));
-            const photos = albums.flatMap(a => a.photos.slice(0, GALLERY_PHOTOS_PER_ALBUM)).map(p => cdnMedia(p.url));
+            const photos = albums.flatMap(a => a.photos.slice(0, GALLERY_PHOTOS_PER_ALBUM)).map(p => cdnThumb(p.url));
             const gallery = document.getElementById('gallery');
 
             if (videos.length) {
