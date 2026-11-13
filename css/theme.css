@@ -180,24 +180,24 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .section-head a { color: var(--muted); font-size: 14px; font-weight: 500; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
 .section-head a:hover { color: var(--gold); border-color: var(--gold); }
 
-/* categories: numbered tiles, the first one gold, the photo faint behind */
+/* categories: numbered tiles that turn gold under the mouse (or keyboard focus), the photo faint behind */
 .cat-grid { gap: 2px; background: var(--line); border: 2px solid var(--line); }
 .cat-card { border: 0; background: var(--panel); aspect-ratio: auto; min-height: 260px; isolation: isolate; }
 .cat-card img { position: absolute; inset: 0; opacity: .16; z-index: -1; filter: grayscale(.6); }
 .cat-card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, var(--panel) 15%, transparent 75%); }
-.cat-card:first-child::after, .cat-card:hover::after { background: linear-gradient(0deg, var(--gold) 15%, transparent 75%); }
+.cat-card:focus-visible::after, .cat-card:hover::after { background: linear-gradient(0deg, var(--gold) 15%, transparent 75%); }
 .cat-card:hover img { transform: none; }
 .cat-num { position: static; display: block; padding: 22px 20px 0; background: none; font-family: var(--f-disp); font-weight: 700; font-size: 34px; line-height: 1; color: var(--gold); }
 .cat-card .cat-info { background: none; text-shadow: none; padding: 0 20px 22px; }
 .cat-card h3 { font-family: var(--f-head); font-weight: 800; font-size: 22px; }
 .cat-card p { color: var(--muted); }
 .cat-card span { font-family: var(--f-body, 'Prompt'), sans-serif; font-size: 13px; letter-spacing: 0; color: var(--text); }
-.cat-card:first-child, .cat-card:hover { background: var(--gold); }
-.cat-card:first-child img, .cat-card:hover img { opacity: .1; }
-.cat-card:first-child .cat-num, .cat-card:hover .cat-num,
-.cat-card:first-child h3, .cat-card:hover h3,
-.cat-card:first-child p, .cat-card:hover p,
-.cat-card:first-child span, .cat-card:hover span { color: var(--on-gold); }
+.cat-card:focus-visible, .cat-card:hover { background: var(--gold); }
+.cat-card:focus-visible img, .cat-card:hover img { opacity: .1; }
+.cat-card:focus-visible .cat-num, .cat-card:hover .cat-num,
+.cat-card:focus-visible h3, .cat-card:hover h3,
+.cat-card:focus-visible p, .cat-card:hover p,
+.cat-card:focus-visible span, .cat-card:hover span { color: var(--on-gold); }
 
 /* why us: photo with an "open daily" tag beside the numbered list */
 .why-split { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); background: var(--panel); }
