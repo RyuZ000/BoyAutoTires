@@ -21,13 +21,16 @@ function getProductImages(p) {
   return p.image_url ? [p.image_url] : [];
 }
 
+// English description on the English site; Thai when there is none
+const productDesc = p => (getLang() === 'en' && p.description_en) || p.description;
+
 // Everything a customer might search a product by: its own fields plus the
 // category and vehicle type names in both languages ("รถไฟฟ้า", "EV", "เบรก", "brake")
 function productSearchText(p) {
   const labels = key => key ? ['th', 'en'].map(l => (translations[l] && translations[l][key]) || '') : [];
   const nav = SITE_NAV.find(n => n.page === p.category);
   return [
-    p.name, p.size, p.model, p.series, p.color, p.description, p.price,
+    p.name, p.size, p.model, p.series, p.color, p.description, p.description_en, p.price,
     ...labels(nav && nav.key),
     ...labels(p.vehicle_type && `vehicle_${p.vehicle_type}`),
   ].filter(v => v != null && v !== '').join(' \n ');
@@ -103,7 +106,7 @@ function renderProductCards(data, gridId, options = {}) {
         <h3>${escapeHtml(p.name)}</h3>
         ${wheelLine(p) ? `<p class="product-model">${escapeHtml(wheelLine(p))}</p>` : ''}
         ${p.color ? `<p class="product-color">${escapeHtml(t('field_color'))}: ${escapeHtml(p.color)}</p>` : ''}
-        ${p.description ? `<p class="product-desc">${escapeHtml(p.description)}</p>` : ''}
+        ${productDesc(p) ? `<p class="product-desc">${escapeHtml(productDesc(p))}</p>` : ''}
         ${page ? '' : `<button type="button" class="product-more" hidden onclick="toggleProductMore(this)">${t('read_more')}</button>`}
         <div class="product-footer">
           ${hasPrice
@@ -305,7 +308,7 @@ function renderProductDetail(p, all) {
               : `<span class="product-price ask">${t('price_ask')}</span>`}
             <span class="product-stock ${p.in_stock ? '' : 'stock-out'}">${p.in_stock ? t('in_stock') : t('out_of_stock')}</span>
           </div>
-          ${p.description ? `<p class="post-text">${escapeHtml(p.description)}</p>` : ''}
+          ${productDesc(p) ? `<p class="post-text">${escapeHtml(productDesc(p))}</p>` : ''}
           ${images.length ? `
           <div class="blog-photos">
             ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnThumb(src))}" alt="" loading="lazy"></button>`).join('')}

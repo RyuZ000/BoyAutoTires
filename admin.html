@@ -513,6 +513,18 @@
             <label class="field-label" for="f-desc" data-i18n="field_desc">รายละเอียด</label>
             <textarea class="field" id="f-desc" data-i18n-placeholder="placeholder_desc"></textarea>
 
+            <!-- English description (optional): same look and button as promotions / blog -->
+            <div class="post-en">
+                <div class="post-en-head">
+                    <span class="field-label" data-i18n="post_en_heading">ภาษาอังกฤษ (ไม่ใส่ก็ได้)</span>
+                    <button type="button" class="btn-sm" id="prod-translate-btn" onclick="translateProduct()" data-i18n="post_translate_btn">🌐 แปลจากภาษาไทยอัตโนมัติ</button>
+                </div>
+                <span class="field-hint" data-i18n="prod_translate_hint">กดปุ่มเพื่อแปลรายละเอียดด้านบนเป็นภาษาอังกฤษ แก้คำได้ก่อนกดบันทึก · ถ้าเว้นว่าง หน้าเว็บภาษาอังกฤษจะแสดงภาษาไทยแทน</span>
+                <label class="field-label" for="f-desc-en" data-i18n="field_desc_en">รายละเอียด (อังกฤษ)</label>
+                <textarea class="field" id="f-desc-en"></textarea>
+                <span class="field-hint" id="prod-translate-status"></span>
+            </div>
+
             <span class="field-label" data-i18n="field_image">รูปภาพสินค้า</span>
             <label class="dropzone" id="dropzone">
                 <input type="file" id="f-image-file" class="visually-hidden" accept="image/*" multiple onchange="addImages(this.files); this.value='';">
@@ -956,6 +968,18 @@
 
     // "🌐 Translate": sends the Thai title + text to /api/translate (worker.js, Workers AI)
     // and fills the English fields; staff can fix the wording before saving
+    async function translateTexts(texts) {
+        const { data } = await sb.auth.getSession();
+        const res = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token || ''}` },
+            body: JSON.stringify({ texts }),
+        });
+        const out = await res.json();
+        if (!res.ok) throw new Error(out.error || res.status);
+        return out.texts;
+    }
+
     async function translatePost() {
         const btn = document.getElementById('post-translate-btn');
         const statusEl = document.getElementById('post-translate-status');
@@ -964,16 +988,28 @@
         btn.disabled = true;
         statusEl.textContent = t('post_translating');
         try {
-            const { data } = await sb.auth.getSession();
-            const res = await fetch('/api/translate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token || ''}` },
-                body: JSON.stringify({ texts: th }),
-            });
-            const out = await res.json();
-            if (!res.ok) throw new Error(out.error || res.status);
-            if (th[0]) document.getElementById('post-title-en').value = out.texts[0];
-            if (th[1]) document.getElementById('post-body-en').value = out.texts[1];
+            const en = await translateTexts(th);
+            if (th[0]) document.getElementById('post-title-en').value = en[0];
+            if (th[1]) document.getElementById('post-body-en').value = en[1];
+            statusEl.textContent = t('post_translate_done');
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = t('post_translate_error') + err.message;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    // same button for the product description
+    async function translateProduct() {
+        const btn = document.getElementById('prod-translate-btn');
+        const statusEl = document.getElementById('prod-translate-status');
+        const th = document.getElementById('f-desc').value.trim();
+        if (!th) { statusEl.textContent = t('prod_translate_empty'); return; }
+        btn.disabled = true;
+        statusEl.textContent = t('post_translating');
+        try {
+            document.getElementById('f-desc-en').value = (await translateTexts([th]))[0];
             statusEl.textContent = t('post_translate_done');
         } catch (err) {
             console.error(err);
@@ -1467,6 +1503,8 @@
         document.getElementById('f-name').value = editing ? p.name || '' : '';
         document.getElementById('f-size').value = editing ? p.size || '' : '';
         document.getElementById('f-desc').value = editing ? p.description || '' : '';
+        document.getElementById('f-desc-en').value = editing ? p.description_en || '' : '';
+        document.getElementById('prod-translate-status').textContent = '';
         document.getElementById('f-price').value = editing ? p.price ?? '' : '';
         document.getElementById('f-vehicle').value = editing ? p.vehicle_type || '' : '';
         document.getElementById('f-model').value = editing ? p.model || '' : '';
@@ -1561,6 +1599,7 @@
                 name,
                 size: size || null,
                 description: description || null,
+                description_en: document.getElementById('f-desc-en').value.trim() || null,
                 price: priceRaw ? Number(priceRaw) : null,
                 image_url: image_urls[0] || null,  // cover image
                 image_urls,
