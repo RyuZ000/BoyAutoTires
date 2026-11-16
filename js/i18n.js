@@ -194,7 +194,7 @@ const translations = {
         in_stock: "มีสินค้า",
         out_of_stock: "สินค้าหมด",
 
-        search_placeholder: "พิมพ์ไซส์ยาง เช่น 2656018 หรือชื่อยาง",
+        search_placeholder: "ไซส์ เช่น 2656018 หรือชื่อ",
         search_placeholder_generic: "ค้นหาชื่อ รุ่น...",
         filter_title: "คัดกรอง",
         filter_clear: "ล้างตัวกรอง",
@@ -485,7 +485,7 @@ const translations = {
         in_stock: "In stock",
         out_of_stock: "Out of stock",
 
-        search_placeholder: "Type tire size, e.g. 2656018, or name",
+        search_placeholder: "Size (2656018) or name",
         search_placeholder_generic: "Name, model...",
         filter_title: "Filter",
         filter_clear: "Clear filters",
