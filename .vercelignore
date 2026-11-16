@@ -1,0 +1,7 @@
+# Not published if a Vercel deploy ever runs (the live site is on Cloudflare; same list as .assetsignore)
+docs
+*.sql
+main.cs
+script.js
+.wrangler
+node_modules
