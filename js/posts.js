@@ -111,7 +111,7 @@ function initPostsPage(type) {
         <div class="post-content">
           <div class="post-meta">
             <time>${formatPostDate(p.created_at)}</time>
-            ${p.ends_on ? `<span class="post-until">⏰ ${t('post_until')} ${formatPostDate(p.ends_on)}</span>` : ''}
+            ${p.ends_on ? `<span class="post-until">${icon('clock')}${t('post_until')} ${formatPostDate(p.ends_on)}</span>` : ''}
           </div>
           <h2>${escapeHtml(postTitle(p))}</h2>
           ${postBody(p) ? `<p class="post-text">${escapeHtml(postBody(p))}</p>` : ''}

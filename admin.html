@@ -397,7 +397,7 @@
         <label class="field-label" for="login-password" data-i18n="field_password">รหัสผ่าน</label>
         <div class="password-field">
             <input class="field" type="password" id="login-password" autocomplete="current-password" data-i18n-placeholder="placeholder_password">
-            <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()">👁</button>
+            <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
         <button type="submit" class="btn btn-gold btn-block" id="login-btn" data-i18n="btn_login">เข้าสู่ระบบ</button>
         <div class="error-msg" id="login-error"></div>
@@ -518,7 +518,7 @@
             <div class="post-en">
                 <div class="post-en-head">
                     <span class="field-label" data-i18n="post_en_heading">ภาษาอังกฤษ (ไม่ใส่ก็ได้)</span>
-                    <button type="button" class="btn-sm" id="prod-translate-btn" onclick="translateProduct()" data-i18n="post_translate_btn">🌐 แปลจากภาษาไทยอัตโนมัติ</button>
+                    <button type="button" class="btn-sm" id="prod-translate-btn" onclick="translateProduct()" ><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span data-i18n="post_translate_btn">แปลจากภาษาไทยอัตโนมัติ</span></button>
                 </div>
                 <span class="field-hint" data-i18n="prod_translate_hint">กดปุ่มเพื่อแปลรายละเอียดด้านบนเป็นภาษาอังกฤษ แก้คำได้ก่อนกดบันทึก · ถ้าเว้นว่าง หน้าเว็บภาษาอังกฤษจะแสดงภาษาไทยแทน</span>
                 <label class="field-label" for="f-desc-en" data-i18n="field_desc_en">รายละเอียด (อังกฤษ)</label>
@@ -529,7 +529,7 @@
             <span class="field-label" data-i18n="field_image">รูปภาพสินค้า</span>
             <label class="dropzone" id="dropzone">
                 <input type="file" id="f-image-file" class="visually-hidden" accept="image/*" multiple onchange="addImages(this.files); this.value='';">
-                <span class="dz-icon">📷</span>
+                <span class="dz-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
                 <span class="dz-text" data-i18n="dz_text">กดเพื่อเลือกรูป หรือลากรูปมาวางตรงนี้</span>
                 <small data-i18n="dz_hint">เลือกได้หลายรูป · รูปที่มีกรอบสีทองคือรูปหลักที่ลูกค้าเห็นก่อน</small>
             </label>
@@ -562,7 +562,7 @@
     <form class="drawer" onsubmit="savePortfolio(event)" novalidate>
         <div class="drawer-head">
             <div>
-                <div class="drawer-cat">🏆 <span data-i18n="tab_portfolio">ผลงาน</span></div>
+                <div class="drawer-cat"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg><span data-i18n="tab_portfolio">ผลงาน</span></div>
                 <h2 id="pf-form-title"></h2>
             </div>
             <button type="button" class="drawer-close" onclick="closePortfolioForm()" aria-label="Close">×</button>
@@ -575,7 +575,7 @@
             <span class="field-label" data-i18n="pf_field_files">รูปภาพ / วิดีโอ</span>
             <label class="dropzone" id="pf-dropzone">
                 <input type="file" id="pf-file" class="visually-hidden" accept="image/*,video/*" multiple onchange="addPortfolioFiles(this.files); this.value='';">
-                <span class="dz-icon">📷 🎬</span>
+                <span class="dz-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
                 <span class="dz-text" data-i18n="pf_dz_text">กดเพื่อเลือกรูปหรือวิดีโอ หรือลากมาวางตรงนี้</span>
                 <small data-i18n="pf_dz_hint">เลือกได้หลายไฟล์ · รูปย่อขนาดให้อัตโนมัติ · วิดีโอไม่เกิน 20 MB</small>
             </label>
@@ -616,7 +616,7 @@
             <div class="post-en">
                 <div class="post-en-head">
                     <span class="field-label" data-i18n="post_en_heading">ภาษาอังกฤษ (ไม่ใส่ก็ได้)</span>
-                    <button type="button" class="btn-sm" id="post-translate-btn" onclick="translatePost()" data-i18n="post_translate_btn">🌐 แปลจากภาษาไทยอัตโนมัติ</button>
+                    <button type="button" class="btn-sm" id="post-translate-btn" onclick="translatePost()" ><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span data-i18n="post_translate_btn">แปลจากภาษาไทยอัตโนมัติ</span></button>
                 </div>
                 <span class="field-hint" data-i18n="post_translate_hint">กดปุ่มเพื่อแปลหัวข้อและเนื้อหาด้านบนเป็นภาษาอังกฤษ แก้คำได้ก่อนกดบันทึก · ถ้าเว้นว่าง หน้าเว็บภาษาอังกฤษจะแสดงภาษาไทยแทน</span>
                 <label class="field-label" for="post-title-en" data-i18n="post_field_title_en">หัวข้อ (อังกฤษ)</label>
@@ -635,7 +635,7 @@
             <span class="field-label" data-i18n="post_field_images">รูปภาพ</span>
             <label class="dropzone" id="post-dropzone">
                 <input type="file" id="post-file" class="visually-hidden" accept="image/*" multiple onchange="addPostImages(this.files); this.value='';">
-                <span class="dz-icon">📷</span>
+                <span class="dz-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
                 <span class="dz-text" data-i18n="dz_text">กดเพื่อเลือกรูป หรือลากรูปมาวางตรงนี้</span>
                 <small data-i18n="post_dz_hint">เลือกได้หลายรูป · รูปที่มีกรอบสีทองคือรูปปก</small>
             </label>
@@ -659,6 +659,7 @@
 <script src="js/vendor/supabase-2.117.3.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script src="js/supabase-config.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/store-status.js"></script>
@@ -668,11 +669,11 @@
 <script src="js/posts.js"></script>
 <script>
     const CATEGORIES = [
-        { cat: 'tires',  key: 'tab_tires',  icon: '🛞' },
-        { cat: 'wheels', key: 'tab_wheels', icon: '⚙️' },
-        { cat: 'shock',  key: 'tab_shock',  icon: '🔩' },
-        { cat: 'brake',  key: 'tab_brake',  icon: '🛑' },
-        { cat: 'other',  key: 'tab_other',  icon: '📦' },
+        { cat: 'tires',  key: 'tab_tires',  icon: icon('tire') },
+        { cat: 'wheels', key: 'tab_wheels', icon: icon('wheel') },
+        { cat: 'shock',  key: 'tab_shock',  icon: icon('spring') },
+        { cat: 'brake',  key: 'tab_brake',  icon: icon('brake') },
+        { cat: 'other',  key: 'tab_other',  icon: icon('box') },
     ];
     const IMAGE_BUCKET = 'product-images';
 
@@ -725,7 +726,7 @@
         const input = document.getElementById('login-password');
         const btn = document.getElementById('password-toggle');
         const hidden = input.type === 'password';
-        btn.textContent = hidden ? '👁' : '🙈';
+        btn.innerHTML = icon(hidden ? 'eye' : 'eyeOff');
         btn.title = t(hidden ? 'pw_show' : 'pw_hide');
         btn.setAttribute('aria-label', btn.title);
     }
@@ -757,7 +758,7 @@
         // a forced mode from an earlier day has expired, so it shows as auto
         const mode = status.manual ? storeSetting.mode : 'auto';
         document.getElementById('store-modes').innerHTML = ['auto', 'open', 'closed'].map(m =>
-            `<button type="button" class="store-mode ${m === mode ? 'active' : ''}" onclick="setStoreMode('${m}')">${t('store_mode_' + m)}</button>`
+            `<button type="button" class="store-mode ${m === mode ? 'active' : ''}" onclick="setStoreMode('${m}')">${m === 'auto' ? icon('clock') : `<span class="sdot ${m}"></span>`}<span>${t('store_mode_' + m)}</span></button>`
         ).join('');
         const note = status.manual ? t('store_manual_note') : `${t('store_by_hours')} ${storeHoursText()}`;
         document.getElementById('store-now').innerHTML =
@@ -806,7 +807,7 @@
     function renderTabs() {
         const tabs = [
             ...CATEGORIES.map(c => ({ ...c, count: products.filter(p => p.category === c.cat).length })),
-            { cat: 'portfolio', key: 'tab_portfolio', icon: '🏆', count: groupPortfolio(portfolioItems).length },
+            { cat: 'portfolio', key: 'tab_portfolio', icon: icon('trophy'), count: groupPortfolio(portfolioItems).length },
             ...Object.entries(POST_TYPES).map(([cat, p]) => ({ cat, key: p.tab, icon: p.icon, count: posts.filter(x => x.type === cat).length })),
         ];
         document.getElementById('cat-tabs').innerHTML = tabs.map(c => `
@@ -844,8 +845,8 @@
 
     // ---- Promotions / blog (table posts, js/posts.js): a list + drawer like products ----
     const POST_TYPES = {
-        promo: { tab: 'tab_promo', icon: '🏷️', add: 'post_add_promo', titlePh: 'post_title_ph_promo' },
-        blog:  { tab: 'tab_blog',  icon: '📝', add: 'post_add_blog',  titlePh: 'post_title_ph_blog' },
+        promo: { tab: 'tab_promo', icon: icon('tag'), add: 'post_add_promo', titlePh: 'post_title_ph_promo' },
+        blog:  { tab: 'tab_blog',  icon: icon('file'), add: 'post_add_blog',  titlePh: 'post_title_ph_blog' },
     };
     let posts = [];
     let postsError = false;
@@ -883,20 +884,20 @@
                 <div class="thumb">
                     ${images.length
                         ? `<img src="${escHtml(cdnThumb(images[0]))}" alt="" loading="lazy">
-                           ${images.length > 1 ? `<span class="img-count">📷 ${images.length}</span>` : ''}`
+                           ${images.length > 1 ? `<span class="img-count">${icon('camera')}${images.length}</span>` : ''}`
                         : escHtml(t('no_image'))}
                 </div>
                 <div class="info">
                     <h4 title="${escHtml(p.title)}">${escHtml(p.title)}</h4>
                     <div class="meta">
-                        <span>📅 ${formatPostDate(p.created_at)}</span>
-                        ${p.ends_on ? `<span>⏰ ${t('post_until')} ${formatPostDate(p.ends_on)}</span>` : ''}
+                        <span>${icon('calendar')}${formatPostDate(p.created_at)}</span>
+                        ${p.ends_on ? `<span>${icon('clock')}${t('post_until')} ${formatPostDate(p.ends_on)}</span>` : ''}
                     </div>
                 </div>
                 ${postIsLive(p) ? '<span></span>' : `<span class="post-expired">${t('post_expired')}</span>`}
                 <div class="row-actions">
-                    <button type="button" class="btn-sm" onclick="openPostForm('${p.id}')">${t('btn_edit')}</button>
-                    <button type="button" class="btn-sm danger" onclick="deletePost('${p.id}')">${t('btn_delete')}</button>
+                    <button type="button" class="btn-sm" onclick="openPostForm('${p.id}')">${icon('pencil')}<span>${t('btn_edit')}</span></button>
+                    <button type="button" class="btn-sm danger" onclick="deletePost('${p.id}')">${icon('trash')}<span>${t('btn_delete')}</span></button>
                 </div>
             </div>`;
         }).join('');
@@ -930,7 +931,7 @@
     function updatePostFormText() {
         const type = POST_TYPES[currentCategory];
         if (!type) return;
-        document.getElementById('post-form-cat').textContent = `${type.icon} ${t(type.tab)}`;
+        document.getElementById('post-form-cat').innerHTML = `${type.icon}<span>${t(type.tab)}</span>`;
         document.getElementById('post-form-title').textContent = t(postEditId ? 'post_form_edit' : type.add);
         document.getElementById('post-title').placeholder = t(type.titlePh);
         // only promotions have an end date
@@ -967,7 +968,7 @@
         return orders.length ? Math.min(...orders) - 1 : 0;
     }
 
-    // "🌐 Translate": sends the Thai title + text to /api/translate (worker.js, Workers AI)
+    // "Translate" button: sends the Thai title + text to /api/translate (worker.js, Workers AI)
     // and fills the English fields; staff can fix the wording before saving
     async function translateTexts(texts) {
         const { data } = await sb.auth.getSession();
@@ -1163,14 +1164,14 @@
                 <div class="info">
                     <h4 title="${escHtml(a.name)}">${escHtml(a.name || t('pf_no_name'))}</h4>
                     <div class="meta">
-                        ${a.photos.length ? `<span>📷 ${a.photos.length}</span>` : ''}
-                        ${a.videos.length ? `<span>🎬 ${a.videos.length}</span>` : ''}
+                        ${a.photos.length ? `<span>${icon('camera')}${a.photos.length}</span>` : ''}
+                        ${a.videos.length ? `<span>${icon('video')}${a.videos.length}</span>` : ''}
                     </div>
                 </div>
                 <span></span>
                 <div class="row-actions">
-                    <button type="button" class="btn-sm" onclick="openPortfolioForm('${a.key}')">${t('btn_edit')}</button>
-                    <button type="button" class="btn-sm danger" onclick="deletePortfolioAlbum('${a.key}')">${t('btn_delete')}</button>
+                    <button type="button" class="btn-sm" onclick="openPortfolioForm('${a.key}')">${icon('pencil')}<span>${t('btn_edit')}</span></button>
+                    <button type="button" class="btn-sm danger" onclick="deletePortfolioAlbum('${a.key}')">${icon('trash')}<span>${t('btn_delete')}</span></button>
                 </div>
             </div>`).join('');
     }
@@ -1199,7 +1200,7 @@
         document.getElementById('pf-grid-edit').innerHTML = pfFormItems.map((item, i) => `
             <div class="image-thumb ${i === 0 ? 'cover' : ''}">
                 ${mediaThumb(item.url || item.preview, item.type)}
-                ${item.type === 'video' ? '<span class="pf-type-tag">🎬</span>' : ''}
+                ${item.type === 'video' ? `<span class="pf-type-tag">${icon('video')}</span>` : ''}
                 <button type="button" class="remove-img" aria-label="${t('image_remove')}" onclick="removePortfolioFormItem(${i})">×</button>
                 ${i === 0 ? `<div class="cover-tag">★ ${t('image_cover')}</div>` : ''}
             </div>`).join('');
@@ -1408,14 +1409,14 @@
                 <div class="thumb">
                     ${images.length
                         ? `<img src="${escHtml(cdnThumb(images[0]))}" alt="" loading="lazy">
-                           ${images.length > 1 ? `<span class="img-count">📷 ${images.length}</span>` : ''}`
+                           ${images.length > 1 ? `<span class="img-count">${icon('camera')}${images.length}</span>` : ''}`
                         : escHtml(t('no_image'))}
                 </div>
                 <div class="info">
                     <h4 title="${escHtml(p.name)}">${escHtml(p.name)}</h4>
                     <div class="meta">
                         ${wheelLine(p) ? `<span>${escHtml(wheelLine(p))}</span>` : ''}
-                        ${p.color ? `<span>🎨 ${escHtml(p.color)}</span>` : ''}
+                        ${p.color ? `<span>${icon('palette')}${escHtml(p.color)}</span>` : ''}
                         ${p.size ? `<span class="size-badge">${escHtml(p.size)}</span>` : ''}
                         ${hasPrice
                             ? `<span class="price">฿${Number(p.price).toLocaleString()}</span>`
@@ -1428,8 +1429,8 @@
                     <span class="stock-text ${p.in_stock ? 'on' : 'off'}">${p.in_stock ? t('in_stock') : t('out_of_stock')}</span>
                 </label>
                 <div class="row-actions">
-                    <button type="button" class="btn-sm" onclick="editProduct('${p.id}')">${t('btn_edit')}</button>
-                    <button type="button" class="btn-sm danger" onclick="deleteProduct('${p.id}')">${t('btn_delete')}</button>
+                    <button type="button" class="btn-sm" onclick="editProduct('${p.id}')">${icon('pencil')}<span>${t('btn_edit')}</span></button>
+                    <button type="button" class="btn-sm danger" onclick="deleteProduct('${p.id}')">${icon('trash')}<span>${t('btn_delete')}</span></button>
                 </div>
             </div>`;
         }).join('');
@@ -1525,7 +1526,7 @@
         const editing = !!document.getElementById('edit-id').value;
         const c = categoryInfo(currentCategory);
         if (!c) return;
-        document.getElementById('form-cat').textContent = `${c.icon} ${t(c.key)}`;
+        document.getElementById('form-cat').innerHTML = `${c.icon}<span>${t(c.key)}</span>`;
         document.getElementById('form-title').textContent = t(editing ? 'form_title_edit' : 'form_title_add');
         document.getElementById('f-size').placeholder = t('size_ph_' + currentCategory);
         // vehicle type is only used by the shock page's filter
