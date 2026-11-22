@@ -36,7 +36,7 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .sec-label, .breadcrumb, .admin-badge, .drawer-cat {
     font-family: var(--f-disp); font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
 }
-.sec-label { font-size: 13px; margin-bottom: 6px; }
+.sec-label { font-size: 13px; margin-bottom: 8px; }
 .breadcrumb a { color: var(--gold); }
 
 /* ---------- square edges everywhere (switches, dots and avatars stay round) ---------- */
@@ -155,17 +155,27 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .hero-kicker { font-family: var(--f-disp); font-weight: 500; letter-spacing: .14em; font-size: 14px; color: var(--gold); }
 .hero h1 { font-family: var(--f-head); font-weight: 800; font-size: clamp(26px, 3.4vw, 40px); margin: 0 0 8px; }
 .hero p { color: #d4d4da; }
-.hero-dots button.active { background: var(--gold); }
+.hero-dots button { width: 24px; height: 4px; border-radius: 0; transition: background-color .3s ease; }
+.hero-dots button.active { width: 24px; background: var(--gold); }
 
-.hero-finder { background: rgba(0,0,0,.82); border-top: 4px solid var(--gold); padding: 22px; backdrop-filter: blur(4px); }
+/* home contact buttons: line icons, call = solid gold, LINE + Messenger = thin outline */
+.ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.hero-actions .btn { padding: 12px 24px; transition: background-color .2s ease, color .2s ease, box-shadow .2s ease; }
+.hero-actions .btn-line, .hero-actions .btn-messenger { background: transparent; color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
+.hero-actions .btn-line:hover, .hero-actions .btn-messenger:hover { color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.hero-actions .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.reviews-link { display: inline-flex; align-items: center; gap: 8px; }
+.reviews-link .ico { width: 16px; height: 16px; }
+
+.hero-finder { background: rgba(0,0,0,.82); border-top: 4px solid var(--gold); padding: 24px; backdrop-filter: blur(4px); }
 .finder-title { font-family: var(--f-disp); font-weight: 700; font-size: 28px; line-height: 1; text-transform: uppercase; margin: 0 0 16px !important; color: #fff !important; }
 .hero-finder .hero-search-cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-bottom: 12px; }
-.hero-finder .hero-search-cats button { background: var(--panel-2); border: 0; color: #ccc; padding: 9px 4px; font-size: 13px; }
+.hero-finder .hero-search-cats button { background: var(--panel-2); border: 0; color: #ccc; padding: 8px 4px; font-size: 13px; }
 .hero-finder .hero-search-cats button:hover { background: #2a2a30; }
 .hero-finder .hero-search-cats button.active { background: var(--gold); color: var(--on-gold); }
 .hero-finder .hero-search { flex-direction: column; gap: 10px; max-width: none; background: transparent; padding: 0; margin: 0; }
-.hero-finder .hero-search input { background: #fff; padding: 13px 12px; }
-.hero-finder .hero-search button { background: var(--gold); color: var(--on-gold); padding: 13px; font-weight: 700; }
+.hero-finder .hero-search input { background: #fff; padding: 12px; }
+.hero-finder .hero-search button { background: var(--gold); color: var(--on-gold); padding: 12px; font-weight: 700; }
 .hero-finder .hero-search button:hover { background: var(--gold-hi); }
 
 /* scrolling strip: gold band */
@@ -180,29 +190,19 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .section-head a { color: var(--muted); font-size: 14px; font-weight: 500; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
 .section-head a:hover { color: var(--gold); border-color: var(--gold); }
 
-/* categories: numbered tiles that turn gold under the mouse (or keyboard focus), the photo faint behind */
+/* categories: the product photo in full, name on a dark fade at the bottom, gold line under the tile on hover / keyboard focus (same as product cards) */
 .cat-grid { gap: 2px; background: var(--line); border: 2px solid var(--line); }
-.cat-card { border: 0; background: var(--panel); aspect-ratio: auto; min-height: 260px; isolation: isolate; }
-.cat-card img { position: absolute; inset: 0; opacity: .16; z-index: -1; filter: grayscale(.6); }
-.cat-card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, var(--panel) 15%, transparent 75%); }
-.cat-card:focus-visible::after { background: linear-gradient(0deg, var(--gold) 15%, transparent 75%); }
+.cat-card { border: 0; border-bottom: 3px solid transparent; background: var(--panel); aspect-ratio: auto; min-height: 280px; isolation: isolate; transition: border-color .2s ease; }
+.cat-card img { position: absolute; inset: 0; z-index: -1; }
+.cat-card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(10,10,11,.96) 0%, rgba(10,10,11,.8) 32%, rgba(10,10,11,0) 64%); }
 .cat-card:hover img { transform: none; }
-.cat-num { position: static; display: block; padding: 22px 20px 0; background: none; font-family: var(--f-disp); font-weight: 700; font-size: 34px; line-height: 1; color: var(--gold); }
-.cat-card .cat-info { background: none; text-shadow: none; padding: 0 20px 22px; }
+.cat-card .cat-info { background: none; text-shadow: none; padding: 0 20px 24px; }
 .cat-card h3 { font-family: var(--f-head); font-weight: 800; font-size: 22px; }
-.cat-card p { color: var(--muted); }
-.cat-card span { font-family: var(--f-body, 'Prompt'), sans-serif; font-size: 13px; letter-spacing: 0; color: var(--text); }
-.cat-card:focus-visible { background: var(--gold); }
-.cat-card:focus-visible img { opacity: .1; }
-.cat-card:focus-visible .cat-num, .cat-card:focus-visible h3,
-.cat-card:focus-visible p, .cat-card:focus-visible span { color: var(--on-gold); }
-/* gold under the mouse only on devices with a real mouse: a phone tap keeps :hover set, so a tile would stay gold after Back */
+.cat-card p { color: #c4c4cc; }
+.cat-card span { font-family: var(--f-body, 'Prompt'), sans-serif; font-size: 13px; letter-spacing: 0; color: var(--gold); }
+.cat-card:focus-visible { border-bottom-color: var(--gold); outline: 2px solid var(--gold); outline-offset: -2px; }
 @media (hover: hover) and (pointer: fine) {
-  .cat-card:hover::after { background: linear-gradient(0deg, var(--gold) 15%, transparent 75%); }
-  .cat-card:hover { background: var(--gold); }
-  .cat-card:hover img { opacity: .1; }
-  .cat-card:hover .cat-num, .cat-card:hover h3,
-  .cat-card:hover p, .cat-card:hover span { color: var(--on-gold); }
+  .cat-card:hover { border-bottom-color: var(--gold); }
 }
 
 /* why us: the shop-front photo (same as /about) shown whole, "open daily" tag on it, the numbered list below */
@@ -220,12 +220,15 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .gallery { gap: 8px; grid-auto-rows: 210px; }
 
 /* contact band: gold */
-.cta-band { background: var(--gold); color: var(--on-gold); border: 0; padding: 44px 40px; }
+.cta-band { background: var(--gold); color: var(--on-gold); border: 0; padding: 48px 40px; }
 .cta-band h2 { font-size: clamp(24px, 3.2vw, 38px); color: var(--on-gold); }
 .cta-band p { color: #2a2a2a; }
 .cta-band .sec-label { color: var(--on-gold); opacity: .7; }
 .cta-band .btn-gold { background: #000; color: #fff; }
 .cta-band .btn-gold:hover { background: #222; }
+.cta-band .hero-actions .btn-line, .cta-band .hero-actions .btn-messenger { color: var(--on-gold); box-shadow: inset 0 0 0 1px rgba(0,0,0,.45); }
+.cta-band .hero-actions .btn-line:hover, .cta-band .hero-actions .btn-messenger:hover { color: #000; background: rgba(0,0,0,.08); box-shadow: inset 0 0 0 1px #000; }
+.cta-band .hero-actions .btn:focus-visible { outline-color: #000; }
 
 @media (max-width: 1100px) {
     .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -239,10 +242,9 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 @media (max-width: 600px) {
     .why-split .why-grid { grid-template-columns: minmax(0, 1fr); }
     .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .cat-card { min-height: 180px; }
+    .cat-card { min-height: 200px; }
     .cat-card:last-child:nth-child(odd) { grid-column: span 2; aspect-ratio: auto; }
-    .cat-num { font-size: 28px; padding: 16px 14px 0; }
-    .cat-card .cat-info { padding: 0 14px 16px; }
+    .cat-card .cat-info { padding: 0 16px 16px; }
     .cat-card h3 { font-size: 19px; }
     .section { padding-top: 64px; }
     .cta-band { padding: 28px 20px; }
