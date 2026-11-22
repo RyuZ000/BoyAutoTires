@@ -312,3 +312,9 @@ a.cat-chip { display: inline-flex; align-items: center; gap: 8px; }
 .post-photos-hint .ico { width: 14px; height: 14px; vertical-align: -2px; margin-right: 6px; }
 .product-noimg span { line-height: 0; }
 .product-noimg span .ico { width: 34px; height: 34px; }
+/* service checklists: a gold line check instead of the green ✅ emoji */
+.svc-list li::before {
+    content: ""; top: .45em; width: 16px; height: 16px; background: var(--gold);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
