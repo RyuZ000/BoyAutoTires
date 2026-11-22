@@ -31,7 +31,7 @@ const SITE_SOCIAL = [
   { title: 'TikTok', href: 'https://www.tiktok.com/@boyautotires', img: 'Photo Social/Tiktok.jpg' },
   { title: 'YouTube', href: 'https://www.youtube.com/@BoyAutoTires', img: 'Photo Social/Youtube.jpg' },
   { title: 'LINE', href: SITE_CONTACT.line, img: 'Photo Social/Line.jpg' },
-  { title: 'Shopee', href: 'https://shopee.co.th/mj_jeab', img: 'Photo Social/Shopee.jpg' },
+  { title: 'Shopee', href: 'https://shopee.co.th/shop/1724036905', img: 'Photo Social/Shopee.jpg' },
 ];
 
 // product: true = a shop category (shown as category chips and in the footer's product list)
