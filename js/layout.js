@@ -25,6 +25,12 @@ const SITE_CONTACT = {
 
 const MESSENGER_ICON = `<svg viewBox="0 0 36 36" aria-hidden="true"><path fill="#fff" d="M18 4C10.27 4 4 9.8 4 16.96c0 4.07 2.03 7.7 5.2 10.08V32l4.75-2.6c1.27.35 2.6.54 4.05.54 7.73 0 14-5.8 14-12.98C32 9.8 25.73 4 18 4zm1.39 17.47l-3.57-3.8-6.96 3.8 7.66-8.13 3.65 3.8 6.88-3.8-7.66 8.13z"/></svg>`;
 
+// line icons (lucide, 1.5 stroke) for the contact buttons; sized and coloured by .ico in css/theme.css
+const ICO = d => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+const ICON_PHONE = ICO('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>');
+const ICON_LINE = ICO('<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>');
+const ICON_CHAT = ICO('<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>');
+
 const SITE_SOCIAL = [
   { title: 'Facebook', href: 'https://www.facebook.com/BOYAUTOTIRES/?locale=th_TH', img: 'Photo Social/Fb.jpg' },
   { title: 'Instagram', href: 'https://www.instagram.com/boyautotires', img: 'Photo Social/IG.jpg' },
@@ -104,9 +110,9 @@ function renderSiteHeader() {
     <div class="topbar">
       <div class="container">
         <div class="topbar-contact">
-          <a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a>
-          <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="hide-sm" data-i18n="cta_line">💬 แอด LINE</a>
-          <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" class="hide-sm" data-i18n="cta_messenger">⚡ แชท Messenger</a>
+          <a href="tel:${SITE_CONTACT.phoneTel}">${ICON_PHONE}<span>${SITE_CONTACT.phone}</span></a>
+          <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="hide-sm">${ICON_LINE}<span data-i18n="cta_line">แอด LINE</span></a>
+          <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" class="hide-sm">${ICON_CHAT}<span data-i18n="cta_messenger">แชท Messenger</span></a>
         </div>
         <div class="topbar-right">
           <div class="lang-switch">
@@ -131,14 +137,14 @@ function renderSiteHeader() {
           <a href="/" class="logo"><span class="b">B</span>oyAuto<span class="t">Tires</span></a>
         </div>
         <nav class="main-nav">${navLinks}</nav>
-        <a href="tel:${SITE_CONTACT.phoneTel}" class="header-cta" data-i18n="cta_call">📞 โทรเลย</a>
+        <a href="tel:${SITE_CONTACT.phoneTel}" class="header-cta">${ICON_PHONE}<span data-i18n="cta_call">โทรเลย</span></a>
         <div class="site-menu" id="site-menu" hidden>
           <div class="site-menu-inner">
             <nav class="site-menu-nav">${menuNavLinks}</nav>
             <div class="site-menu-cta">
-              <a href="tel:${SITE_CONTACT.phoneTel}" class="contact-btn gold" data-i18n="cta_call">📞 โทรเลย</a>
-              <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="contact-btn line" data-i18n="cta_line">💬 แอด LINE</a>
-              <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" class="contact-btn messenger" data-i18n="cta_messenger">⚡ แชท Messenger</a>
+              <a href="tel:${SITE_CONTACT.phoneTel}" class="contact-btn gold">${ICON_PHONE}<span data-i18n="cta_call">โทรเลย</span></a>
+              <a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" class="contact-btn line">${ICON_LINE}<span data-i18n="cta_line">แอด LINE</span></a>
+              <a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" class="contact-btn messenger">${ICON_CHAT}<span data-i18n="cta_messenger">แชท Messenger</span></a>
             </div>
           </div>
         </div>
@@ -207,10 +213,10 @@ function renderSiteFooter() {
         <div>
           <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
           <ul>
-            <li><a href="tel:${SITE_CONTACT.phoneTel}">📞 ${SITE_CONTACT.phone}</a></li>
-            <li><a href="tel:${SITE_CONTACT.phone2Tel}">📞 ${SITE_CONTACT.phone2}</a></li>
-            <li><a href="${SITE_CONTACT.line}" target="_blank" rel="noopener" data-i18n="cta_line">💬 แอด LINE</a></li>
-            <li><a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener" data-i18n="cta_messenger">⚡ แชท Messenger</a></li>
+            <li><a href="tel:${SITE_CONTACT.phoneTel}">${ICON_PHONE}<span>${SITE_CONTACT.phone}</span></a></li>
+            <li><a href="tel:${SITE_CONTACT.phone2Tel}">${ICON_PHONE}<span>${SITE_CONTACT.phone2}</span></a></li>
+            <li><a href="${SITE_CONTACT.line}" target="_blank" rel="noopener">${ICON_LINE}<span data-i18n="cta_line">แอด LINE</span></a></li>
+            <li><a href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener">${ICON_CHAT}<span data-i18n="cta_messenger">แชท Messenger</span></a></li>
           </ul>
         </div>
       </div>

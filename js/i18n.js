@@ -22,9 +22,9 @@ const translations = {
 
         tagline: "จำหน่ายล้อแม็ก-ยางรถยนต์ โช้คสตรัท สปริงโหลด ช่วงล่างครบวงจร",
 
-        cta_call: "📞 โทรเลย",
-        cta_line: "💬 แอด LINE",
-        cta_messenger: "⚡ แชท Messenger",
+        cta_call: "โทรเลย",
+        cta_line: "แอด LINE",
+        cta_messenger: "แชท Messenger",
         home_call: "โทรเลย",
         home_line: "แอด LINE",
         home_messenger: "แชท Messenger",
@@ -316,9 +316,9 @@ const translations = {
 
         tagline: "Alloy wheels, tires, struts, lowering springs & full suspension service",
 
-        cta_call: "📞 Call us",
-        cta_line: "💬 Add LINE",
-        cta_messenger: "⚡ Chat on Messenger",
+        cta_call: "Call us",
+        cta_line: "Add LINE",
+        cta_messenger: "Chat on Messenger",
         home_call: "Call us",
         home_line: "Add LINE",
         home_messenger: "Chat on Messenger",

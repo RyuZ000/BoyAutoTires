@@ -322,9 +322,9 @@ function renderProductDetail(p, all) {
           <p>${t('cta_band_sub')}</p>
         </div>
         <div class="blog-cta-btns">
-          <a class="blog-cta-call" href="tel:${SITE_CONTACT.phoneTel}">${t('cta_call')}</a>
-          <a class="blog-cta-line" href="${SITE_CONTACT.line}" target="_blank" rel="noopener">${t('cta_line')}</a>
-          <a class="blog-cta-messenger" href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener">${t('cta_messenger')}</a>
+          <a class="blog-cta-call" href="tel:${SITE_CONTACT.phoneTel}">${ICON_PHONE}<span>${t('cta_call')}</span></a>
+          <a class="blog-cta-line" href="${SITE_CONTACT.line}" target="_blank" rel="noopener">${ICON_LINE}<span>${t('cta_line')}</span></a>
+          <a class="blog-cta-messenger" href="${SITE_CONTACT.messenger}" target="_blank" rel="noopener">${ICON_CHAT}<span>${t('cta_messenger')}</span></a>
         </div>
       </div>
       ${others.length ? `
