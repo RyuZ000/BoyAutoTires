@@ -190,15 +190,15 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 .section-head a { color: var(--muted); font-size: 14px; font-weight: 500; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
 .section-head a:hover { color: var(--gold); border-color: var(--gold); }
 
-/* categories: the product photo in full, name on a dark fade at the bottom, gold line under the tile on hover / keyboard focus (same as product cards) */
+/* categories: the product photo on top (square), name + link on the dark panel below it,
+   gold line under the tile on hover / keyboard focus (same as product cards) */
 .cat-grid { gap: 2px; background: var(--line); border: 2px solid var(--line); }
-.cat-card { border: 0; border-bottom: 3px solid transparent; background: var(--panel); aspect-ratio: auto; min-height: 280px; isolation: isolate; transition: border-color .2s ease; }
-.cat-card img { position: absolute; inset: 0; z-index: -1; }
-.cat-card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(10,10,11,.96) 0%, rgba(10,10,11,.8) 32%, rgba(10,10,11,0) 64%); }
+.cat-card { display: flex; flex-direction: column; border: 0; border-bottom: 3px solid transparent; background: var(--panel); aspect-ratio: auto; min-height: 0; transition: border-color .2s ease; }
+.cat-card img { position: static; display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; background: #fff; }
 .cat-card:hover img { transform: none; }
-.cat-card .cat-info { background: none; text-shadow: none; padding: 0 20px 24px; }
+.cat-card .cat-info { position: static; background: none; text-shadow: none; padding: 16px 20px 24px; }
 .cat-card h3 { font-family: var(--f-head); font-weight: 800; font-size: 22px; }
-.cat-card p { color: #c4c4cc; }
+.cat-card p { color: var(--muted); }
 .cat-card span { font-family: var(--f-body, 'Prompt'), sans-serif; font-size: 13px; letter-spacing: 0; color: var(--gold); }
 .cat-card:focus-visible { border-bottom-color: var(--gold); outline: 2px solid var(--gold); outline-offset: -2px; }
 @media (hover: hover) and (pointer: fine) {
@@ -242,9 +242,9 @@ h3 { font-family: var(--f-head); font-weight: 600; }
 @media (max-width: 600px) {
     .why-split .why-grid { grid-template-columns: minmax(0, 1fr); }
     .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .cat-card { min-height: 200px; }
+    .cat-card:last-child:nth-child(odd) img { aspect-ratio: 2 / 1; }
     .cat-card:last-child:nth-child(odd) { grid-column: span 2; aspect-ratio: auto; }
-    .cat-card .cat-info { padding: 0 16px 16px; }
+    .cat-card .cat-info { padding: 12px 16px 16px; }
     .cat-card h3 { font-size: 19px; }
     .section { padding-top: 64px; }
     .cta-band { padding: 28px 20px; }
