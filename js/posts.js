@@ -32,7 +32,7 @@ function blogCardHtml(p) {
   const cover = (p.image_urls || [])[0];
   return `
       <a class="blog-card" href="/blog?a=${encodeURIComponent(p.id)}">
-        <div class="blog-card-img">${cover ? `<img src="${escapeHtml(cdnThumb(cover))}" alt="" loading="lazy">` : '<span>📝</span>'}</div>
+        <div class="blog-card-img">${cover ? `<img src="${escapeHtml(cdnThumb(cover))}" alt="" loading="lazy">` : `<span>${icon('file')}</span>`}</div>
         <div class="blog-card-body">
           <time>${formatPostDate(p.created_at)}</time>
           <h2>${escapeHtml(postTitle(p))}</h2>
@@ -61,7 +61,7 @@ function blogArticleHtml(p) {
           <div class="blog-photos">
             ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnThumb(src))}" alt="" loading="lazy"></button>`).join('')}
           </div>
-          <span class="post-photos-hint">📷 ${t('blog_photos_hint')}</span>` : ''}
+          <span class="post-photos-hint">${icon('camera')}${t('blog_photos_hint')}</span>` : ''}
         </div>
       </article>
       <div class="blog-cta">
@@ -106,7 +106,7 @@ function initPostsPage(type) {
         ${images.length ? `
         <button type="button" class="post-cover" onclick="openLightbox('${p.id}')">
           <img src="${escapeHtml(cdnMedia(images[0]))}" alt="${escapeHtml(postTitle(p))}" loading="lazy">
-          ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}
+          ${images.length > 1 ? `<span class="product-img-count">${icon('camera')}${images.length}</span>` : ''}
         </button>` : ''}
         <div class="post-content">
           <div class="post-meta">
@@ -115,7 +115,7 @@ function initPostsPage(type) {
           </div>
           <h2>${escapeHtml(postTitle(p))}</h2>
           ${postBody(p) ? `<p class="post-text">${escapeHtml(postBody(p))}</p>` : ''}
-          ${images.length > 1 ? `<span class="post-photos-hint">📷 ${t('post_photos_hint').replace('{n}', images.length)}</span>` : ''}
+          ${images.length > 1 ? `<span class="post-photos-hint">${icon('camera')}${t('post_photos_hint').replace('{n}', images.length)}</span>` : ''}
         </div>
       </article>`;
     }).join('');

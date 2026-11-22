@@ -289,3 +289,26 @@ body.admin-page .admin-header { background: rgba(0,0,0,.94); border-bottom: 1px 
 .blog-cta .blog-cta-line:hover, .blog-cta .blog-cta-messenger:hover { color: #000; background: rgba(0,0,0,.08); box-shadow: inset 0 0 0 1px #000; }
 /* floating Messenger button: one solid Messenger blue instead of the purple-pink gradient */
 .float-contact .fc-messenger { background: #0084ff; }
+
+/* ---------- line icons in place of emoji on the public pages (same set as ICONS in js/layout.js) ---------- */
+.menu-tile-icon .ico { width: 20px; height: 20px; color: var(--gold); }
+.staff-btn { display: inline-flex; align-items: center; gap: 6px; }
+.staff-btn .ico { width: 14px; height: 14px; }
+.contact-icon { color: var(--gold); line-height: 0; }
+.contact-icon .ico { width: 28px; height: 28px; }
+.contact-btn .ico { width: 18px; height: 18px; }
+.contact-btn.line, .contact-btn.messenger { background: transparent; color: var(--text); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
+.contact-btn.line:hover, .contact-btn.messenger:hover { color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.why-icon { color: var(--gold); }
+.why-icon .ico { width: 24px; height: 24px; }
+strong > .ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; color: var(--gold); }
+a.cat-chip { display: inline-flex; align-items: center; gap: 8px; }
+.cat-chip .ico { width: 16px; height: 16px; }
+.blog-empty-icon { color: var(--muted); line-height: 0; }
+.blog-empty-icon .ico { width: 44px; height: 44px; }
+.blog-card-img > span .ico { width: 40px; height: 40px; color: var(--muted); }
+.product-img-count, .pf-badges span { display: inline-flex; align-items: center; gap: 4px; }
+.product-img-count .ico, .pf-badges span .ico { width: 14px; height: 14px; }
+.post-photos-hint .ico { width: 14px; height: 14px; vertical-align: -2px; margin-right: 6px; }
+.product-noimg span { line-height: 0; }
+.product-noimg span .ico { width: 34px; height: 34px; }

@@ -108,27 +108,27 @@
         function renderContactCards() {
             const cards = [
                 {
-                    icon: '📞', title: t('contact_phone'),
+                    icon: icon('phone'), title: t('contact_phone'),
                     body: `<a href="tel:${c.phoneTel}">${c.phone}</a><a href="tel:${c.phone2Tel}">${c.phone2}</a>`,
                 },
                 {
-                    icon: '📍', title: t('contact_location'),
+                    icon: icon('pin'), title: t('contact_location'),
                     body: `${c.address ? `<p>${c.address[getLang()] || c.address.th}</p>` : ''}
-                           <a href="${directionsUrl}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>
-                           <a href="${c.reviews}" target="_blank" rel="noopener" class="contact-btn outline">${t('contact_reviews')}</a>`,
+                           <a href="${directionsUrl}" target="_blank" rel="noopener" class="contact-btn gold">${icon('pin')}<span>${t('contact_directions')}</span></a>
+                           <a href="${c.reviews}" target="_blank" rel="noopener" class="contact-btn outline">${icon('star')}<span>${t('contact_reviews')}</span></a>`,
                 },
                 {
-                    icon: '💬', title: t('contact_chat'),
-                    body: `<a href="${c.line}" target="_blank" rel="noopener" class="contact-btn line">${t('contact_line')}</a>
-                           <a href="${c.messenger}" target="_blank" rel="noopener" class="contact-btn messenger">${t('contact_messenger')}</a>`,
+                    icon: icon('message'), title: t('contact_chat'),
+                    body: `<a href="${c.line}" target="_blank" rel="noopener" class="contact-btn line">${icon('message')}<span>${t('contact_line')}</span></a>
+                           <a href="${c.messenger}" target="_blank" rel="noopener" class="contact-btn messenger">${icon('chat')}<span>${t('contact_messenger')}</span></a>`,
                 },
                 {
-                    icon: '🕒', title: t('contact_hours'),
+                    icon: icon('clock'), title: t('contact_hours'),
                     body: `<span class="store-badge" id="store-badge"></span>
                            <p class="contact-hours">${storeHoursText()}</p>`,
                 },
                 {
-                    icon: '🌐', title: t('contact_social'),
+                    icon: icon('globe'), title: t('contact_social'),
                     body: `<div class="contact-social">${SITE_SOCIAL.map(s =>
                         `<a href="${s.href}" target="_blank" rel="noopener" title="${s.title}"><img src="${s.img}" alt="${s.title}"></a>`
                     ).join('')}</div>`,

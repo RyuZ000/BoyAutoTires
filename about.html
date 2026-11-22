@@ -49,10 +49,10 @@
         <section>
             <h2 class="about-h2" data-i18n="section_why">ทำไมต้อง BoyAutoTires</h2>
             <div class="why-grid">
-                <div class="why-card"><div class="why-icon">🔧</div><h3 data-i18n="why_1_title">ช่างผู้ชำนาญ</h3><p data-i18n="why_1_desc">ติดตั้งและปรับตั้งช่วงล่างโดยทีมช่างประสบการณ์</p></div>
-                <div class="why-card"><div class="why-icon">🛞</div><h3 data-i18n="why_2_title">สินค้าครบ</h3><p data-i18n="why_2_desc">ล้อ ยาง โช้ค เบรก ครบจบในร้านเดียว</p></div>
-                <div class="why-card"><div class="why-icon">💬</div><h3 data-i18n="why_3_title">ให้คำปรึกษา</h3><p data-i18n="why_3_desc">แนะนำสินค้าที่เหมาะกับรถและการใช้งานของคุณ</p></div>
-                <div class="why-card"><div class="why-icon">📱</div><h3 data-i18n="why_4_title">ติดต่อง่าย</h3><p data-i18n="why_4_desc">สอบถามได้ทั้งโทรศัพท์ LINE และโซเชียล</p></div>
+                <div class="why-card"><div class="why-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><h3 data-i18n="why_1_title">ช่างผู้ชำนาญ</h3><p data-i18n="why_1_desc">ติดตั้งและปรับตั้งช่วงล่างโดยทีมช่างประสบการณ์</p></div>
+                <div class="why-card"><div class="why-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div><h3 data-i18n="why_2_title">สินค้าครบ</h3><p data-i18n="why_2_desc">ล้อ ยาง โช้ค เบรก ครบจบในร้านเดียว</p></div>
+                <div class="why-card"><div class="why-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div><h3 data-i18n="why_3_title">ให้คำปรึกษา</h3><p data-i18n="why_3_desc">แนะนำสินค้าที่เหมาะกับรถและการใช้งานของคุณ</p></div>
+                <div class="why-card"><div class="why-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div><h3 data-i18n="why_4_title">ติดต่อง่าย</h3><p data-i18n="why_4_desc">สอบถามได้ทั้งโทรศัพท์ LINE และโซเชียล</p></div>
             </div>
         </section>
 
@@ -81,11 +81,11 @@
                 .map(n => `<a href="${n.href}" class="cat-chip">${t(n.key)}</a>`)
                 .join('');
             document.getElementById('about-visit').innerHTML = `
-                <p><strong>📍 ${t('contact_location')}</strong><br>${c.address[getLang()] || c.address.th}</p>
-                <p><strong>🕒 ${t('contact_hours')}</strong><br>${storeHoursText()}</p>
+                <p><strong>${icon('pin')}${t('contact_location')}</strong><br>${c.address[getLang()] || c.address.th}</p>
+                <p><strong>${icon('clock')}${t('contact_hours')}</strong><br>${storeHoursText()}</p>
                 <div class="about-visit-btns">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${q}" target="_blank" rel="noopener" class="contact-btn gold">${t('contact_directions')}</a>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener" class="contact-btn outline">${t('about_reviews')}</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${q}" target="_blank" rel="noopener" class="contact-btn gold">${icon('pin')}<span>${t('contact_directions')}</span></a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener" class="contact-btn outline">${icon('star')}<span>${t('about_reviews')}</span></a>
                     <a href="/contact" class="contact-btn outline">${t('menu_contact')} →</a>
                 </div>`;
         }

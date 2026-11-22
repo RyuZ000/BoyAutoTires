@@ -111,8 +111,8 @@
                     <button type="button" class="pf-photo" onclick="openLightbox('pf${n}')" aria-label="${escapeHtml(name)}">
                         ${cover}
                         <span class="pf-badges">
-                            ${photos ? `<span>📷 ${photos}</span>` : ''}
-                            ${videos ? `<span>🎬 ${videos}</span>` : ''}
+                            ${photos ? `<span>${icon('camera')}${photos}</span>` : ''}
+                            ${videos ? `<span>${icon('video')}${videos}</span>` : ''}
                         </span>
                     </button>
                     <figcaption class="pf-caption">${escapeHtml(name)}</figcaption>

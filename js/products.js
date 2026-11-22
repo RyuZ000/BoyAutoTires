@@ -92,12 +92,12 @@ function renderProductCards(data, gridId, options = {}) {
     const tag = page ? 'a' : 'article';
     const imgInner = images.length
       ? `<img src="${escapeHtml(cdnThumb(images[0]))}" alt="${escapeHtml(p.name)}" loading="lazy">
-         ${images.length > 1 ? `<span class="product-img-count">📷 ${images.length}</span>` : ''}`
+         ${images.length > 1 ? `<span class="product-img-count">${icon('camera')}${images.length}</span>` : ''}`
       : '';
     return `
     <${tag} id="product-${p.id}" class="product-card ${p.in_stock ? '' : 'out-of-stock'}"${page ? ` href="${page.href}?p=${encodeURIComponent(p.id)}"` : ''}>
       ${!images.length
-        ? `<div class="product-noimg"><span>📷</span>${escapeHtml(t('no_image'))}</div>`
+        ? `<div class="product-noimg"><span>${icon('camera')}</span>${escapeHtml(t('no_image'))}</div>`
         : page
           ? `<div class="product-img-btn">${imgInner}</div>`
           : `<button type="button" class="product-img-btn" onclick="openLightbox('${p.id}')">${imgInner}</button>`}
@@ -296,7 +296,7 @@ function renderProductDetail(p, all) {
         ${images.length ? `
         <button type="button" class="post-cover" onclick="openLightbox('${p.id}')">
           <img src="${escapeHtml(cdnMedia(images[0]))}" alt="${escapeHtml(title)}">
-        </button>` : `<div class="product-noimg"><span>📷</span>${escapeHtml(t('no_image'))}</div>`}
+        </button>` : `<div class="product-noimg"><span>${icon('camera')}</span>${escapeHtml(t('no_image'))}</div>`}
         <div class="post-content">
           ${p.size ? `<span class="product-size-badge">${escapeHtml(p.size)}</span>` : ''}
           <h1>${escapeHtml(p.name)}</h1>
@@ -313,7 +313,7 @@ function renderProductDetail(p, all) {
           <div class="blog-photos">
             ${images.map((src, i) => `<button type="button" onclick="openLightbox('${p.id}', ${i})"><img src="${escapeHtml(cdnThumb(src))}" alt="" loading="lazy"></button>`).join('')}
           </div>
-          <span class="post-photos-hint">📷 ${t('blog_photos_hint')}</span>` : ''}
+          <span class="post-photos-hint">${icon('camera')}${t('blog_photos_hint')}</span>` : ''}
         </div>
       </article>
       <div class="blog-cta">
